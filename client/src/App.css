@@ -1,0 +1,370 @@
+.App {
+  font-family: 'Courier New', monospace;
+  width: 100%;
+}
+
+h1,
+h2 {
+  font-weight: normal;
+  text-align: center;
+  width: 400px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.passwords {
+  list-style: none;
+  padding: 0;
+  font-size: 32px;
+  margin-bottom: 2em;
+}
+
+.more {
+  font-size: 32px;
+  font-family: 'Courier New', monospace;
+  border: 2px solid #000;
+  background-color: #fff;
+  padding: 10px 25px;
+}
+.more:hover {
+  background-color: #fdd836;
+}
+.more:active {
+  background-color: #ffefa9;
+}
+
+div.crud_section {
+  display: flex;
+  grid-template-columns: 400px auto;
+}
+
+form {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  width: 400px;
+  /* margin: auto; */
+}
+
+ul {
+  /* text-align: center; */
+  list-style-type: none;
+  /* width: 400px; */
+  padding: 0px;
+}
+
+/* li {
+  display: grid;
+  grid-template-columns: auto 50px;
+  width: 300px;
+  padding-left: 50px;
+} */
+
+p {
+  cursor: pointer;
+}
+
+button.delete {
+  display: flex;
+  align-self: center;
+  justify-self: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  background-color: tomato;
+  border: none;
+  outline: none;
+  color: white;
+  font-weight: bold;
+  /* text-align: center; */
+  padding: 0px;
+  border-radius: 5px;
+}
+
+/* 
+/
+/ Navbar
+/
+*/
+
+section.navbar {
+  display: flex;
+  height: 40px;
+  background-color: #e0e0e0;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+section.navbar a {
+  margin-right: 20px;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #c9c8c8;
+  padding: 5px 10px;
+}
+
+/* 
+/
+/ Register Form
+/
+*/
+
+section.register form {
+  display: grid;
+  grid-gap: 10px;
+}
+
+section.register label {
+  display: grid;
+  grid-template-columns: 200px 200px;
+}
+
+section.register input {
+  padding: 5px 10px;
+  outline: 0;
+}
+
+section.register button {
+  width: 200px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #c9c8c8;
+  /* float: right; */
+  display: flex;
+  justify-self: flex-end;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+section.register span {
+  margin-left: 200px;
+  width: 200px;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px 0px 0px 5px;
+  color: red;
+  font-weight: bold;
+}
+
+/* 
+/
+/ Login Form
+/
+*/
+
+section.login form {
+  display: grid;
+  grid-gap: 10px;
+}
+
+section.login label {
+  display: grid;
+  grid-template-columns: 200px 200px;
+}
+
+section.login input {
+  padding: 5px 10px;
+  outline: 0;
+}
+
+section.login button {
+  width: 200px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #c9c8c8;
+  /* float: right; */
+  display: flex;
+  justify-self: flex-end;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+section.login span {
+  margin-left: 200px;
+  width: 200px;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px 0px 0px 5px;
+  color: red;
+  font-weight: bold;
+}
+
+/* 
+/
+/ Dashboard 
+/
+*/
+section.dashboard {
+  width: 400px;
+}
+
+section.dashboard p {
+  padding: 20px;
+}
+
+section.dashboard a {
+  width: 120px;
+  margin: auto;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #c9c8c8;
+  padding: 5px 10px;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}
+
+section.dashboard button {
+  width: 150px;
+  margin: auto;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid #c9c8c8;
+  padding: 5px 10px;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+/* 
+/
+/ Add Venue 
+/
+*/
+section.venue {
+  width: 400px;
+}
+
+section.venue form {
+  display: grid;
+  grid-gap: 10px;
+}
+
+section.venue label {
+  display: grid;
+  grid-template-columns: 200px 200px;
+}
+
+section.venue input {
+  padding: 5px 10px;
+  outline: 0;
+}
+
+section.venue button {
+  width: 200px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #c9c8c8;
+  float: right;
+  display: flex;
+  justify-self: flex-end;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+section.venue span {
+  margin-left: 200px;
+  width: 200px;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px 0px 0px 5px;
+  color: red;
+  font-weight: bold;
+}
+
+/* 
+/
+/ Add Recipe 
+/
+*/
+section.recipe {
+  width: 600px;
+}
+
+section.recipe form {
+  display: grid;
+  grid-gap: 10px;
+}
+
+section.recipe label {
+  display: grid;
+  grid-template-columns: 300px 300px;
+}
+
+section.recipe input {
+  padding: 5px 10px;
+  outline: 0;
+}
+
+section.recipe select {
+  padding: 5px 10px;
+  outline: 0;
+  height: 40px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0px;
+}
+
+section.recipe button {
+  width: 200px;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #c9c8c8;
+  float: right;
+  display: flex;
+  justify-self: flex-end;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+section.recipe span {
+  margin-left: 200px;
+  width: 200px;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px 0px 0px 5px;
+  color: red;
+  font-weight: bold;
+}
+
+/* 
+/
+/ Ingredient Page
+/
+*/
+
+div.ingredient_page {
+  display: grid;
+  grid-template-columns: 400px auto;
+}
+
+section.ingredient_left label {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  grid-gap: 10px;
+  margin-bottom: 10px;
+}
+
+section.ingredient_right {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+section.supplier_panel {
+  width: 400px;
+  border: 1px solid #e0e0e0;
+  padding: 0px 10px;
+}
