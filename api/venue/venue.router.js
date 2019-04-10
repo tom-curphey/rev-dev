@@ -36,7 +36,7 @@ router.get(
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  venueController.createOrEditVenue
+  venueController.addOrEditVenue
 );
 
 // @route   DELETE api/venue

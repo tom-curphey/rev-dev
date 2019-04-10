@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const Profile = require('../profile/profile.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
@@ -21,7 +22,7 @@ module.exports.findAll = findAll;
 
 // Assuming this is from a POST request and the body of the
 // request contained the JSON of the new item to be saved
-const createUser = (req, res) => {
+const addUser = (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
 
   // Check Validation
@@ -31,14 +32,20 @@ const createUser = (req, res) => {
 
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      errors.email = 'Email Already Exists';
+      errors.email = 'A user with your email already exists';
       return res.status(400).json(errors);
     } else {
+      Profile.findOne({ mobile: req.body.mobile }).then(mobile => {
+        errors.mobile = 'A user with your mobile already exists';
+        return res.status(400).json(errors);
+      });
+
       const newUser = new User({
-        name: req.body.name,
         email: req.body.email,
         password: req.body.password
       });
+
+      console.log('newUser', newUser);
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -48,14 +55,35 @@ const createUser = (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then(user => {
+              if (!user) {
+                errors.user =
+                  'There was an error registering your account, please try and later..';
+              }
+
+              profileData = {};
+              profileData.user = newUser._id;
+              profileData.firstName = req.body.firstName;
+              profileData.lastName = req.body.lastName;
+              profileData.mobile = req.body.mobile;
+              profileData.position = req.body.position;
+
+              const newProfile = new Profile(profileData);
+              newProfile.save().then(profile => {
+                if (!profile) {
+                  errors.profile =
+                    'There was an error registering your account profile, please try and later..';
+                }
+                res.json({ user, profile });
+              });
+            })
             .catch(err => console.log(err));
         });
       });
     }
   });
 };
-module.exports.createUser = createUser;
+module.exports.addUser = addUser;
 
 const login = (req, res) => {
   const { errors, isValid } = validateLoginInput(req.body);

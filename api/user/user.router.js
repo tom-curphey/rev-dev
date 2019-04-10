@@ -5,7 +5,7 @@ const passport = require('passport');
 
 // /api/user
 router.get('/findall', userController.findAll);
-router.post('/register', userController.createUser);
+router.post('/register', userController.addUser);
 router.post('/login', userController.login);
 
 // /api/user/:id
@@ -15,7 +15,7 @@ router.post('/login', userController.login);
 
 // Protected API Routes
 router.get(
-  '/current',
+  '/',
   passport.authenticate('jwt', { session: false }),
   userController.currentUser
 );

@@ -31,11 +31,13 @@ class EditVenue extends Component {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
     }
-    if (nextProps.venue.venue) {
+    // console.log('nextProps.errors: ', nextProps.errors);
+    // console.log('State Check: ', this.state);
+    const errorCheck = isEmpty(nextProps.errors);
+    // console.log('errorOutsideCheck: ', errorCheck);
+
+    if (nextProps.venue.venue && errorCheck) {
       const venue = nextProps.venue.venue;
-
-      console.log(venue);
-
       // Check if any fields are empty
       // If so make them an empty string
       venue.displayName = !isEmpty(venue.displayName)
@@ -45,21 +47,31 @@ class EditVenue extends Component {
       venue.phone = !isEmpty(venue.phone) ? venue.phone : '';
       venue.address = !isEmpty(venue.address) ? venue.address : '';
       venue.website = !isEmpty(venue.website) ? venue.website : '';
-      venue.chefPayPerHour = !isEmpty(venue.costs.chefPayPerHour)
-        ? venue.costs.chefPayPerHour
-        : '';
-      venue.rentPerMonth = !isEmpty(venue.costs.rentPerMonth)
-        ? venue.costs.rentPerMonth
-        : '';
-      venue.waterPerMonth = !isEmpty(venue.costs.waterPerMonth)
-        ? venue.costs.waterPerMonth
-        : '';
-      venue.powerPerMonth = !isEmpty(venue.costs.powerPerMonth)
-        ? venue.costs.powerPerMonth
-        : '';
-      venue.insurancePerYear = !isEmpty(venue.costs.insurancePerYear)
-        ? venue.costs.insurancePerYear
-        : '';
+      if (venue.costs) {
+        venue.chefPayPerHour = !isEmpty(venue.costs.chefPayPerHour)
+          ? venue.costs.chefPayPerHour
+          : '';
+        venue.rentPerMonth = !isEmpty(venue.costs.rentPerMonth)
+          ? venue.costs.rentPerMonth
+          : '';
+        venue.waterPerMonth = !isEmpty(venue.costs.waterPerMonth)
+          ? venue.costs.waterPerMonth
+          : '';
+        venue.powerPerMonth = !isEmpty(venue.costs.powerPerMonth)
+          ? venue.costs.powerPerMonth
+          : '';
+        venue.insurancePerYear = !isEmpty(
+          venue.costs.insurancePerYear
+        )
+          ? venue.costs.insurancePerYear
+          : '';
+      } else {
+        venue.chefPayPerHour = '';
+        venue.rentPerMonth = '';
+        venue.waterPerMonth = '';
+        venue.powerPerMonth = '';
+        venue.insurancePerYear = '';
+      }
 
       this.setState({
         name: venue.displayName,

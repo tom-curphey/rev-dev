@@ -47,7 +47,7 @@ class AddVenue extends Component {
       insurancePerYear: this.state.insurancePerYear
     };
 
-    console.log(venueData);
+    console.log('venueData: ', venueData);
 
     // This.props.history uses withRouter to push history into the actions files
     this.props.addOrEditVenue(venueData, this.props.history);

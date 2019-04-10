@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const generatePassword = require('password-generator');
+const profile = require('./api/profile/profile.router');
 const item = require('./api/item/item.router');
 const user = require('./api/user/user.router');
 const venue = require('./api/venue/venue.router');
@@ -47,6 +48,7 @@ app.get('/api/passwords', (req, res) => {
   console.log(`Sent ${count} passwords`);
 });
 
+app.use('/api/profile', profile);
 app.use('/api/item', item);
 app.use('/api/user', user);
 app.use('/api/venue', venue);

@@ -43,7 +43,7 @@ export const loginUser = (userData, history) => dispatch => {
 
 // Set logged in user
 export const setCurrentUser = decodedData => {
-  console.log('decodedData: ', decodedData);
+  // console.log('decodedData: ', decodedData);
 
   return {
     type: SET_CURRENT_USER,

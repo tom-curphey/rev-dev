@@ -1,6 +1,7 @@
 import {
   GET_VENUE,
   VENUE_LOADING,
+  REMOVE_VENUE_LOADING,
   CLEAR_CURRENT_VENUE,
   SAVE_VENUE
 } from '../../redux/types';
@@ -16,6 +17,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         loading: true
+      };
+    case REMOVE_VENUE_LOADING:
+      return {
+        ...state,
+        loading: false
       };
     case GET_VENUE:
       return {

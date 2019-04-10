@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   GET_VENUE,
   VENUE_LOADING,
+  REMOVE_VENUE_LOADING,
   CLEAR_CURRENT_VENUE,
   GET_ERRORS,
   SET_CURRENT_USER,
@@ -32,6 +33,8 @@ export const getCurrentVenue = () => dispatch => {
 
 // Add Venue
 export const addOrEditVenue = (venueData, history) => dispatch => {
+  console.log('here');
+
   dispatch(setVenueLoading());
   axios
     .post('/api/venue', venueData)
@@ -41,18 +44,25 @@ export const addOrEditVenue = (venueData, history) => dispatch => {
         payload: res.data
       })
     )
-    .catch(err =>
+    .catch(err => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })
-    );
+      });
+      dispatch(removeVenueLoading());
+    });
 };
 
 // Venue loading
 export const setVenueLoading = () => {
   return {
     type: VENUE_LOADING
+  };
+};
+// Venue loading
+export const removeVenueLoading = () => {
+  return {
+    type: REMOVE_VENUE_LOADING
   };
 };
 

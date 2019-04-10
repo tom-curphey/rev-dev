@@ -21,11 +21,11 @@ const getVenue = (req, res) => {
 };
 module.exports.getVenue = getVenue;
 
-const createOrEditVenue = (req, res) => {
+const addOrEditVenue = (req, res) => {
+  console.log('REQ', req.body);
   const { errors, isValid } = validateVenueInput(req.body);
 
-  // console.log('REQ', req);
-
+  console.log('REQ - Errors', errors);
   // Check Validation
   if (!isValid) {
     // Return any errors
@@ -99,7 +99,7 @@ const createOrEditVenue = (req, res) => {
     }
   });
 };
-module.exports.createOrEditVenue = createOrEditVenue;
+module.exports.addOrEditVenue = addOrEditVenue;
 
 const venueByName = (req, res) => {
   const errors = {};

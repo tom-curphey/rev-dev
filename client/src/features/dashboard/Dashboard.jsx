@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getCurrentVenue, deleteVenue } from '../venue/venueActions';
 import { reactivateUser } from '../auth/authActions';
+import { getUserProfile } from '../profile/profileActions';
 import Spinner from '../../utils/spinner/Spinner';
 
 class Dashboard extends Component {
@@ -12,6 +13,7 @@ class Dashboard extends Component {
       this.props.history.push('/');
     }
     this.props.getCurrentVenue();
+    this.props.getUserProfile();
   }
 
   handleDeleteVenue = () => {
@@ -22,7 +24,10 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { user } = this.props.auth;
+    const {
+      profile: { profile },
+      auth: { user }
+    } = this.props;
     const { venue, loading } = this.props.venue;
 
     let dashboardContent;
@@ -46,11 +51,13 @@ class Dashboard extends Component {
           </div>
         );
       } else {
-        if (!user.active) {
+        // console.log(profile.profile.firstName);
+        console.log(profile.firstName);
+
+        if (!profile.active) {
           dashboardContent = (
             <div>
-              <h1>Hi {user.name}</h1>
-              <p>It seems like you have deactived your account..</p>
+              <h1>Welcome back {profile.firstName}</h1>
               <p>Would you like to reactive the account?</p>
               <button onClick={this.handleReactivate}>
                 + Reactivate Account
@@ -61,7 +68,7 @@ class Dashboard extends Component {
           // User is logged in but has no venue
           dashboardContent = (
             <div>
-              <h1>Welcome {user.name}</h1>
+              <h1>Hi {profile.firstName}</h1>
               <p>
                 First we need to know what venue you are optimising
                 your recipes for..
@@ -82,13 +89,15 @@ class Dashboard extends Component {
 
 const actions = {
   getCurrentVenue,
+  getUserProfile,
   deleteVenue,
   reactivateUser
 };
 
 const mapState = state => ({
   auth: state.auth,
-  venue: state.venue
+  venue: state.venue,
+  profile: state.profile
 });
 
 Dashboard.propTypes = {
@@ -96,6 +105,8 @@ Dashboard.propTypes = {
   deleteVenue: PropTypes.func.isRequired,
   reactivateUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+
   venue: PropTypes.object.isRequired
 };
 
