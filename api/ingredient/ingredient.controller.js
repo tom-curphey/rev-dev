@@ -80,11 +80,6 @@ const addIngredient = (req, res) => {
       .replace(/\s+/g, '-')
       .toLowerCase();
   }
-  ingredientFields.supplier = {};
-  if (req.body.packageCost)
-    ingredientFields.supplier.packageCost = req.body.packageCost;
-  if (req.body.packageGram)
-    ingredientFields.supplier.packageGram = req.body.packageGram;
 
   ingredientFields.metrics = {};
   if (req.body.cup) {
@@ -99,10 +94,10 @@ const addIngredient = (req, res) => {
   Ingredient.findOne({ urlName: ingredientFields.urlName }).then(
     ingredient => {
       if (ingredient) {
-        return res.status(400).json({
-          message:
-            'There is an ingredient already registered by this name...'
-        });
+        errors.ingredient = `There is an ingredient already registered by name ${
+          ingredientFields.urlName
+        }`;
+        return res.status(400).json({ errors });
       } else {
         const newIngredient = new Ingredient(ingredientFields);
 
@@ -110,16 +105,18 @@ const addIngredient = (req, res) => {
           .save()
           .then(ingredient => {
             if (!ingredient) {
-              return res.status(400).json({
-                message: 'There was an error creating your ingredient'
-              });
+              errors.ingredient =
+                'There was an error creating your ingredient';
+              return res.status(400).json(errors);
             }
             return res.status(200).json(ingredient);
           })
           .catch(err => {
+            errors.ingredient =
+              'There was an error saving your ingredient';
             return res.status(400).json({
-              message: 'There was an error saving your ingredient',
-              error: err
+              errors,
+              error: err.response.data
             });
           });
       }
@@ -149,15 +146,13 @@ const editIngredientByID = (req, res) => {
       .toLowerCase();
   }
   ingredientFields.metrics = {};
-  if (req.body.cup) ingredientFields.metrics.cup = req.body.cup;
-  ingredientFields.metrics = {};
+  if (req.body.cup) {
+    ingredientFields.metrics.cup = req.body.cup;
+    ingredientFields.metrics.tablespoon = req.body.cup / 16;
+    ingredientFields.metrics.teaspoon =
+      ingredientFields.metrics.tablespoon / 48;
+  }
   if (req.body.whole) ingredientFields.metrics.whole = req.body.whole;
-
-  ingredientFields.supplier = {};
-  if (req.body.packageCost)
-    ingredientFields.supplier.packageCost = req.body.packageCost;
-  if (req.body.packageGram)
-    ingredientFields.supplier.packageGram = req.body.packageGram;
 
   Ingredient.findOneAndUpdate(
     { _id: req.params.ingredient_id },
@@ -168,9 +163,10 @@ const editIngredientByID = (req, res) => {
       return res.json(ingredient);
     })
     .catch(err => {
+      errors.ingredient = 'Ingredient could not be updated';
       return res.status(400).json({
-        message: 'Ingredient could not be updated',
-        error: err
+        errors: errors,
+        error: err.response.data
       });
     });
 };
@@ -237,37 +233,37 @@ const addSupplierToIngredient = (req, res) => {
 
       const SupplierIngredientData = {};
       SupplierIngredientData.ingredient = ingredient.id;
-      console.log('SupplierIngredientData: ', SupplierIngredientData);
+      // console.log('SupplierIngredientData: ', SupplierIngredientData);
 
       const confirmIngredientSupplier = ingredient.suppliers.filter(
         ingredientSupplier => {
-          console.log('Supplier.id: ', supplier.id);
-          console.log(
-            'ingredientSupplier.supplier: ',
-            ingredientSupplier.supplier
-          );
+          // console.log('Supplier.id: ', supplier.id);
+          // console.log(
+          //   'ingredientSupplier.supplier: ',
+          //   ingredientSupplier.supplier
+          // );
           return ingredientSupplier.supplier == supplier.id;
         }
       );
       const confirmSupplierIngredientID = supplier.ingredients.filter(
         supplierIngredient => {
-          console.log('Supplier.id: ', supplier.id);
-          console.log(
-            'supplierIngredient.ingredient: ',
-            supplierIngredient.ingredient
-          );
+          // console.log('Supplier.id: ', supplier.id);
+          // console.log(
+          //   'supplierIngredient.ingredient: ',
+          //   supplierIngredient.ingredient
+          // );
           return supplierIngredient.ingredient == ingredient.id;
         }
       );
 
-      console.log(
-        'confirmIngredientSupplier: ',
-        confirmIngredientSupplier.length
-      );
-      console.log(
-        'confirmSupplierIngredientID: ',
-        confirmSupplierIngredientID.length
-      );
+      // console.log(
+      //   'confirmIngredientSupplier: ',
+      //   confirmIngredientSupplier.length
+      // );
+      // console.log(
+      //   'confirmSupplierIngredientID: ',
+      //   confirmSupplierIngredientID.length
+      // );
 
       if (
         confirmIngredientSupplier.length === 0 &&
@@ -334,44 +330,6 @@ const addSupplierToIngredient = (req, res) => {
           });
         });
       }
-
-      // if (
-      //   confirmIngredientSupplier.length === 0 &&
-      //   confirmSupplierIngredientID.length === 0
-      // ) {
-      //   console.log('Add Ingredient To Supplier');
-      //   supplier.ingredients.push(SupplierIngredientData);
-      //   supplier
-      //     .save()
-      //     .then(supplierSaved => {
-      //       if (!supplierSaved) {
-      //         // errors.ingredient =
-      //         // 'We could save the ingredient to this supplier';
-      //         return res.status(400).json({
-      //           message:
-      //             'We could not save the ingredient to this supplier'
-      //         });
-      //       }
-      //       console.log(
-      //         'Add Ingredient To Supplier',
-      //         ingredientSaved
-      //       );
-      //       return res.status(200).json({
-      //         message: 'Ingredient & Supplier Saved',
-      //         supplierSaved
-      //       });
-      //     })
-      //     .catch(err => {
-      //       return res.status(404).json({
-      //         message: 'Catch Error on Supplier',
-      //         mongoError: err
-      //       });
-      //     });
-      // } else {
-      //   console.log(
-      //     'Update Ingredient ID On The Supplier - This Cannot Be HIT..'
-      //   );
-      // }
     });
   });
 };

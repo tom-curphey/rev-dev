@@ -1,7 +1,9 @@
 const Validator = require('validator');
-const isEmpty = require('../validation/is.empty');
+const isEmpty = require('./is.empty');
 
-module.exports = function validateUserIngredientSupplierInput(data) {
+module.exports = function validateProfileIngredientSupplierInput(
+  data
+) {
   let errors = {};
 
   // console.log('Check data: ', data);

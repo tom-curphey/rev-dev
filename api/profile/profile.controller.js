@@ -2,6 +2,7 @@ const User = require('../user/user.model');
 const Profile = require('../profile/profile.model');
 
 const validateProfileInput = require('../../config/validation/profile');
+const validateProfileIngredientSupplierInput = require('../../config/validation/profileIngredient');
 
 const getProfile = (req, res) => {
   // To be complited
@@ -11,7 +12,7 @@ const getProfile = (req, res) => {
     // .populate('user', ['name', 'email'])
     .then(profile => {
       if (!profile) {
-        errors.noprofile = 'There is no profile for this user';
+        errors.profile = 'There is no profile for this user';
         return res.status(404).json(errors);
       }
       return res.json(profile);
@@ -71,3 +72,93 @@ const deactivateProfile = (req, res) => {
   });
 };
 module.exports.deactivateProfile = deactivateProfile;
+
+const addOrEditProfileIngredient = (req, res) => {
+  req.body.ingredient_id = req.params.ingredient_id;
+  req.body.supplier_id = req.params.supplier_id;
+
+  const { errors, isValid } = validateProfileIngredientSupplierInput(
+    req.body
+  );
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+  Profile.findOne({ user: req.user.id }).then(profile => {
+    if (!profile) {
+      errors.profile = 'Profile not found';
+      return res.status(400).json(errors);
+    }
+    console.log('beforeProfileIngredient: ', profile);
+
+    Ingredient.findById(req.body.ingredient_id).then(ingredient => {
+      if (!ingredient) {
+        errors.ingredient =
+          'We could not find the ingredient selected';
+        return res.status(404).json(errors);
+      }
+
+      const confirmedIngredientSupplier = ingredient.suppliers.filter(
+        ingredientSupplier => {
+          // console.log(
+          //   'ingredientSupplier: ',
+          //   ingredientSupplier.supplier
+          // );
+          // console.log('req: ', req.body.supplier_id);
+          return (
+            ingredientSupplier.supplier.toString() ===
+            req.body.supplier_id
+          );
+        }
+      );
+
+      if (confirmedIngredientSupplier.length < 1) {
+        errors.ingredient = `We could not find the supplier selected for ${
+          ingredient.displayName
+        }`;
+        return res.status(404).json(errors);
+      }
+
+      const profileIngredientData = {};
+      profileIngredientData.ingredient = ingredient.id;
+      profileIngredientData.supplier =
+        confirmedIngredientSupplier[0].supplier;
+      profileIngredientData.packageCost = req.body.packageCost;
+      profileIngredientData.packageGrams = req.body.packageGrams;
+
+      const profileIngredient = profile.ingredients.filter(
+        profileIngredient => {
+          return (
+            profileIngredient.ingredient.toString() === ingredient.id
+          );
+        }
+      );
+
+      if (profileIngredient.length > 0) {
+        profileIngredient[0].set(profileIngredientData);
+      } else {
+        profile.ingredients.push(profileIngredientData);
+      }
+
+      // console.log('profileIngredient: ', profile);
+
+      profile
+        .save()
+        .then(profileSaved => {
+          if (!profileSaved) {
+            const errors = {};
+            errors.ingredient =
+              'We could save the ingredient to your account';
+            return res.status(400).json(errors);
+          }
+          // console.log('profileSaved: ', profileSaved);
+          return res.status(200).json(profileSaved);
+        })
+        .catch(err => {
+          return res.status(400).json(err.response.data);
+        });
+    });
+  });
+};
+module.exports.addOrEditProfileIngredient = addOrEditProfileIngredient;

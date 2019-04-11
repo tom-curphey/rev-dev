@@ -12,7 +12,7 @@ const getVenue = (req, res) => {
     .populate('user', ['name', 'email'])
     .then(venue => {
       if (!venue) {
-        errors.novenue = 'There is no venue for this user';
+        errors.venue = 'There is no venue for this user';
         return res.status(404).json(errors);
       }
       return res.json(venue);
@@ -35,9 +35,9 @@ const addOrEditVenue = (req, res) => {
   // Get Fields
   const venueFields = {};
   venueFields.user = req.user.id;
-  if (req.body.name) {
-    venueFields.displayName = req.body.name;
-    venueFields.urlName = req.body.name
+  if (req.body.displayName) {
+    venueFields.displayName = req.body.displayName;
+    venueFields.urlName = req.body.displayName
       .trim()
       .replace(/\s+/g, '-')
       .toLowerCase();
@@ -112,7 +112,7 @@ const venueByName = (req, res) => {
     .populate('user', ['name', 'avatar'])
     .then(venue => {
       if (!venue) {
-        errors.novenue = "You don't have a Venue by this name..";
+        errors.venue = "You don't have a Venue by this name..";
         res.status(404).json(errors);
       }
 
@@ -129,7 +129,8 @@ const venueByID = (req, res) => {
     .populate('user', ['name', 'avatar'])
     .then(venue => {
       if (!venue) {
-        errors.novenue = 'There is no venue for this user';
+        errors.venue =
+          "You don't have a venue associated with this account";
         res.status(404).json(errors);
       }
 
@@ -149,7 +150,7 @@ const deleteUserAndVenue = (req, res) => {
       )
         .then(() =>
           res.status(200).json({
-            message: 'Your account has been successfully deactivated'
+            message: 'Your venue has been successfully deactivated'
           })
         )
         .catch(err => res.status(404).json(err));

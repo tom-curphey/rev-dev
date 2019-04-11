@@ -15,9 +15,10 @@ const getAllSuppliers = (req, res) => {
       return res.status(200).json(suppliers);
     })
     .catch(err => {
+      errors.supplier =
+        'There was an error getting suppliers from the database';
       return res.status(400).json({
-        message:
-          'There was an error getting suppliers from the database',
+        errors,
         error: err.response.data
       });
     });
@@ -36,9 +37,10 @@ const getSupplierByID = (req, res) => {
       return res.status(200).json(supplier);
     })
     .catch(err => {
+      errors.supplier =
+        'There was an error getting the supplier from the database';
       return res.status(400).json({
-        message:
-          'There was an error getting the supplier from the database',
+        errors,
         error: err.response.data
       });
     });
@@ -95,9 +97,6 @@ const addSupplier = (req, res) => {
   if (req.body.address) {
     supplierFields.address = req.body.address;
   }
-  if (req.user.admin) {
-    supplierFields.registered = true;
-  }
 
   Supplier.findOne({
     $or: [
@@ -106,9 +105,10 @@ const addSupplier = (req, res) => {
     ]
   }).then(supplier => {
     if (supplier) {
+      errors.supplier =
+        'There is already a supplier registered with these details';
       return res.status(400).json({
-        message:
-          'There is already a supplier registered with these details'
+        errors: errors
       });
     } else {
       const newSupplier = new Supplier(supplierFields);
@@ -117,16 +117,19 @@ const addSupplier = (req, res) => {
         .save()
         .then(supplier => {
           if (!supplier) {
+            errors.supplier =
+              'There was an error creating your supplier';
             return res.status(400).json({
-              message: 'There was an error creating your supplier'
+              errors: errors
             });
           }
           return res.status(200).json(supplier);
         })
         .catch(err => {
+          errors.supplier = 'There was an error saving the supplier';
           return res.status(400).json({
-            message: 'There was an error saving the supplier',
-            error: err
+            errors: errors,
+            error: err.response.data
           });
         });
     }
@@ -196,28 +199,30 @@ const editSupplierByID = (req, res) => {
           )
             .then(supplier => {
               if (!supplier) {
+                errors.supplier =
+                  'There was an error saving the supplier to the database';
                 return res.status(400).json({
-                  message:
-                    'There was an error saving the supplier to the database'
+                  errors
                 });
               }
               return res.status(200).json(supplier);
             })
             .catch(err => {
+              'There was an error saving the supplier to the database';
               return res.status(400).json({
-                message:
-                  'There was an error saving the supplier to the database',
-                error: err
+                errors,
+                error: err.response.data
               });
             });
         }
       );
     })
     .catch(err => {
+      errors.supplier =
+        'There was an error finding the supplier to be updated in the database';
       return res.status(400).json({
-        message:
-          'There was an error finding the supplier to be updated in the database',
-        error: err
+        errors,
+        error: err.response.data
       });
     });
 };
@@ -227,9 +232,11 @@ const deleteSupplierByID = (req, res) => {
   Supplier.findByIdAndDelete(req.params.supplier_id).then(
     supplier => {
       if (!supplier) {
+        const errors = {};
+        errors.supplier =
+          'There was an error delete the supplier in the database';
         return res.status(400).json({
-          message:
-            'There was an error delete the supplier in the database'
+          errors
         });
       }
       return res.status(200).json({

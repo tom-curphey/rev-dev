@@ -17,14 +17,33 @@ class Login extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
+  componentDidUpdate(prevProps, state) {
+    console.log('componentDidUpdate: prevProps', prevProps);
+    console.log('componentDidUpdate: this.props', this.props);
+    console.log('componentDidUpdate: state', state);
+
+    if (
+      prevProps.auth.isAuthenticated !==
+      this.props.auth.isAuthenticated
+    ) {
       this.props.history.push('/dashboard');
     }
-    if (nextProps) {
-      this.setState({ errors: nextProps.errors });
+
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors });
     }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   console.log(nextProps);
+
+  //   if (nextProps.auth.isAuthenticated) {
+  //     this.props.history.push('/dashboard');
+  //   }
+  //   if (nextProps) {
+  //     this.setState({ errors: nextProps.errors });
+  //   }
+  // }
 
   handleOnChange = e => {
     this.setState({ [e.target.name]: e.target.value });

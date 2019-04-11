@@ -25,13 +25,4 @@ router.post(
   userController.reactivateUser
 );
 
-// @route   POST api/ingredient/supplier/:ingredient_id/:supplier_id
-// @desc    Add user ingredient
-// @access  Private
-router.post(
-  '/ingredient/:ingredient_id/:supplier_id',
-  passport.authenticate('jwt', { session: false }),
-  userController.addOrEditUserIngredient
-);
-
 module.exports = router;

@@ -4,13 +4,15 @@ const isEmpty = require('../validation/is.empty');
 module.exports = function validateVenueInput(data) {
   let errors = {};
 
-  data.name = !isEmpty(data.name) ? data.name : '';
+  data.displayName = !isEmpty(data.displayName)
+    ? data.displayName
+    : '';
   data.email = !isEmpty(data.email) ? data.email : '';
   data.address = !isEmpty(data.address) ? data.address : '';
   data.phone = !isEmpty(data.phone) ? data.phone : '';
 
-  if (Validator.isEmpty(data.name)) {
-    errors.name = 'Venue name is required';
+  if (Validator.isEmpty(data.displayName)) {
+    errors.displayName = 'Venue name is required';
   }
   if (!Validator.isEmail(data.email)) {
     errors.email = 'Email is invalid';

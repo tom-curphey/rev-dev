@@ -3,7 +3,7 @@ import {
   GET_INGREDIENTS,
   INGREDIENTS_LOADING,
   GET_ERRORS,
-  SAVE_USER_INGREDIENT,
+  SAVE_PROFILE_INGREDIENT,
   INGREDIENTS_LOADING_FALSE
 } from '../../redux/types';
 
@@ -24,27 +24,22 @@ export const getIngredients = () => dispatch => {
     });
 };
 
-// Add / Edit User Ingredient
-export const addOrEditUserIngredient = (
-  userIngredientData,
-  userData
-) => dispatch => {
-  console.log(userIngredientData);
-  const { ingredient, supplier } = userIngredientData;
+// Add / Edit Profile Ingredient
+export const addOrEditProfileIngredient = profileIngredientData => dispatch => {
+  console.log(profileIngredientData);
+  const { ingredient, supplier } = profileIngredientData;
 
   dispatch(setIngredientsLoading());
   axios
     .post(
-      `api/user/ingredient/${ingredient}/${supplier}`,
-      userIngredientData
+      `api/profile/ingredient/${ingredient}/${supplier}`,
+      profileIngredientData
     )
     .then(res => {
-      res.data.iat = userData.iat;
-      res.data.exp = userData.exp;
       console.log('Res.data: ', res.data);
 
       dispatch({
-        type: SAVE_USER_INGREDIENT,
+        type: SAVE_PROFILE_INGREDIENT,
         payload: res.data
       });
       dispatch(ingredientsLoadingFalse());

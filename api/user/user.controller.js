@@ -7,7 +7,6 @@ const keys = require('../../config/keys');
 // Load Input Validation
 const validateRegisterInput = require('../../config/validation/register');
 const validateLoginInput = require('../../config/validation/login');
-const validateUserIngredientSupplierInput = require('../../config/validation/userIngredient');
 
 const findAll = (req, res) => {
   User.find().then(users => {
@@ -97,47 +96,49 @@ const login = (req, res) => {
   const password = req.body.password;
 
   // Find user by email
-  User.findOne({ email: email }).then(user => {
-    errors.email = 'User not found';
-    if (!user) {
-      return res.status(404).json(errors);
-    }
+  User.findOne({ email: email })
+    .then(user => {
+      if (!user) {
+        errors.email = 'User not found';
+        return res.status(404).json(errors);
+      }
 
-    console.log('Check User: ', user);
+      console.log('Check User: ', user);
 
-    // Check password
-    bcrypt
-      .compare(password, user.password)
-      // Returns a boolean promise
-      .then(isMatch => {
-        if (!isMatch) {
-          errors.password = 'Incorrect Password';
-          return res.status(400).json(errors);
-        }
-
-        // User Matched
-        const payload = {
-          id: user.id,
-          name: user.name,
-          active: user.active,
-          ingredients: user.ingredients
-        };
-
-        // Sign Token
-        // 3600 is an hour in seconds
-        jwt.sign(
-          payload,
-          keys.secretOrKey,
-          { expiresIn: 86400 },
-          (err, token) => {
-            res.json({
-              success: true,
-              token: 'Bearer ' + token
-            });
+      // Check password
+      bcrypt
+        .compare(password, user.password)
+        // Returns a boolean promise
+        .then(isMatch => {
+          if (!isMatch) {
+            errors.password = 'Incorrect Password';
+            return res.status(400).json(errors);
           }
-        );
-      });
-  });
+
+          // User Matched
+          const payload = {
+            id: user.id,
+            name: user.name,
+            active: user.active,
+            ingredients: user.ingredients
+          };
+
+          // Sign Token
+          // 3600 is an hour in seconds
+          jwt.sign(
+            payload,
+            keys.secretOrKey,
+            { expiresIn: 86400 },
+            (err, token) => {
+              res.json({
+                success: true,
+                token: 'Bearer ' + token
+              });
+            }
+          );
+        });
+    })
+    .catch(err => console.log(err));
 };
 module.exports.login = login;
 
@@ -178,104 +179,3 @@ const reactivateUser = (req, res) => {
     .catch(err => res.status(404).json(err));
 };
 module.exports.reactivateUser = reactivateUser;
-
-const addOrEditUserIngredient = (req, res) => {
-  req.body.ingredient_id = req.params.ingredient_id;
-  req.body.supplier_id = req.params.supplier_id;
-
-  const { errors, isValid } = validateUserIngredientSupplierInput(
-    req.body
-  );
-
-  if (!isValid) {
-    return res.status(400).json(errors);
-  }
-
-  User.findById(req.user.id).then(user => {
-    if (!user) {
-      errors.email = 'User not found';
-      return res.status(400).json(errors);
-    }
-    console.log('beforeUserIngredient: ', user);
-
-    Ingredient.findById(req.body.ingredient_id).then(ingredient => {
-      if (!ingredient) {
-        errors.ingredient =
-          'We could not find the ingredient selected';
-        return res.status(404).json(errors);
-      }
-
-      const confirmedIngredientSupplier = ingredient.suppliers.filter(
-        ingredientSupplier => {
-          // console.log(
-          //   'ingredientSupplier: ',
-          //   ingredientSupplier.supplier
-          // );
-          // console.log('req: ', req.body.supplier_id);
-          return (
-            ingredientSupplier.supplier.toString() ===
-            req.body.supplier_id
-          );
-        }
-      );
-
-      if (confirmedIngredientSupplier.length < 1) {
-        errors.ingredient = `We could not find the supplier selected for ${
-          ingredient.displayName
-        }`;
-        return res.status(404).json(errors);
-      }
-
-      const userIngredientData = {};
-      userIngredientData.ingredient = ingredient.id;
-      userIngredientData.supplier =
-        confirmedIngredientSupplier[0].supplier;
-      userIngredientData.packageCost = req.body.packageCost;
-      userIngredientData.packageGrams = req.body.packageGrams;
-
-      const userIngredient = user.ingredients.filter(
-        userIngredient => {
-          return (
-            userIngredient.ingredient.toString() === ingredient.id
-          );
-        }
-      );
-
-      if (userIngredient.length > 0) {
-        userIngredient[0].set(userIngredientData);
-      } else {
-        user.ingredients.push(userIngredientData);
-      }
-
-      console.log('userIngredient: ', user);
-
-      user
-        .save()
-        .then(userSaved => {
-          if (!userSaved) {
-            // errors.ingredient =
-            // 'We could save the ingredient to your account';
-            return res.status(400).json({
-              message:
-                'We could not save the ingredient to your account'
-            });
-          }
-          // console.log('userSaved: ', userSaved);
-
-          const updatedUser = {
-            id: userSaved.id,
-            name: userSaved.name,
-            email: userSaved.email,
-            active: userSaved.active,
-            ingredients: userSaved.ingredients
-          };
-
-          return res.status(200).json(updatedUser);
-        })
-        .catch(err => {
-          return res.status(400).json(err);
-        });
-    });
-  });
-};
-module.exports.addOrEditUserIngredient = addOrEditUserIngredient;

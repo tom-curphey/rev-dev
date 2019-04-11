@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Counter from './Counter';
 
 export default class Password extends Component {
   // Initialize state
@@ -6,7 +7,7 @@ export default class Password extends Component {
 
   // Fetch passwords after first mount
   componentDidMount() {
-    this.getPasswords();
+    // this.getPasswords();
   }
 
   getPasswords = () => {
@@ -49,6 +50,7 @@ export default class Password extends Component {
             </button>
           </div>
         )}
+        <Counter />
       </section>
     );
   }

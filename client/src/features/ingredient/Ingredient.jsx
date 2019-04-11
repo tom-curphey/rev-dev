@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import isEmpty from '../../utils/validation/is.empty';
+import { getUserProfile } from '../profile/profileActions';
 import {
   getIngredients,
-  addOrEditUserIngredient
+  addOrEditProfileIngredient
 } from './ingredientActions';
 import { getSuppliers } from './supplierActions';
 import Spinner from '../../utils/spinner/Spinner';
@@ -12,13 +14,14 @@ import SupplierPanel from './SupplierPanel';
 
 class Ingredient extends Component {
   state = {
+    profile: {},
     errors: {},
     ingredients: [],
     ingredient: {
       displayName: '',
       packetCost: '',
       selected: false,
-      userIngredient: false
+      profileIngredient: false
     },
     filteredIngredientsArray: [],
     filteredSuppliersArray: [],
@@ -28,25 +31,56 @@ class Ingredient extends Component {
       packetCost: '',
       packetGrams: '',
       selected: false,
-      userSupplier: false
+      profileSupplier: false
     }
   };
 
+  static getDerivedStateFromProps(nextProps, nextState) {
+    console.log('getDerivedStateFromProps: nextProps', nextProps);
+    console.log('getDerivedStateFromProps: nextState', nextState);
+
+    if (
+      nextProps.suppliers &&
+      nextState.suppliers !== nextProps.suppliers
+    ) {
+      nextProps.profile.loading = false;
+      nextProps.ingredients.loading = false;
+      nextProps.suppliers.loading = false;
+      return {
+        profile: nextProps.profile,
+        ingredients: nextProps.ingredients,
+        suppliers: nextProps.suppliers
+      };
+    }
+
+    // Return null to indicate no change to state.
+    return null;
+  }
+
   componentDidMount() {
+    this.props.getUserProfile();
     this.props.getIngredients();
     this.props.getSuppliers();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
-    }
-    if (nextProps.ingredients) {
-      this.setState({ ingredients: nextProps.ingredients });
-    }
-    if (nextProps.suppliers) {
-      this.setState({ suppliers: nextProps.suppliers });
-    }
+  componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate: prevProps', prevProps);
+    console.log('componentDidUpdate: props', this.props);
+
+    console.log('this.state: ', this.state);
+
+    // if (nextProps.errors) {
+    //   this.setState({ errors: nextProps.errors });
+    // }
+    // if (nextProps.profile) {
+    //   this.setState({ profile: nextProps.profile });
+    // }
+    // if (nextProps.ingredients) {
+    //   this.setState({ ingredients: nextProps.ingredients });
+    // }
+    // if (nextProps.suppliers) {
+    //   this.setState({ suppliers: nextProps.suppliers });
+    // }
   }
 
   async filteredIngredients(ingredientsArray) {
@@ -91,6 +125,7 @@ class Ingredient extends Component {
     await this.filteredIngredients(this.state.ingredients);
   }
 
+  // Changes Supplier Details in Form
   handleIngredientSupplierChange = e => {
     e.persist();
     this.setState(prevState => ({
@@ -101,9 +136,10 @@ class Ingredient extends Component {
     }));
   };
 
+  // Allows you to click on the ingredient to begin editing
   handleSelectIngredient = e => {
     const { suppliers, filteredIngredientsArray } = this.state;
-    const { user } = this.props.auth;
+    const { profile } = this.props.profile;
 
     const selectedIngredient = filteredIngredientsArray.filter(
       ingredient => {
@@ -118,10 +154,12 @@ class Ingredient extends Component {
       }
     );
 
-    const userSelectedIngredient = user.ingredients.filter(
-      userIngredient => {
-        if (userIngredient.ingredient === selectedIngredient[0]._id) {
-          selectedIngredient[0].userIngredient = true;
+    const profileSelectedIngredient = profile.ingredients.filter(
+      profileIngredient => {
+        if (
+          profileIngredient.ingredient === selectedIngredient[0]._id
+        ) {
+          selectedIngredient[0].profileIngredient = true;
           return selectedIngredient;
         } else {
           return null;
@@ -156,20 +194,20 @@ class Ingredient extends Component {
       );
       console.log('filteredSuppliers: ', filteredSuppliers);
 
-      if (selectedIngredient[0].userIngredient) {
+      if (selectedIngredient[0].profileIngredient) {
         const setSupplier = filteredSuppliers.filter(supplier => {
           if (
             supplier.supplier._id ===
-            userSelectedIngredient[0].supplier
+            profileSelectedIngredient[0].supplier
           ) {
             console.log('supplier: ', supplier);
             console.log(
-              'userSelectedIngredient[0]: ',
-              userSelectedIngredient[0]
+              'profileSelectedIngredient[0]: ',
+              profileSelectedIngredient[0]
             );
-            supplier.packageCost = userSelectedIngredient[0].packageCost.toString();
-            supplier.packageGrams = userSelectedIngredient[0].packageGrams.toString();
-            supplier.userSupplier = true;
+            supplier.packageCost = profileSelectedIngredient[0].packageCost.toString();
+            supplier.packageGrams = profileSelectedIngredient[0].packageGrams.toString();
+            supplier.profileSupplier = true;
             supplier.selected = true;
             console.log('supplier: ', supplier);
             return supplier;
@@ -191,20 +229,7 @@ class Ingredient extends Component {
     this.setState({ filteredIngredientsArray: [] });
   };
 
-  handleSetUserSupplier = updatedSupplier => {
-    console.log('Updated Supplier: ', updatedSupplier[0]);
-
-    const supplierData = {};
-    supplierData.id = updatedSupplier[0].supplier._id;
-    supplierData.displayName =
-      updatedSupplier[0].supplier.displayName;
-    supplierData.packageCost = updatedSupplier[0].packageCost.toString();
-    supplierData.packageGrams = updatedSupplier[0].packageGrams.toString();
-    supplierData.selected = true;
-    console.log('Select Supplier: ', supplierData);
-    this.setState({ supplier: supplierData });
-  };
-
+  // Handles the ability to select a supplier
   handleSelectSupplier = e => {
     const selectedSupplier = this.state.ingredient.suppliers.filter(
       supplier => {
@@ -216,6 +241,8 @@ class Ingredient extends Component {
     selectedSupplier[0].packageCost = selectedSupplier[0].packageCost.toString();
     selectedSupplier[0].packageGrams = selectedSupplier[0].packageGrams.toString();
     selectedSupplier[0].selected = true;
+    // this.state.profile.suppliers;
+    // if (selectedSupplier[0])
     console.log('---> selectedSupplier: ', selectedSupplier[0]);
 
     this.setState({ supplier: selectedSupplier[0] });
@@ -224,25 +251,18 @@ class Ingredient extends Component {
   handleConfirmSupplier = e => {
     e.preventDefault();
     const { ingredient, supplier } = this.state;
-    const { user } = this.props.auth;
-    const userIngredient = {};
-    userIngredient.ingredient = ingredient._id;
-    userIngredient.supplier = supplier.supplier._id;
-    userIngredient.packageCost = supplier.packageCost;
-    userIngredient.packageGrams = supplier.packageGrams;
+    const profileIngredient = {};
+    profileIngredient.ingredient = ingredient._id;
+    profileIngredient.supplier = supplier.supplier._id;
+    profileIngredient.packageCost = supplier.packageCost;
+    profileIngredient.packageGrams = supplier.packageGrams;
 
-    const userData = {};
-    // console.log('Auth: ', auth);
-
-    userData.iat = user.iat;
-    userData.exp = user.exp;
-
-    console.log('userIngredient: ', userIngredient);
-    this.props.addOrEditUserIngredient(userIngredient, userData);
+    console.log('profileIngredient: ', profileIngredient);
+    this.props.addOrEditProfileIngredient(profileIngredient);
   };
 
   render() {
-    const { ingredientLoading, auth } = this.props;
+    const { ingredientLoading, profile } = this.props;
     const {
       ingredient,
       ingredients,
@@ -251,17 +271,18 @@ class Ingredient extends Component {
       supplier
     } = this.state;
 
+    // if (!isEmpty(this.state.profile)) {
+    //   console.log(
+    //     'State Check: ',
+    //     this.state.profile.profile.ingredients[0]
+    //   );
+    // }
+
     let ingredientContent;
 
     if (ingredients.length === 0 || ingredientLoading) {
       ingredientContent = <Spinner />;
     } else {
-      let check = 'start';
-      if (ingredient.ingredients === null) {
-        check = 'Loading';
-      } else {
-        check = 'done';
-      }
       ingredientContent = (
         <div>
           <form
@@ -288,10 +309,14 @@ class Ingredient extends Component {
                   value={supplier.packageGrams}
                   onChange={this.handleIngredientSupplierChange}
                 />
-                <button type="submit">
-                  Confirm {supplier.supplier.displayName} as your
-                  Supplier
-                </button>
+                {console.log('Button Supplier: ', supplier)}
+
+                {!supplier.profileSupplier && (
+                  <button type="submit">
+                    Confirm {supplier.supplier.displayName} as your
+                    Supplier
+                  </button>
+                )}
               </React.Fragment>
             )}
           </form>
@@ -311,7 +336,6 @@ class Ingredient extends Component {
           <hr />
           <h3>All Ingredients</h3>
           <ul>
-            <li>{check}</li>
             {ingredients.map(ingredient => (
               <li key={ingredient._id}>{ingredient.displayName}</li>
             ))}
@@ -331,9 +355,9 @@ class Ingredient extends Component {
           <SupplierPanel
             filteredSuppliers={filteredSuppliersArray}
             ingredient={ingredient}
-            userIngredients={auth.user.ingredients}
+            // profileIngredients={profile.profile.ingredients}
             handleSelectSupplier={this.handleSelectSupplier}
-            handleSetUserSupplier={this.handleSetUserSupplier}
+            // handleSetProfileSupplier={this.handleSetProfileSupplier}
           />
         </section>
       </div>
@@ -342,9 +366,10 @@ class Ingredient extends Component {
 }
 
 const actions = {
+  getUserProfile,
   getIngredients,
   getSuppliers,
-  addOrEditUserIngredient
+  addOrEditProfileIngredient
 };
 
 const mapState = state => ({
@@ -352,13 +377,15 @@ const mapState = state => ({
   suppliers: state.supplier.suppliers,
   errors: state.errors,
   ingredientLoading: state.ingredient.loading,
-  auth: state.auth
+  auth: state.auth,
+  profile: state.profile
 });
 
 Ingredient.propTypes = {
+  getUserProfile: PropTypes.func.isRequired,
   getIngredients: PropTypes.func.isRequired,
   getSuppliers: PropTypes.func.isRequired,
-  addOrEditUserIngredient: PropTypes.func.isRequired
+  addOrEditProfileIngredient: PropTypes.func.isRequired
 };
 
 export default connect(

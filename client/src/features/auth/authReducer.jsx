@@ -1,8 +1,5 @@
 import isEmpty from '../../utils/validation/is.empty';
-import {
-  SET_CURRENT_USER,
-  SAVE_USER_INGREDIENT
-} from '../../redux/types';
+import { SET_CURRENT_USER } from '../../redux/types';
 
 const initialState = {
   isAuthenticated: false,
@@ -17,12 +14,6 @@ export default function(state = initialState, action) {
         isAuthenticated: !isEmpty(action.payload),
         user: action.payload
       };
-    case SAVE_USER_INGREDIENT:
-      return {
-        ...state,
-        user: action.payload
-      };
-
     default:
       return state;
   }

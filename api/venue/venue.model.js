@@ -32,19 +32,24 @@ const VenueSchema = new Schema(
     },
     costs: {
       chefPayPerHour: {
-        type: Number
+        type: Number,
+        default: 0
       },
       rentPerMonth: {
-        type: Number
+        type: Number,
+        default: 0
       },
       waterPerMonth: {
-        type: Number
+        type: Number,
+        default: 0
       },
       powerPerMonth: {
-        type: Number
+        type: Number,
+        default: 0
       },
       insurancePerYear: {
-        type: Number
+        type: Number,
+        default: 0
       }
     }
   },

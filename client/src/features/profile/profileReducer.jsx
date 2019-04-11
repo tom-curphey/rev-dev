@@ -1,5 +1,8 @@
-import isEmpty from '../../utils/validation/is.empty';
-import { SET_USER_PROFILE, PROFILE_LOADING } from '../../redux/types';
+import {
+  SET_USER_PROFILE,
+  PROFILE_LOADING,
+  SAVE_PROFILE_INGREDIENT
+} from '../../redux/types';
 
 const initialState = {
   profile: {},
@@ -14,13 +17,16 @@ export default function(state = initialState, action) {
         profile: action.payload,
         loading: false
       };
-
     case PROFILE_LOADING:
       return {
         ...state,
         loading: true
       };
-
+    case SAVE_PROFILE_INGREDIENT:
+      return {
+        ...state,
+        profile: action.payload
+      };
     default:
       return state;
   }

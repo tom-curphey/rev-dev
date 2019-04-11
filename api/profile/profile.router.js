@@ -21,8 +21,6 @@ router.post(
   profileController.editProfile
 );
 
-module.exports = router;
-
 // @route   POST api/profile/deactivate
 // @desc    Creates the user profile
 // @access  Private
@@ -30,6 +28,15 @@ router.post(
   '/deactivate',
   passport.authenticate('jwt', { session: false }),
   profileController.deactivateProfile
+);
+
+// // @route   POST api/profile/ingredient/:ingredient_id/:supplier_id
+// // @desc    Add profile ingredient
+// // @access  Private
+router.post(
+  '/ingredient/:ingredient_id/:supplier_id',
+  passport.authenticate('jwt', { session: false }),
+  profileController.addOrEditProfileIngredient
 );
 
 module.exports = router;
