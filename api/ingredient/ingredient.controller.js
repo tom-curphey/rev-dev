@@ -1,5 +1,6 @@
 const Ingredient = require('./ingredient.model');
 const Supplier = require('../supplier/supplier.model');
+const Profile = require('../profile/profile.model');
 
 // Load Input Validation
 const validateIngredientInput = require('../../config/validation/ingredient');
@@ -51,7 +52,6 @@ const getIngredientByID = (req, res) => {
           message: "There isn't an ingredient registered by this name"
         });
       }
-
       return res.status(200).json(ingredient);
     })
     .catch(err => {

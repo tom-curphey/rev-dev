@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 const SupplierPanel = ({
   filteredSuppliers,
-  selectedIngredient,
+  ingredient,
   // supplier,
   // userIngredients,
-  handleSelectIngredientSupplier
+  handleSelectSupplier
   // handleSetProfileSupplier
 }) => {
   // console.log('ingredient: ', ingredient);
@@ -14,14 +14,14 @@ const SupplierPanel = ({
 
   let supplierContent = '';
 
-  if (selectedIngredient) {
+  if (ingredient.selected) {
     if (filteredSuppliers.length > 0) {
       supplierContent = filteredSuppliers.map(supplier => (
         <li
           style={{ cursor: 'pointer' }}
           key={supplier.supplier._id}
           id={supplier.supplier._id}
-          onClick={handleSelectIngredientSupplier}
+          onClick={handleSelectSupplier}
         >
           {supplier.supplier.displayName}
           {supplier.profileSupplier && '**'}
@@ -30,8 +30,7 @@ const SupplierPanel = ({
     } else {
       supplierContent = (
         <li>
-          There are no suppliers avalaible for this ingredient.. '+
-          Add Supplier.'
+          There are no suppliers avalaible for this ingredient..
         </li>
       );
     }
@@ -52,10 +51,10 @@ const SupplierPanel = ({
 
 SupplierPanel.propTypes = {
   filteredSuppliers: PropTypes.array.isRequired,
-  selectedIngredient: PropTypes.object.isRequired,
+  ingredient: PropTypes.object.isRequired,
   // supplier: PropTypes.object.isRequired,
   // userIngredients: PropTypes.array.isRequired,
-  handleSelectIngredientSupplier: PropTypes.func.isRequired
+  handleSelectSupplier: PropTypes.func.isRequired
   // handleSetProfileSupplier: PropTypes.func.isRequired
 };
 

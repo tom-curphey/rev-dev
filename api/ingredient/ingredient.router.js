@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const ingredientController = require('./ingredient.controller');
 
-// @route   GET api/ingredient
+// @route   GET api/ingredient/all
 // @desc    Get all ingredients for user
 // @access  Private
 router.get(
