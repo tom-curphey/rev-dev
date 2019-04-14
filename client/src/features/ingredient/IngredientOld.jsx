@@ -518,7 +518,7 @@ class Ingredient extends Component {
               value={ingredient.displayName}
               onChange={this.handleOnChangeSearch.bind(this)}
             />
-            {supplier.selected && (
+            {supplier.selectedIngredientSupplier && (
               <React.Fragment>
                 <TextInput
                   label="Package Cost"

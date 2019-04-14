@@ -5,7 +5,9 @@ import isEmpty from '../../utils/validation/is.empty';
 import { getUserProfile } from '../profile/profileActions';
 import {
   getIngredients,
-  addOrEditProfileIngredient
+  addOrEditProfileIngredientSupplier,
+  setSelectedIngredient,
+  updateSelectedIngredientAfterProfileUpdate
 } from './ingredientActions';
 import { getSuppliers } from './supplierActions';
 import Spinner from '../../utils/spinner/Spinner';
@@ -15,21 +17,15 @@ import SupplierPanel from './SupplierPanel';
 class Ingredient extends Component {
   state = {
     errors: {},
-    profile: {},
-    ingredients: [],
-    selectedIngredient: {
-      displayName: 'Hello',
-      packetCost: '',
-      suppliers: [],
-      selected: false,
-      profileIngredient: false
-    },
-    suppliers: [],
+    searchedIngredientName: '',
     selectedIngredientSupplier: {},
     currentProfileIngredientSupplier: {},
     filteredSearchIngredientsArray: [],
     filteredIngredientSuppilersArray: []
   };
+
+  // Leave data in props
+  // Put data in redux
 
   static getDerivedStateFromProps(nextProps, nextState) {
     // Return null to indicate no change to state.
@@ -43,43 +39,59 @@ class Ingredient extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log('componentDidUpdate: prevProps', prevProps);
-    // console.log('componentDidUpdate: this.props', this.props);
-    // console.log('componentDidUpdate: prevState', prevState);
-
     if (prevProps.errors !== this.props.errors) {
       this.setState({ errors: this.props.errors });
     }
     if (prevProps.ingredients !== this.props.ingredients) {
       this.setState({ ingredients: this.props.ingredients });
     }
+    if (
+      prevProps.selectedIngredient !== this.props.selectedIngredient
+    ) {
+      this.setState({
+        searchedIngredientName: this.props.selectedIngredient
+          .displayName
+      });
+    }
+    if (
+      prevProps.selectedIngredientSupplier !==
+      this.props.selectedIngredientSupplier
+    ) {
+      // console.log(
+      //   'Updated Selected Supplier State: ',
+      //   this.props.selectedIngredientSupplier
+      // );
+
+      this.setState({
+        selectedIngredientSupplier: this.props
+          .selectedIngredientSupplier
+      });
+    }
     if (prevProps.suppliers !== this.props.suppliers) {
       this.setState({ suppliers: this.props.suppliers });
-    }
-    if (prevProps.profile !== this.props.profile) {
-      this.setState({ profile: this.props.profile });
     }
   }
 
   async handleOnChangeSearch(e) {
     let inputData = e.target.value;
     await this.setState(prevState => ({
-      selectedIngredient: {
-        ...prevState.selectedIngredient,
-        displayName: inputData
-      }
+      searchedIngredientName: inputData
     }));
-    await this.filteredIngredients(this.state.ingredients);
+    await this.filteredIngredients(this.props.ingredient.ingredients);
   }
 
   async filteredIngredients(ingredientsArray) {
-    const ingredientSearchInput = this.state.selectedIngredient
-      .displayName;
+    // console.log(
+    //   'this.state.searchedIngredientName: ',
+    //   this.state.searchedIngredientName
+    // );
 
-    if (ingredientSearchInput.length >= 1) {
+    const { searchedIngredientName } = this.state;
+
+    if (searchedIngredientName.length >= 1) {
       const filteredIngredients = ingredientsArray.filter(
         ingredientToFilter => {
-          let regX = new RegExp(ingredientSearchInput, 'gi');
+          let regX = new RegExp(searchedIngredientName, 'gi');
           let matchedArray = ingredientToFilter.urlName.match(regX);
           return matchedArray;
         }
@@ -91,12 +103,9 @@ class Ingredient extends Component {
     }
   }
 
-  handleSelectIngredient = e => {
-    const {
-      filteredSearchIngredientsArray,
-      profile,
-      suppliers
-    } = this.state;
+  async handleSelectIngredient(e) {
+    const { filteredSearchIngredientsArray } = this.state;
+    const { profile, suppliers } = this.props;
 
     // Figures out which ingredient was selected
     const clickedOnIngredient = filteredSearchIngredientsArray.filter(
@@ -105,134 +114,104 @@ class Ingredient extends Component {
       }
     );
 
-    // Check if the ingredient selected is in the profile ingredients
-    const checkProfileIngredient = profile.profile.ingredients.filter(
-      profileIngredient => {
-        if (
-          profileIngredient.ingredient === clickedOnIngredient[0]._id
-        ) {
-          clickedOnIngredient[0].profileIngredient = true;
-          return clickedOnIngredient;
-        } else {
-          return null;
-        }
-      }
+    console.log('clickedOnIngredient - react: ', clickedOnIngredient);
+
+    await this.props.setSelectedIngredient(
+      clickedOnIngredient[0],
+      profile,
+      suppliers
     );
 
-    // Filters ingredient suppliers and puts them in ABC order
-    // If successful set filteredIngredientSuppilersArray[]
-    let abcFilteredSuppliers = null;
-    if (
-      clickedOnIngredient[0].suppliers.length > 0 &&
-      suppliers.length > 0
-    ) {
-      const filteredIngredientSuppliers = clickedOnIngredient[0].suppliers.filter(
-        o1 => {
-          return suppliers.some(o2 => {
-            // return the ones with equal id
-            return o1.supplier._id === o2._id;
-          });
-        }
-      );
-
-      function compare(a, b) {
-        const supplierA = a.supplier.displayName;
-        const supplierB = b.supplier.displayName;
-
-        let comparison = 0;
-        if (supplierA > supplierB) {
-          comparison = 1;
-        } else if (supplierA < supplierB) {
-          comparison = -1;
-        }
-        return comparison;
-      }
-
-      abcFilteredSuppliers = filteredIngredientSuppliers.sort(
-        compare
-      );
-
-      this.setState({
-        filteredIngredientSuppilersArray: abcFilteredSuppliers
-      });
-    }
-
-    // Set current ingredient supplier if there is one
-    // Set current ingredient supplier as the selected supplier
-    if (
-      checkProfileIngredient !== null &&
-      abcFilteredSuppliers !== null
-    ) {
-      const currentProfileIngredientSupplier = abcFilteredSuppliers.filter(
-        ingredientSupplier => {
-          return (
-            ingredientSupplier.supplier._id ===
-            checkProfileIngredient[0].supplier
-          );
-        }
-      );
-      this.setState({
-        currentProfileIngredientSupplier:
-          currentProfileIngredientSupplier[0]
-      });
-      this.setState({
-        selectedIngredientSupplier:
-          currentProfileIngredientSupplier[0]
-      });
-    }
-
-    // Sets selectedIngredient in the state & clears the filteredIngredientsArray
-    this.setState({ selectedIngredient: clickedOnIngredient[0] });
     this.setState({ filteredSearchIngredientsArray: [] });
+  }
+
+  handleIngredientSupplierChange = e => {
+    e.persist();
+    this.setState(prevState => ({
+      selectedIngredientSupplier: {
+        ...prevState.selectedIngredientSupplier,
+        [e.target.name]: e.target.value
+      }
+    }));
   };
 
-  // Update selectedIngredientSupplier in the state
-  handleSelectIngredientSupplier = e => {
-    const clickedOnIngredientSupplier = this.state.filteredIngredientSuppilersArray.filter(
-      clickedSupplier => {
-        return clickedSupplier._id === e.target.id;
-      }
+  handleConfirmProfileIngredientSupplier = e => {
+    e.preventDefault();
+    console.log(
+      'Selected Ingredient: ',
+      this.props.selectedIngredient
     );
-    this.setState({
-      selectedIngredientSupplier: clickedOnIngredientSupplier
-    });
-    if (
-      clickedOnIngredientSupplier.supplier._id ==
-      this.state.currentProfileIngredientSupplier
-    ) {
-      this.setState({
-        currentProfileIngredientSupplier: clickedOnIngredientSupplier
-      });
-    }
+    console.log(
+      'selectedIngredientSupplier: ',
+      this.state.selectedIngredientSupplier
+    );
+
+    this.props.addOrEditProfileIngredientSupplier(
+      this.props.selectedIngredient,
+      this.state.selectedIngredientSupplier
+    );
   };
 
   render() {
+    // console.log('this.props.ingredient: ', this.props.ingredient);
+
     const {
       ingredients,
       selectedIngredient,
+      loading
+    } = this.props.ingredient;
+    const {
       filteredSearchIngredientsArray,
-      filteredIngredientSuppilersArray
+      filteredIngredientSuppilersArray,
+      searchedIngredientName,
+      selectedIngredientSupplier
     } = this.state;
-    if (!isEmpty(this.state)) {
-      console.log('********* State Check: ', this.state);
-    }
 
     let ingredientContent;
-    if (ingredients.length === 0) {
+    if (ingredients === null && loading === true) {
       ingredientContent = <Spinner />;
     } else {
       ingredientContent = (
         <div>
           <form
             style={{ border: 'none' }}
-            onSubmit={this.handleConfirmSupplier}
+            onSubmit={this.handleConfirmProfileIngredientSupplier}
           >
             <TextInput
               label="Search Ingredient"
               name="ingredient"
-              value={selectedIngredient.displayName}
+              value={searchedIngredientName}
               onChange={this.handleOnChangeSearch.bind(this)}
             />
+
+            {!isEmpty(selectedIngredientSupplier) && (
+              <React.Fragment>
+                <TextInput
+                  label="Package Cost"
+                  name="packageCost"
+                  value={selectedIngredientSupplier.packageCost}
+                  onChange={this.handleIngredientSupplierChange}
+                />
+                <TextInput
+                  label="Package Grams"
+                  name="packageGrams"
+                  value={selectedIngredientSupplier.packageGrams}
+                  onChange={this.handleIngredientSupplierChange}
+                />
+                {console.log(
+                  'Button Supplier: ',
+                  selectedIngredientSupplier
+                )}
+
+                {!selectedIngredientSupplier.confirmedProfileIngredientSupplier && (
+                  <button type="submit">
+                    Confirm{' '}
+                    {selectedIngredientSupplier.supplier.displayName}{' '}
+                    as your Supplier
+                  </button>
+                )}
+              </React.Fragment>
+            )}
           </form>
 
           <ul>
@@ -242,7 +221,7 @@ class Ingredient extends Component {
                   <li
                     id={filteredSearchIngredient._id}
                     style={{ cursor: 'pointer' }}
-                    onClick={this.handleSelectIngredient}
+                    onClick={this.handleSelectIngredient.bind(this)}
                     key={filteredSearchIngredient._id}
                   >
                     {filteredSearchIngredient.displayName}
@@ -253,9 +232,10 @@ class Ingredient extends Component {
           <hr />
           <h3>All Ingredients</h3>
           <ul>
-            {ingredients.map(ingredient => (
-              <li key={ingredient._id}>{ingredient.displayName}</li>
-            ))}
+            {ingredients &&
+              ingredients.map(ingredient => (
+                <li key={ingredient._id}>{ingredient.displayName}</li>
+              ))}
           </ul>
           <hr />
         </div>
@@ -286,23 +266,31 @@ const actions = {
   getUserProfile,
   getIngredients,
   getSuppliers,
-  addOrEditProfileIngredient
+  addOrEditProfileIngredientSupplier,
+  setSelectedIngredient,
+  updateSelectedIngredientAfterProfileUpdate
 };
 
 const mapState = state => ({
-  ingredients: state.ingredient.ingredients,
+  ingredient: state.ingredient,
   suppliers: state.supplier.suppliers,
   errors: state.errors,
   ingredientLoading: state.ingredient.loading,
   auth: state.auth,
-  profile: state.profile
+  profile: state.profile,
+  selectedIngredient: state.ingredient.selectedIngredient,
+  selectedIngredientSupplier:
+    state.ingredient.selectedIngredientSupplier
 });
 
 Ingredient.propTypes = {
   getUserProfile: PropTypes.func.isRequired,
   getIngredients: PropTypes.func.isRequired,
+  setSelectedIngredient: PropTypes.func.isRequired,
   getSuppliers: PropTypes.func.isRequired,
-  addOrEditProfileIngredient: PropTypes.func.isRequired
+  addOrEditProfileIngredientSupplier: PropTypes.func.isRequired,
+  updateSelectedIngredientAfterProfileUpdate:
+    PropTypes.func.isRequired
 };
 
 export default connect(
