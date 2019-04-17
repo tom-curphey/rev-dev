@@ -3,9 +3,8 @@ import {
   INGREDIENTS_LOADING,
   INGREDIENTS_LOADING_FALSE,
   SET_SELECTED_INGREDIENT,
-  SET_SELECTED_INGREDIENT_SUPPLIER
-  // CLEAR_CURRENT_VENUE,
-  // SAVE_VENUE
+  SET_SELECTED_INGREDIENT_SUPPLIER,
+  REMOVE_SELECTED_INGREDIENT
 } from '../../redux/types';
 
 const initialState = {
@@ -37,6 +36,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         selectedIngredient: action.payload
+      };
+    case REMOVE_SELECTED_INGREDIENT:
+      return {
+        ...state,
+        selectedIngredient: null,
+        selectedIngredientSupplier: null
       };
     case SET_SELECTED_INGREDIENT_SUPPLIER:
       return {

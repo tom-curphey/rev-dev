@@ -83,6 +83,15 @@ button.delete {
   border-radius: 5px;
 }
 
+button.add {
+  display: flex;
+  /* align-items: center; */
+  width: 100px;
+  margin: 20px auto;
+  padding: 10px;
+  text-align: center;
+}
+
 /* 
 /
 / Navbar

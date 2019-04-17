@@ -6,7 +6,8 @@ import {
   SAVE_PROFILE_INGREDIENT,
   INGREDIENTS_LOADING_FALSE,
   SET_SELECTED_INGREDIENT,
-  SET_SELECTED_INGREDIENT_SUPPLIER
+  SET_SELECTED_INGREDIENT_SUPPLIER,
+  REMOVE_SELECTED_INGREDIENT
 } from '../../redux/types';
 import { select } from 'async';
 
@@ -105,12 +106,6 @@ export const setSelectedIngredient = (
     const profileIngredientSuppliersToUpdate = checkProfileIngredient[0].suppliers.filter(
       fromProfileIngredient => {
         return selectedIngredient.suppliers.some(fromIngredient => {
-          // return the ones with equal id
-          // console.log(
-          //   'fromProfileIngredient:',
-          //   fromProfileIngredient
-          // );
-          // console.log('fromIngredient:', fromIngredient);
           if (
             fromProfileIngredient.supplier ===
             fromIngredient.supplier._id
@@ -170,72 +165,6 @@ export const setSelectedIngredient = (
       selectedIngredient.suppliers = newIngredientSuppliers;
     }
 
-    // const updatedProfileIngredientSuppliers = selectedIngredient.suppliers.map(
-    //   fromDatabaseIngredientSupplier => {
-    //     return profileIngredientSuppliersToUpdate.map(
-    //       fromProfileIngredientSupplier => {
-    //         return (
-    //           fromDatabaseIngredientSupplier.supplier._id ===
-    //           fromProfileIngredientSupplier.supplier
-    //         );
-
-    //         // if (
-    //         //   fromDatabaseIngredientSupplier.supplier._id ===
-    //         //   fromProfileIngredientSupplier.supplier
-    //         // ) {
-    //         //   console.log(
-    //         //     'fromDatabaseIngredientSupplier: ',
-    //         //     fromDatabaseIngredientSupplier
-    //         //   );
-    //         //   console.log(
-    //         //     'fromProfileIngredientSupplier: ',
-    //         //     fromProfileIngredientSupplier
-    //         //   );
-
-    //         //   let newOb = { name: 'Kalindi' };
-
-    //         //   // fromDatabaseIngredientSupplier.packageCost = fromProfileIngredientSupplier.packageCost.toString();
-    //         //   // fromDatabaseIngredientSupplier.packageGrams = fromProfileIngredientSupplier.packageGrams.toString();
-    //         //   // fromDatabaseIngredientSupplier.prefered =
-    //         //   //   fromProfileIngredientSupplier.prefered;
-    //         //   // // if (fromProfileIngredientSupplier.prefered) {
-    //         //   // //   updatedSelectedProfileIngredientSupplier = fromDatabaseIngredientSupplier;
-    //         //   // // }
-
-    //         // }
-    //       }
-    //     );
-    //   }
-    // );
-
-    // let updatedSelectedProfileIngredientSupplier = null;
-    // const updatedProfileIngredientSuppliers = selectedIngredient.suppliers.map(
-    //   ingredientSupplier => {
-    //     if (
-    //       ingredientSupplier.supplier._id ===
-    //       profileIngredientSuppliersToUpdate.supplier
-    //     ) {
-    //       ingredientSupplier.packageCost = profileIngredientSuppliersToUpdate[0].packageCost.toString();
-    //       ingredientSupplier.packageGrams = profileIngredientSuppliersToUpdate[0].packageGrams.toString();
-    //       ingredientSupplier.prefered = true;
-    //       updatedSelectedProfileIngredientSupplier = ingredientSupplier;
-    //       return ingredientSupplier;
-    //     } else {
-    //       ingredientSupplier.prefered = false;
-    //       return ingredientSupplier;
-    //     }
-    //   }
-    // );
-
-    // console.log(
-    //   'updatedSelectedProfileIngredientSupplier: ',
-    //   updatedSelectedProfileIngredientSupplier
-    // );
-    // console.log(
-    //   'KKKKKK -> updatedProfileIngredientSuppliers: ',
-    //   updatedProfileIngredientSuppliers
-    // );
-
     if (updatedSelectedProfileIngredientSupplier !== null) {
       dispatch(
         setSelectedIngredientSupplier(
@@ -249,6 +178,10 @@ export const setSelectedIngredient = (
     type: SET_SELECTED_INGREDIENT,
     payload: selectedIngredient
   });
+};
+
+export const removeSelectedIngredient = () => {
+  return { type: REMOVE_SELECTED_INGREDIENT };
 };
 
 // Add / Edit Profile Ingredient

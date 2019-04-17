@@ -6,8 +6,8 @@ import { getUserProfile } from '../profile/profileActions';
 import {
   getIngredients,
   addOrEditProfileIngredientSupplier,
-  setSelectedIngredient
-  // updateSelectedIngredientAfterProfileUpdate
+  setSelectedIngredient,
+  removeSelectedIngredient
 } from './ingredientActions';
 import { getSuppliers } from './supplierActions';
 import Spinner from '../../utils/spinner/Spinner';
@@ -23,24 +23,6 @@ class Ingredient extends Component {
     filteredSearchIngredientsArray: [],
     filteredIngredientSuppilersArray: []
   };
-
-  // Leave data in props
-  // Put data in redux
-
-  // static getDerivedStateFromProps(nextProps, nextState) {
-  //   // if (
-  //   //   nextProps.ingredient.selectedIngredientSupplier !==
-  //   //   nextState.selectedIngredientSupplier
-  //   // ) {
-  //   //   console.log('Here');
-  //   //   return {
-  //   //     selectedIngredientSupplier:
-  //   //       nextProps.ingredient.selectedIngredientSupplier
-  //   //   };
-  //   // }
-  //   // Return null to indicate no change to state.
-  //   return null;
-  // }
 
   componentDidMount() {
     this.props.getUserProfile();
@@ -64,7 +46,8 @@ class Ingredient extends Component {
 
     if (
       prevProps.ingredient.selectedIngredient !==
-      this.props.ingredient.selectedIngredient
+        this.props.ingredient.selectedIngredient &&
+      this.props.ingredient.selectedIngredient !== null
     ) {
       this.setState({
         searchedIngredientName: this.props.ingredient
@@ -72,12 +55,11 @@ class Ingredient extends Component {
       });
     }
 
-    console.log('---------------[ TEST HERE ]-----------');
     if (
       prevProps.ingredient.selectedIngredientSupplier !==
       this.props.ingredient.selectedIngredientSupplier
     ) {
-      console.log('YESY');
+      // console.log('YESY');
 
       this.setState({
         selectedIngredientSupplier: this.props.ingredient
@@ -92,14 +74,35 @@ class Ingredient extends Component {
 
   async handleOnChangeSearch(e) {
     let inputData = e.target.value;
+
     await this.setState(prevState => ({
       searchedIngredientName: inputData
     }));
+    await this.ingredientNameCheck(this.props.ingredient.ingredients);
     await this.filteredIngredients(this.props.ingredient.ingredients);
+  }
+
+  async ingredientNameCheck(ingredientsArray) {
+    const { searchedIngredientName } = this.state;
+    if (searchedIngredientName.length >= 1) {
+      const urlSearchedIngredientName = searchedIngredientName.toLowerCase();
+      const checkIngredientName = ingredientsArray.some(
+        checkIngredient => {
+          return (
+            checkIngredient.urlName === urlSearchedIngredientName
+          );
+        }
+      );
+      if (!checkIngredientName) {
+        console.log('checkIngredientName: ', checkIngredientName);
+        this.props.removeSelectedIngredient();
+      }
+    }
   }
 
   async filteredIngredients(ingredientsArray) {
     const { searchedIngredientName } = this.state;
+
     if (searchedIngredientName.length >= 1) {
       const filteredIngredients = ingredientsArray.filter(
         ingredientToFilter => {
@@ -109,9 +112,11 @@ class Ingredient extends Component {
         }
       );
 
-      this.setState({
-        filteredSearchIngredientsArray: filteredIngredients
-      });
+      if (filteredIngredients.length > 0) {
+        this.setState({
+          filteredSearchIngredientsArray: filteredIngredients
+        });
+      }
     }
   }
 
@@ -145,7 +150,7 @@ class Ingredient extends Component {
 
   handleUpdateAndSetPreferedProfileIngredientSupplier = e => {
     e.preventDefault();
-    console.log('HERE');
+    // console.log('HERE');
 
     this.props.addOrEditProfileIngredientSupplier(
       this.props.ingredient.selectedIngredient,
@@ -156,7 +161,7 @@ class Ingredient extends Component {
 
   handleUpdateProfileIngredientSupplier = e => {
     e.preventDefault();
-    console.log('e.target', e.target.name);
+    // console.log('e.target', e.target.name);
     this.props.addOrEditProfileIngredientSupplier(
       this.props.ingredient.selectedIngredient,
       this.state.selectedIngredientSupplier
@@ -306,7 +311,8 @@ const actions = {
   getIngredients,
   getSuppliers,
   addOrEditProfileIngredientSupplier,
-  setSelectedIngredient
+  setSelectedIngredient,
+  removeSelectedIngredient
 };
 
 const mapState = state => ({
