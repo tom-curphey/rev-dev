@@ -74,59 +74,46 @@ const deactivateProfile = (req, res) => {
 module.exports.deactivateProfile = deactivateProfile;
 
 const addOrEditProfileIngredient = (req, res) => {
+  console.log('req.body ====+++ ', req.body);
+
   req.body.ingredient_id = req.params.ingredient_id;
   req.body.supplier_id = req.params.supplier_id;
-
   const { errors, isValid } = validateProfileIngredientSupplierInput(
     req.body
   );
-
   if (!isValid) {
     return res.status(400).json(errors);
   }
-
+  // Find profile by ID
   Profile.findOne({ user: req.user.id }).then(profile => {
     if (!profile) {
       errors.profile = 'Profile not found';
       return res.status(400).json(errors);
     }
-    console.log('beforeProfileIngredient: ', profile);
-
+    // Find ingredient by ID
     Ingredient.findById(req.body.ingredient_id).then(ingredient => {
       if (!ingredient) {
         errors.ingredient =
           'We could not find the ingredient selected';
         return res.status(404).json(errors);
       }
-
+      // Check if supplier ID is in ingredient suppliers
       const confirmedIngredientSupplier = ingredient.suppliers.filter(
         ingredientSupplier => {
-          // console.log(
-          //   'ingredientSupplier: ',
-          //   ingredientSupplier.supplier
-          // );
-          // console.log('req: ', req.body.supplier_id);
           return (
             ingredientSupplier.supplier.toString() ===
             req.body.supplier_id
           );
         }
       );
-
+      // Return error if supplier ID did not match ingredient suppliers
       if (confirmedIngredientSupplier.length < 1) {
         errors.ingredient = `We could not find the supplier selected for ${
           ingredient.displayName
         }`;
         return res.status(404).json(errors);
       }
-
-      const profileIngredientData = {};
-      profileIngredientData.ingredient = ingredient.id;
-      profileIngredientData.supplier =
-        confirmedIngredientSupplier[0].supplier;
-      profileIngredientData.packageCost = req.body.packageCost;
-      profileIngredientData.packageGrams = req.body.packageGrams;
-
+      // Check if ingredient is already in profile ingredients return profile ingredient
       const profileIngredient = profile.ingredients.filter(
         profileIngredient => {
           return (
@@ -134,14 +121,91 @@ const addOrEditProfileIngredient = (req, res) => {
           );
         }
       );
+      console.log('profileIngredient: ', profileIngredient[0]);
+
+      const newProfileIngredient = profileIngredient[0].suppliers.map(
+        profileIngredientSupplier => {
+          profileIngredientSupplier.prefered = false;
+          return profileIngredientSupplier;
+        }
+      );
+
+      console.log('newProfileIngredient: ', newProfileIngredient);
 
       if (profileIngredient.length > 0) {
-        profileIngredient[0].set(profileIngredientData);
+        console.log('YOU NEED TO EDIT THE INGREDIENT SUPPLIERS');
+        let supplierIndex = null;
+        const profileIngredientSupplierIndex = profileIngredient[0].suppliers.findIndex(
+          profileIngredientSupplier => {
+            return (
+              profileIngredientSupplier.supplier.toString() ===
+              confirmedIngredientSupplier[0].supplier.toString()
+            );
+          }
+        );
+
+        console.log(
+          '--profileIngredientSupplierIndex: ',
+          profileIngredientSupplierIndex
+        );
+
+        if (profileIngredientSupplierIndex === -1) {
+          console.log('YOU NEED TO ADD THE INGREDIENT SUPPLIER');
+          const newProfileIngredientSupplier = {};
+          newProfileIngredientSupplier.supplier =
+            confirmedIngredientSupplier[0].supplier;
+          newProfileIngredientSupplier.packageCost =
+            req.body.packageCost;
+          newProfileIngredientSupplier.packageGrams =
+            req.body.packageGrams;
+          newProfileIngredientSupplier.prefered = req.body.prefered
+            ? req.body.prefered
+            : false;
+          profileIngredient[0].suppliers.push(
+            newProfileIngredientSupplier
+          );
+        } else {
+          console.log('YOU NEED TO EDIT THE INGREDIENT SUPPLIER');
+          const updatedProfileIngredientSupplier = {};
+          updatedProfileIngredientSupplier.packageCost =
+            req.body.packageCost;
+          updatedProfileIngredientSupplier.packageGrams =
+            req.body.packageGrams;
+          updatedProfileIngredientSupplier.prefered = req.body
+            .prefered
+            ? req.body.prefered
+            : false;
+
+          console.log(
+            'updatedProfileIngredientSupplier: ',
+            updatedProfileIngredientSupplier
+          );
+          // console.log('req.body: ', req.body.prefered);
+
+          profileIngredient[0].suppliers[
+            profileIngredientSupplierIndex
+          ].set(updatedProfileIngredientSupplier);
+        }
       } else {
-        profile.ingredients.push(profileIngredientData);
+        console.log('YOU NEED TO ADD THE INGREDIENT & SUPPLIER');
+
+        // const newProfileIngredient = {};
+        // newProfileIngredient.ingredient = ingredient._id;
+        // newProfileIngredient.suppliers = {};
+        // newProfileIngredient.suppliers.supplier =
+        //   confirmedIngredientSupplier[0].supplier;
+        // newProfileIngredient.suppliers.packageCost =
+        //   req.body.packageCost;
+        // newProfileIngredient.suppliers.packageGrams =
+        //   req.body.packageGrams;
+        // newProfileIngredient.suppliers.prefered = req.body.prefered
+        //   ? true
+        //   : false;
+
+        // profile.ingredients.push(newProfileIngredient);
       }
 
-      // console.log('profileIngredient: ', profile);
+      console.log('-----------profileIngredient: ', profile);
 
       profile
         .save()
@@ -156,7 +220,7 @@ const addOrEditProfileIngredient = (req, res) => {
           return res.status(200).json(profileSaved);
         })
         .catch(err => {
-          return res.status(400).json(err.response.data);
+          return res.status(400).json(err);
         });
     });
   });

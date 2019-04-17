@@ -52,32 +52,27 @@ const ProfileSchema = new Schema(
           unique: true,
           sparse: true
         },
-        supplier: {
-          type: Schema.ObjectId,
-          ref: 'supplier',
-          required: true
-        },
-        packageCost: {
-          type: Number,
-          required: true
-        },
-        packageGrams: {
-          type: Number,
-          required: true
-        }
-      }
-    ],
-    suppliers: [
-      {
-        supplier: {
-          type: Schema.ObjectId,
-          ref: 'supplier',
-          required: true
-        },
-        prefered: {
-          type: Boolean,
-          default: false
-        }
+        suppliers: [
+          {
+            supplier: {
+              type: Schema.ObjectId,
+              ref: 'supplier',
+              required: true
+            },
+            packageCost: {
+              type: Number,
+              required: true
+            },
+            packageGrams: {
+              type: Number,
+              required: true
+            },
+            prefered: {
+              type: Boolean,
+              default: false
+            }
+          }
+        ]
       }
     ]
   },

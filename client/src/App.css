@@ -368,3 +368,10 @@ section.supplier_panel {
   border: 1px solid #e0e0e0;
   padding: 0px 10px;
 }
+
+.supplier_buttons {
+  display: grid;
+  grid-template-columns: 150px 150px;
+  grid-gap: 10px;
+  margin-bottom: 10px;
+}

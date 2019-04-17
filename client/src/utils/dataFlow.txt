@@ -1,0 +1,59 @@
+************************
+
+  Ingredient Process..
+
+************************
+
+show spinner
+
+load
+  All ingredients
+  Profile
+  All suppliers
+
+search Ingredient name
+  Change state of ingredient name
+  filter all ingredients by searched name
+
+select ingredient by name 
+dispatch (setSelectedIngredient)
+  (clickedOnIngredient, profile, suppliers)
+  Check if ingredient selected is a profile ingredient
+  Fliter suppliers that are in the ingredients suppliers list
+  Filter ingredient suppliers in abc order
+  if profile ingredient..
+    update ingredient suppliers with profile ingredient data
+    dispatch (setSelectedIngredeintSupplier) 
+dispatch (setSelectedIngredeint)
+
+Display Ingredient data 
+  Ingredient Form - with selected suppliers
+    display packageCost & packageGram for selected suppliers
+    display save button, Changing text between profile supplier
+    & ingredient supplier
+  Suppliers Panel
+    List all selected ingredient suppliers with updated profile supplier data
+
+Option 1 - Edit current profile ingredient
+  ?????
+
+Option 2 - Select supplier to Edit
+  Click in supplier to setSelectedIngredeintSupplier
+  dispatch (setSelectedIngredeintSupplier)
+
+Edit selected ingredient supplier
+  Click confirm ingredient supplier
+    (this.props.ingredient.selectedIngredient, state.selectedIngredientSupplier)
+dispatch (addOrEditProfileIngredientSupplier)
+  
+
+
+
+
+
+  
+
+
+
+
+
