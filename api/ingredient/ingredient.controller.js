@@ -233,37 +233,40 @@ const addSupplierToIngredient = (req, res) => {
 
       const SupplierIngredientData = {};
       SupplierIngredientData.ingredient = ingredient.id;
-      // console.log('SupplierIngredientData: ', SupplierIngredientData);
+      console.log(
+        '-------> SupplierIngredientData: ',
+        SupplierIngredientData
+      );
+      console.log(
+        '-------> ingredientSupplierData: ',
+        ingredientSupplierData
+      );
 
       const confirmIngredientSupplier = ingredient.suppliers.filter(
         ingredientSupplier => {
-          // console.log('Supplier.id: ', supplier.id);
-          // console.log(
-          //   'ingredientSupplier.supplier: ',
-          //   ingredientSupplier.supplier
-          // );
+          console.log(
+            '-------> ingredientSupplier: ',
+            ingredientSupplier
+          );
+
           return ingredientSupplier.supplier == supplier.id;
         }
       );
       const confirmSupplierIngredientID = supplier.ingredients.filter(
         supplierIngredient => {
-          // console.log('Supplier.id: ', supplier.id);
-          // console.log(
-          //   'supplierIngredient.ingredient: ',
-          //   supplierIngredient.ingredient
-          // );
           return supplierIngredient.ingredient == ingredient.id;
         }
       );
 
-      // console.log(
-      //   'confirmIngredientSupplier: ',
-      //   confirmIngredientSupplier.length
-      // );
-      // console.log(
-      //   'confirmSupplierIngredientID: ',
-      //   confirmSupplierIngredientID.length
-      // );
+      console.log(
+        'confirmIngredientSupplier: ',
+        confirmIngredientSupplier.length
+      );
+      console.log(
+        'confirmIngredientSupplier: ',
+        confirmSupplierIngredientID.length
+      );
+      console.log('SupplierIngredientData: ', SupplierIngredientData);
 
       if (
         confirmIngredientSupplier.length === 0 &&
@@ -293,8 +296,13 @@ const addSupplierToIngredient = (req, res) => {
               mongoError: err
             });
           });
+        console.log(
+          '-----> ingredientSupplierData: ',
+          ingredientSupplierData
+        );
 
         ingredient.suppliers.push(ingredientSupplierData);
+        console.log('-----> ingredient: ', ingredient);
         ingredient
           .save()
           .then(ingredientSaved => {
@@ -303,6 +311,8 @@ const addSupplierToIngredient = (req, res) => {
                 'We could save the supplier to this ingredient';
               return res.status(404).json(errors);
             }
+
+            console.log('-----> ingredientSaved: ', ingredientSaved);
 
             return res.status(200).json({
               message: 'Ingredient & Supplier Saved',
@@ -316,9 +326,14 @@ const addSupplierToIngredient = (req, res) => {
           });
       } else {
         console.log('Update Supplier On The Ingredient');
+        console.log(
+          'confirmIngredientSupplier[0]',
+          confirmIngredientSupplier[0]
+        );
+        console.log('ingredientSupplierData', ingredientSupplierData);
         confirmIngredientSupplier[0].set(ingredientSupplierData);
-        ingredient.save().then(ingredientSaved => {
-          if (!ingredientSaved) {
+        ingredient.save().then(ingredient => {
+          if (!ingredient) {
             errors.ingredient =
               'We could update the supplier details for this ingredient';
             return res.status(404).json(errors);

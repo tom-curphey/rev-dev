@@ -121,18 +121,49 @@ const addOrEditProfileIngredient = (req, res) => {
           );
         }
       );
-      console.log('profileIngredient: ', profileIngredient[0]);
-
-      const newProfileIngredient = profileIngredient[0].suppliers.map(
-        profileIngredientSupplier => {
-          profileIngredientSupplier.prefered = false;
-          return profileIngredientSupplier;
-        }
+      console.log(
+        '------->profileIngredient[0].suppliers: ',
+        profileIngredient[0].suppliers
       );
 
-      console.log('newProfileIngredient: ', newProfileIngredient);
+      // if (profileIngredient.length > 0) {
+      //   // if (req.body.prefered === true) {
+      //   const newProfileIngredient = profileIngredient[0].suppliers.map(
+      //     profileIngredientSupplier => {
+      //       profileIngredientSupplier.prefered = false;
+      //       return profileIngredientSupplier;
+      //     }
+      //   );
+      //   // }
+
+      //   console.log('newProfileIngredient: ', newProfileIngredient);
+      // }
+
+      // console.log(
+      //   '----^^--->profileIngredient.suppliers: ',
+      //   profileIngredient.suppliers
+      // );
 
       if (profileIngredient.length > 0) {
+        let setProfileIngredientSuppliersToFalse = null;
+        if (req.body.prefered === true) {
+          setProfileIngredientSuppliersToFalse = profileIngredient[0].suppliers.map(
+            profileIngredientSupplier => {
+              profileIngredientSupplier.prefered = false;
+              return profileIngredientSupplier;
+            }
+          );
+        }
+
+        if (setProfileIngredientSuppliersToFalse !== null) {
+          profileIngredient.suppliers = setProfileIngredientSuppliersToFalse;
+        }
+
+        // console.log(
+        //   '----^^--->updatedProfileIngredient: ',
+        //   updatedProfileIngredient[0]
+        // );
+
         console.log('YOU NEED TO EDIT THE INGREDIENT SUPPLIERS');
         let supplierIndex = null;
         const profileIngredientSupplierIndex = profileIngredient[0].suppliers.findIndex(
@@ -189,23 +220,23 @@ const addOrEditProfileIngredient = (req, res) => {
       } else {
         console.log('YOU NEED TO ADD THE INGREDIENT & SUPPLIER');
 
-        // const newProfileIngredient = {};
-        // newProfileIngredient.ingredient = ingredient._id;
-        // newProfileIngredient.suppliers = {};
-        // newProfileIngredient.suppliers.supplier =
-        //   confirmedIngredientSupplier[0].supplier;
-        // newProfileIngredient.suppliers.packageCost =
-        //   req.body.packageCost;
-        // newProfileIngredient.suppliers.packageGrams =
-        //   req.body.packageGrams;
-        // newProfileIngredient.suppliers.prefered = req.body.prefered
-        //   ? true
-        //   : false;
+        const newProfileIngredient = {};
+        newProfileIngredient.ingredient = ingredient._id;
+        newProfileIngredient.suppliers = {};
+        newProfileIngredient.suppliers.supplier =
+          confirmedIngredientSupplier[0].supplier;
+        newProfileIngredient.suppliers.packageCost =
+          req.body.packageCost;
+        newProfileIngredient.suppliers.packageGrams =
+          req.body.packageGrams;
+        newProfileIngredient.suppliers.prefered = req.body.prefered
+          ? req.body.prefered
+          : false;
 
-        // profile.ingredients.push(newProfileIngredient);
+        profile.ingredients.push(newProfileIngredient);
       }
 
-      console.log('-----------profileIngredient: ', profile);
+      console.log('>>----->>-----profileIngredient: ', profile);
 
       profile
         .save()

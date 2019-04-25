@@ -18,9 +18,9 @@ class Login extends Component {
   }
 
   componentDidUpdate(prevProps, state) {
-    console.log('componentDidUpdate: prevProps', prevProps);
-    console.log('componentDidUpdate: this.props', this.props);
-    console.log('componentDidUpdate: state', state);
+    // console.log('componentDidUpdate: prevProps', prevProps);
+    // console.log('componentDidUpdate: this.props', this.props);
+    // console.log('componentDidUpdate: state', state);
 
     if (
       prevProps.auth.isAuthenticated !==

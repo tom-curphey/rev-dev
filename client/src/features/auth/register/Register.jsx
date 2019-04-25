@@ -7,7 +7,10 @@ import TextInput from '../../../utils/input/TextInput';
 
 class Register extends Component {
   state = {
-    name: '',
+    firstName: '',
+    lastName: '',
+    position: '',
+    mobile: '',
     email: '',
     password: '',
     passwordMatch: '',
@@ -34,8 +37,11 @@ class Register extends Component {
     e.preventDefault();
 
     const newUser = {
-      name: this.state.name,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
       email: this.state.email,
+      mobile: this.state.mobile,
+      position: this.state.position,
       password: this.state.password,
       passwordMatch: this.state.passwordMatch
     };
@@ -46,8 +52,11 @@ class Register extends Component {
 
   render() {
     const {
-      name,
+      firstName,
+      lastName,
       email,
+      mobile,
+      position,
       password,
       passwordMatch,
       errors
@@ -58,13 +67,23 @@ class Register extends Component {
         <h1>Register</h1>
         <form action="post">
           <TextInput
-            info="Please provide your fullname"
-            name="name"
+            placeholder="Please provide your fullname"
+            name="firstName"
             type="text"
-            value={name}
+            value={firstName}
             onChange={this.handleOnChange}
-            label="Name"
-            error={errors.name}
+            label="First Name"
+            error={errors.firstName}
+          />
+          <TextInput
+            placeholder="Please provide your fullname"
+            // info="Please provide your fullname"
+            name="lastName"
+            type="text"
+            value={lastName}
+            onChange={this.handleOnChange}
+            label="Last Name"
+            error={errors.lastName}
           />
           <TextInput
             placeholder="Email Address"
@@ -74,6 +93,22 @@ class Register extends Component {
             onChange={this.handleOnChange}
             label="Email"
             error={errors.email}
+          />
+          <TextInput
+            placeholder="To verify your account"
+            name="mobile"
+            value={mobile}
+            onChange={this.handleOnChange}
+            label="Mobile"
+            error={errors.mobile}
+          />
+          <TextInput
+            placeholder="Chef, Manager, Venue Owner"
+            name="position"
+            value={position}
+            onChange={this.handleOnChange}
+            label="Job Position"
+            error={errors.position}
           />
           <TextInput
             placeholder="Password"

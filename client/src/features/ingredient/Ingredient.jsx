@@ -35,15 +35,6 @@ class Ingredient extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log(
-      'prevProps.ingredient: ',
-      prevProps.ingredient.selectedIngredientSupplier
-    );
-    console.log(
-      'this.props.ingredient: ',
-      this.props.ingredient.selectedIngredientSupplier
-    );
-
     if (
       prevProps.ingredient.selectedIngredient !==
         this.props.ingredient.selectedIngredient &&
@@ -72,21 +63,26 @@ class Ingredient extends Component {
     }
   }
 
+  // setState search ingredient name
   async handleOnChangeSearch(e) {
     let inputData = e.target.value;
 
     await this.setState(prevState => ({
       searchedIngredientName: inputData
     }));
-    await this.ingredientNameCheck(this.props.ingredient.ingredients);
-    await this.filteredIngredients(this.props.ingredient.ingredients);
+    await this.ingredientNameCheck();
+    await this.filterIngredients();
+    if (inputData === '') {
+      this.setState({ filteredSearchIngredientsArray: [] });
+    }
   }
 
-  async ingredientNameCheck(ingredientsArray) {
+  // Check if ingredient state name is different to input box
+  async ingredientNameCheck() {
     const { searchedIngredientName } = this.state;
     if (searchedIngredientName.length >= 1) {
       const urlSearchedIngredientName = searchedIngredientName.toLowerCase();
-      const checkIngredientName = ingredientsArray.some(
+      const checkIngredientName = this.props.ingredient.ingredients.some(
         checkIngredient => {
           return (
             checkIngredient.urlName === urlSearchedIngredientName
@@ -94,49 +90,44 @@ class Ingredient extends Component {
         }
       );
       if (!checkIngredientName) {
-        console.log('checkIngredientName: ', checkIngredientName);
         this.props.removeSelectedIngredient();
       }
     }
   }
 
-  async filteredIngredients(ingredientsArray) {
+  async filterIngredients() {
     const { searchedIngredientName } = this.state;
-
     if (searchedIngredientName.length >= 1) {
-      const filteredIngredients = ingredientsArray.filter(
+      const filteredIngredients = this.props.ingredient.ingredients.filter(
         ingredientToFilter => {
           let regX = new RegExp(searchedIngredientName, 'gi');
           let matchedArray = ingredientToFilter.urlName.match(regX);
           return matchedArray;
         }
       );
-
-      if (filteredIngredients.length > 0) {
-        this.setState({
-          filteredSearchIngredientsArray: filteredIngredients
-        });
-      }
+      this.setState({
+        filteredSearchIngredientsArray: filteredIngredients
+      });
     }
   }
 
-  async handleSelectIngredient(e) {
+  handleSelectIngredient = e => {
     const { filteredSearchIngredientsArray } = this.state;
-
     // Figures out which ingredient was selected
     const clickedOnIngredient = filteredSearchIngredientsArray.filter(
       ingredient => {
         return ingredient._id === e.target.id;
       }
     );
-    await this.props.setSelectedIngredient(
+    this.props.setSelectedIngredient(
       clickedOnIngredient[0],
       this.props.profile.profile,
-      this.props.suppliers.suppliers
+      this.props.suppliers.suppliers,
+      true
     );
 
     this.setState({ filteredSearchIngredientsArray: [] });
-  }
+  };
 
   handleIngredientSupplierChange = e => {
     e.persist();
@@ -152,6 +143,11 @@ class Ingredient extends Component {
     e.preventDefault();
     // console.log('HERE');
 
+    console.log(
+      'this.props.ingredient.selectedIngredient.suppliers: ',
+      this.props.ingredient.selectedIngredient.suppliers
+    );
+
     this.props.addOrEditProfileIngredientSupplier(
       this.props.ingredient.selectedIngredient,
       this.state.selectedIngredientSupplier,
@@ -161,11 +157,22 @@ class Ingredient extends Component {
 
   handleUpdateProfileIngredientSupplier = e => {
     e.preventDefault();
-    // console.log('e.target', e.target.name);
+    console.log(
+      '^^^^^^^^%%^^^^^ this.props.ingredient.selectedIngredient.suppliers: ',
+      this.props.ingredient.selectedIngredient.suppliers
+    );
+
     this.props.addOrEditProfileIngredientSupplier(
       this.props.ingredient.selectedIngredient,
-      this.state.selectedIngredientSupplier
+      this.state.selectedIngredientSupplier,
+      false
     );
+  };
+
+  handleOpenAddIngredientForm = e => {
+    const { searchedIngredientName } = this.state;
+
+    this.props.addIngredient(searchedIngredientName);
   };
 
   render() {
@@ -180,8 +187,11 @@ class Ingredient extends Component {
       filteredSearchIngredientsArray,
       filteredIngredientSuppilersArray,
       searchedIngredientName,
-      selectedIngredientSupplier
+      selectedIngredientSupplier,
+      errors
     } = this.state;
+
+    console.log('--> errors: ', errors);
 
     let ingredientContent;
     if (ingredients === null || loading === true) {
@@ -201,6 +211,27 @@ class Ingredient extends Component {
               onChange={this.handleOnChangeSearch.bind(this)}
             />
 
+            <ul className="filterList ingredient">
+              {filteredSearchIngredientsArray &&
+                filteredSearchIngredientsArray.map(
+                  filteredSearchIngredient => (
+                    <li
+                      id={filteredSearchIngredient._id}
+                      style={{ cursor: 'pointer' }}
+                      onClick={this.handleSelectIngredient}
+                      key={filteredSearchIngredient._id}
+                    >
+                      {filteredSearchIngredient.displayName}
+                    </li>
+                  )
+                )}
+              {filteredSearchIngredientsArray.length > 0 && (
+                <li onClick={this.handleAddIngredient}>
+                  + Add Ingredient
+                </li>
+              )}
+            </ul>
+
             {!isEmpty(selectedIngredientSupplier) && (
               <React.Fragment>
                 <TextInput
@@ -208,12 +239,14 @@ class Ingredient extends Component {
                   name="packageCost"
                   value={selectedIngredientSupplier.packageCost}
                   onChange={this.handleIngredientSupplierChange}
+                  error={errors.packageCost}
                 />
                 <TextInput
                   label="Package Grams"
                   name="packageGrams"
                   value={selectedIngredientSupplier.packageGrams}
                   onChange={this.handleIngredientSupplierChange}
+                  error={errors.packageGrams}
                 />
                 {/* {console.log(
                   'Button Supplier: ',
@@ -238,7 +271,6 @@ class Ingredient extends Component {
                     {!selectedIngredientSupplier.prefered && (
                       <button
                         type="submit"
-                        type="submit"
                         onClick={
                           this
                             .handleUpdateAndSetPreferedProfileIngredientSupplier
@@ -258,21 +290,6 @@ class Ingredient extends Component {
             )}
           </form>
 
-          <ul>
-            {filteredSearchIngredientsArray &&
-              filteredSearchIngredientsArray.map(
-                filteredSearchIngredient => (
-                  <li
-                    id={filteredSearchIngredient._id}
-                    style={{ cursor: 'pointer' }}
-                    onClick={this.handleSelectIngredient.bind(this)}
-                    key={filteredSearchIngredient._id}
-                  >
-                    {filteredSearchIngredient.displayName}
-                  </li>
-                )
-              )}
-          </ul>
           <hr />
           <h3>All Ingredients</h3>
           <ul>

@@ -10,6 +10,10 @@ h2 {
   width: 400px;
 }
 
+input {
+  outline: 0;
+}
+
 button {
   cursor: pointer;
 }
@@ -41,7 +45,7 @@ div.crud_section {
 }
 
 form {
-  text-align: center;
+  /* text-align: center; */
   padding-bottom: 20px;
   border-bottom: 1px solid #e0e0e0;
   width: 400px;
@@ -53,6 +57,32 @@ ul {
   list-style-type: none;
   /* width: 400px; */
   padding: 0px;
+}
+
+ul.filterList {
+  /* text-align: center; */
+  list-style-type: none;
+  /* width: 400px; */
+  padding: 0px;
+  width: 206px;
+  background-color: #f1f1f1;
+  margin-left: 210px;
+  margin-top: 0px;
+  text-align: left;
+}
+
+ul.filterList {
+  margin-left: 155px;
+}
+
+ul.filterList.ingredient {
+  margin-left: 210px;
+  width: 200px;
+}
+
+ul.filterList li {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 /* li {
@@ -376,6 +406,14 @@ section.supplier_panel {
   width: 400px;
   border: 1px solid #e0e0e0;
   padding: 0px 10px;
+}
+
+section.supplier_panel form {
+  padding-bottom: 0px;
+}
+
+section.supplier_panel input {
+  width: 200px;
 }
 
 .supplier_buttons {
