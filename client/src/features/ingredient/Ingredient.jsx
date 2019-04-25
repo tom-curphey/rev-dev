@@ -191,7 +191,7 @@ class Ingredient extends Component {
       errors
     } = this.state;
 
-    console.log('--> errors: ', errors);
+    // console.log('--> errors: ', errors);
 
     let ingredientContent;
     if (ingredients === null || loading === true) {

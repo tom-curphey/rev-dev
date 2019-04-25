@@ -42,152 +42,109 @@ export const ingredientsLoadingFalse = () => {
   };
 };
 
+export const sortIngredientSuppliersIntoAbcOrder = selectedIngredientSuppliers => {
+  if (selectedIngredientSuppliers.length > 0) {
+    selectedIngredientSuppliers = selectedIngredientSuppliers.sort(
+      (a, b) =>
+        a.supplier.displayName.localeCompare(b.supplier.displayName)
+    );
+    return selectedIngredientSuppliers;
+  }
+  return selectedIngredientSuppliers;
+};
+
+export const updateSelectedIngredientSupplierDetails = (
+  profileSuppliers,
+  selectedIngredientSuppliers
+) => {
+  let updatedSuppliers = [];
+  for (var dis = 0; dis < selectedIngredientSuppliers.length; dis++) {
+    for (var pis = 0; pis < profileSuppliers.length; pis++) {
+      if (
+        selectedIngredientSuppliers[dis].supplier._id ===
+        profileSuppliers[pis].supplier
+      ) {
+        let updatedSupplierDetails = {};
+        updatedSupplierDetails.supplier = {};
+        updatedSupplierDetails._id =
+          selectedIngredientSuppliers[dis]._id;
+        updatedSupplierDetails.packageCost =
+          profileSuppliers[pis].packageCost;
+        updatedSupplierDetails.packageGrams =
+          profileSuppliers[pis].packageGrams;
+        updatedSupplierDetails.prefered =
+          profileSuppliers[pis].prefered;
+
+        updatedSupplierDetails.supplier._id =
+          selectedIngredientSuppliers[dis].supplier._id;
+        updatedSupplierDetails.supplier.displayName =
+          selectedIngredientSuppliers[dis].supplier.displayName;
+        updatedSuppliers.push(updatedSupplierDetails);
+      }
+    }
+  }
+  return updatedSuppliers;
+};
+
 export const setSelectedIngredient = (
   selectedIngredient,
   profile,
   suppliers,
   selectIngredientSupplier
 ) => dispatch => {
-  console.log('profile.ingredients:', profile.ingredients);
+  let confirmedProfileIngredient = null;
+  let updatedSelectedIngredient = null;
 
   // Check if the ingredient selected is in the profile ingredients
-  const checkProfileIngredient = profile.ingredients.filter(
-    profileIngredient => {
-      if (profileIngredient.ingredient === selectedIngredient._id) {
-        selectedIngredient.profileIngredient = true;
-        return selectedIngredient;
+  if (selectedIngredient.suppliers.length > 0) {
+    confirmedProfileIngredient = profile.ingredients.filter(
+      profileIngredient => {
+        if (profileIngredient.ingredient === selectedIngredient._id) {
+          selectedIngredient.profileIngredient = true;
+          return profileIngredient;
+        }
+        return null;
       }
-      return null;
-    }
-  );
-
-  console.log('@@@@@@@@@ selectedIngredient: ', selectedIngredient);
-  console.log('@@@@@@@@@ profile: ', profile);
-  console.log('@@@@@@@@@ suppliers.length: ', suppliers.length);
-
-  // Filters ingredient suppliers and puts them in ABC order
-  // If successful set filteredIngredientSuppilersArray[]
-  let abcFilteredSuppliers = null;
-  if (
-    selectedIngredient.suppliers.length > 0 &&
-    suppliers.length > 0
-  ) {
-    const filteredIngredientSuppliers = selectedIngredient.suppliers.filter(
-      o1 => {
-        return suppliers.some(o2 => {
-          // return the ones with equal id
-          return o1.supplier._id === o2._id;
-        });
-      }
-    );
-
-    function compare(a, b) {
-      const supplierA = a.supplier.displayName;
-      const supplierB = b.supplier.displayName;
-
-      let comparison = 0;
-      if (supplierA > supplierB) {
-        comparison = 1;
-      } else if (supplierA < supplierB) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-
-    selectedIngredient.suppliers = filteredIngredientSuppliers.sort(
-      compare
     );
   }
-
-  console.log('Should be filtered ABC -> ', setSelectedIngredient);
-
-  // Filter suppliers
+  // Update suppliers with profile supplier data
   if (
-    checkProfileIngredient.length > 0 &&
+    confirmedProfileIngredient.length > 0 &&
     selectedIngredient.suppliers !== null
   ) {
-    // console.log('profile: ', checkProfileIngredient[0].suppliers);
-    // console.log('selectedIngredient: ', selectedIngredient.suppliers);
-
-    // Check profile ingredient suppliers
-    const profileIngredientSuppliersToUpdate = checkProfileIngredient[0].suppliers.filter(
-      fromProfileIngredient => {
-        return selectedIngredient.suppliers.some(fromIngredient => {
-          if (
-            fromProfileIngredient.supplier ===
-            fromIngredient.supplier._id
-          ) {
-            return fromProfileIngredient;
-          }
-        });
-      }
-    );
-    console.log(
-      '>>>>>>>> profileIngredientSuppliersToUpdate: ',
-      profileIngredientSuppliersToUpdate
+    updatedSelectedIngredient = updateSelectedIngredientSupplierDetails(
+      confirmedProfileIngredient[0].suppliers,
+      selectedIngredient.suppliers
     );
 
-    let updatedSelectedProfileIngredientSupplier = null;
-    let newIngredientSuppliers = [];
-    for (
-      var dis = 0;
-      dis < selectedIngredient.suppliers.length;
-      dis++
-    ) {
-      for (
-        var pis = 0;
-        pis < profileIngredientSuppliersToUpdate.length;
-        pis++
-      ) {
-        if (
-          selectedIngredient.suppliers[dis].supplier._id ===
-          profileIngredientSuppliersToUpdate[pis].supplier
-        ) {
-          let newIngredientSupplier = {};
-          newIngredientSupplier.supplier = {};
-          newIngredientSupplier._id =
-            selectedIngredient.suppliers[dis]._id;
-          newIngredientSupplier.packageCost =
-            profileIngredientSuppliersToUpdate[pis].packageCost;
-          newIngredientSupplier.packageGrams =
-            profileIngredientSuppliersToUpdate[pis].packageGrams;
-          newIngredientSupplier.prefered =
-            profileIngredientSuppliersToUpdate[pis].prefered;
+    if (updatedSelectedIngredient.length > 0) {
+      selectedIngredient.suppliers = updatedSelectedIngredient;
+    }
 
-          newIngredientSupplier.supplier._id =
-            selectedIngredient.suppliers[dis].supplier._id;
-          newIngredientSupplier.supplier.displayName =
-            selectedIngredient.suppliers[dis].supplier.displayName;
-          newIngredientSuppliers.push(newIngredientSupplier);
+    console.log('----> selectedIngredient: ', selectedIngredient);
 
-          if (selectIngredientSupplier) {
-            if (profileIngredientSuppliersToUpdate[pis].prefered) {
-              updatedSelectedProfileIngredientSupplier = newIngredientSupplier;
-            }
-          }
+    if (selectIngredientSupplier === true) {
+      const selectedIngredientSupplier = selectedIngredient.suppliers.filter(
+        supplier => {
+          return supplier.prefered === true;
         }
-      }
-    }
-
-    console.log('newIngredientSuppliers: ', newIngredientSuppliers);
-    if (newIngredientSuppliers.length > 0) {
-      selectedIngredient.suppliers = newIngredientSuppliers;
-    }
-
-    console.log('newIngredientSuppliers: ', newIngredientSuppliers);
-
-    if (updatedSelectedProfileIngredientSupplier !== null) {
-      dispatch(
-        setSelectedIngredientSupplier(
-          updatedSelectedProfileIngredientSupplier
-        )
       );
+      if (selectedIngredientSupplier.length > 0) {
+        dispatch(
+          setSelectedIngredientSupplier(selectedIngredientSupplier[0])
+        );
+      }
     }
   } else {
     console.log(
       'Ingredeint supplier is not in profile ingredients...'
     );
   }
+
+  // Filters ingredient supplier names and puts them in ABC order
+  selectedIngredient.suppliers = sortIngredientSuppliersIntoAbcOrder(
+    selectedIngredient.suppliers
+  );
 
   dispatch({
     type: SET_SELECTED_INGREDIENT,
@@ -310,6 +267,11 @@ export const addAndSetSelectedIngredientSupplier = (
     )
     .then(res => {
       console.log('res.data: ', res.data);
+
+      // When I had a supplier here it is getting stuck...
+      // When you get an ingredient that is not in the profile it gets stuck
+      // Add ingredient.. ?
+      // What should I do about this?
 
       if (res.data.ingredientSaved.suppliers.length > 0) {
         console.log('[INNER] - res.data: ', res.data);
