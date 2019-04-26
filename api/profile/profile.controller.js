@@ -122,8 +122,8 @@ const addOrEditProfileIngredient = (req, res) => {
         }
       );
       console.log(
-        '------->profileIngredient[0].suppliers: ',
-        profileIngredient[0].suppliers
+        '------->profileIngredient --> that was filtered',
+        profileIngredient
       );
 
       // if (profileIngredient.length > 0) {

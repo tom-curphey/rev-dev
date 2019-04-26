@@ -1,41 +1,45 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import Select from 'react-select';
+import CreatableSelect from 'react-select/lib/Creatable';
 
-const SelectInput = ({
-  name,
-  value,
-  label,
-  error,
-  info,
-  onChange,
-  options
-}) => {
-  const selectOptions = options.map((option, i) => (
-    <option key={i} value={option.label}>
-      {option.value}
-    </option>
-  ));
+const SelectInput = ({ options, getSelectedValue, checkFocus }) => {
+  const handleChange = (newValue, actionMeta) => {
+    console.group('Value Changed');
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+
+    if (newValue) {
+      // Pass the selected value to the parent component
+      getSelectedValue(newValue);
+    }
+  };
+
+  // What to do when input is being typed
+  const handleInputChange = (inputValue, actionMeta) => {
+    console.group('Input Changed');
+    console.log(inputValue);
+    console.log(`action: ${actionMeta.action}`);
+    console.groupEnd();
+  };
+
+  const handleOnFocus = () => {
+    if (checkFocus) {
+      checkFocus(true);
+    }
+  };
 
   return (
-    <label htmlFor={name}>
-      {label}{' '}
-      <select onChange={onChange} name={name} value={value}>
-        {selectOptions}
-      </select>
-      {info && <small>{info}</small>}
-      {error && <span>{error}</span>}
-    </label>
+    <div>
+      {/* <Select options={options} /> */}
+      <CreatableSelect
+        isClearable
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        options={options}
+        onFocus={handleOnFocus}
+      />
+    </div>
   );
-};
-
-SelectInput.propTypes = {
-  name: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  info: PropTypes.string,
-  error: PropTypes.string,
-  label: PropTypes.string.isRequired,
-  options: PropTypes.array.isRequired,
-  onChange: PropTypes.func.isRequired
 };
 
 export default SelectInput;

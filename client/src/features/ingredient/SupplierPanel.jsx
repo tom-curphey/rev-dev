@@ -7,7 +7,8 @@ import {
 } from './ingredientActions';
 import isEmpty from '../../utils/validation/is.empty';
 import Spinner from '../../utils/spinner/Spinner';
-import TextInput from '../../utils/input/TextInput';
+// import TextInput from '../../utils/input/TextInput';
+import SelectSupplier from './SelectSupplier';
 
 class SupplierPanel extends Component {
   state = {
@@ -15,7 +16,10 @@ class SupplierPanel extends Component {
     filteredSearchSuppliersArray: []
   };
 
+  // handles the event when the user clicks on the supplier
   handleSelectIngredientSupplier = e => {
+    console.log('Clicked..');
+
     const clickedOnIngredientSupplier = this.props.selectedIngredient.suppliers.filter(
       clickedOnSupplier => {
         return clickedOnSupplier.supplier._id === e.target.id;
@@ -33,85 +37,13 @@ class SupplierPanel extends Component {
     );
   };
 
-  async handleOnChangeSearch(e) {
-    let inputData = e.target.value;
-    await this.setState({ searchedSupplierName: inputData });
-    await this.filterSuppliers();
-    if (inputData === '') {
-      this.setState({ filteredSearchSuppliersArray: [] });
-    }
-  }
-
-  async filterSuppliers() {
-    const { searchedSupplierName } = this.state;
-    const { supplier, ingredient } = this.props;
-    let filteredSuppliers = supplier.suppliers;
-
-    if (ingredient.selectedIngredient.suppliers) {
-      const supplierIdArray = supplier.suppliers.map(supplier => {
-        return supplier._id;
-      });
-      const ingredeintSupplierIdArray = ingredient.selectedIngredient.suppliers.map(
-        iSupplier => {
-          return iSupplier.supplier._id;
-        }
-      );
-
-      filteredSuppliers = supplierIdArray.filter(
-        s => !ingredeintSupplierIdArray.includes(s)
-      );
-    }
-
-    const newSearchSuppliersArray = supplier.suppliers.filter(
-      supplier => {
-        return filteredSuppliers.some(fSupplier => {
-          if (supplier._id === fSupplier) {
-            return supplier;
-          }
-        });
-      }
-    );
-
-    if (searchedSupplierName.length >= 1) {
-      const filteredSuppliers = newSearchSuppliersArray.filter(
-        supplierToFilter => {
-          let regX = new RegExp(searchedSupplierName, 'gi');
-          let matchedArray = supplierToFilter.urlName.match(regX);
-          return matchedArray;
-        }
-      );
-
-      this.setState({
-        filteredSearchSuppliersArray: filteredSuppliers
-      });
-    }
-  }
-
-  async handleSelectSupplier(e) {
-    const { filteredSearchSuppliersArray } = this.state;
-
-    // Figure out which supplier was clicked and place supplier into new object
-    const clickedOnSupplier = filteredSearchSuppliersArray.filter(
-      supplier => {
-        return supplier._id === e.target.id;
-      }
-    );
-    console.log('clickedOnSupplier: ', clickedOnSupplier);
-    console.log(
-      'this.props.ingredient.selectedIngredient: ',
-      this.props.ingredient.selectedIngredient._id
-    );
-
-    // Set Supplier as Selected Ingredient Supplier
-    await this.props.addAndSetSelectedIngredientSupplier(
-      clickedOnSupplier[0],
+  getSelectedSupplier = selectedSupplier => {
+    console.log('---> selectedSupplier', selectedSupplier);
+    this.props.addAndSetSelectedIngredientSupplier(
+      selectedSupplier,
       this.props.ingredient.selectedIngredient
     );
-    this.setState({
-      filteredSearchSuppliersArray: [],
-      searchedSupplierName: ''
-    });
-  }
+  };
 
   render() {
     const {
@@ -119,6 +51,8 @@ class SupplierPanel extends Component {
       selectedIngredient,
       selectedIngredientSupplier
     } = this.props.ingredient;
+
+    const { suppliers } = this.props.supplier;
 
     const {
       searchedSupplierName,
@@ -166,16 +100,10 @@ class SupplierPanel extends Component {
       addSupplierForm = (
         <React.Fragment>
           <h1>+ Add Supplier</h1>
-          <form
-            style={{ border: 'none' }}
-            // onSubmit={this.handleConfirmProfileIngredientSupplier}
-            // onSubmit={}
-          >
-            <TextInput
-              label="Search Supplier"
-              name="supplier"
-              value={searchedSupplierName}
-              onChange={this.handleOnChangeSearch.bind(this)}
+          <form style={{ border: 'none' }}>
+            <SelectSupplier
+              getSelectedSupplier={this.getSelectedSupplier}
+              suppliers={suppliers}
             />
           </form>
           <ul className="filterList">

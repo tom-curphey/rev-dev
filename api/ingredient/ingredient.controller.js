@@ -212,20 +212,21 @@ const addSupplierToIngredient = (req, res) => {
     return res.status(400).json(errors);
   }
 
-  // console.log('URL: ', req.params);
-  // console.log(supplier)
+  // Find ingredient by ID to confirm ingredient exists
   Ingredient.findById(req.body.ingredient_id).then(ingredient => {
     if (!ingredient) {
       errors.ingredient = 'We could not find the ingredient selected';
       return res.status(404).json(errors);
     }
 
+    // If ingredient is found, find supplier by ID to confirm supplier exists
     Supplier.findById(req.body.supplier_id).then(supplier => {
       if (!supplier) {
         errors.supplier = 'We could not find the supplier selected';
         return res.status(404).json(errors);
       }
 
+      //Format ingredient & supplier data
       const ingredientSupplierData = {};
       ingredientSupplierData.supplier = supplier.id;
       ingredientSupplierData.packageCost = req.body.packageCost;
@@ -234,14 +235,15 @@ const addSupplierToIngredient = (req, res) => {
       const SupplierIngredientData = {};
       SupplierIngredientData.ingredient = ingredient.id;
       console.log(
-        '-------> SupplierIngredientData: ',
-        SupplierIngredientData
-      );
-      console.log(
         '-------> ingredientSupplierData: ',
         ingredientSupplierData
       );
+      console.log(
+        '-------> SupplierIngredientData: ',
+        SupplierIngredientData
+      );
 
+      // Check if ingredient already has the supplier
       const confirmIngredientSupplier = ingredient.suppliers.filter(
         ingredientSupplier => {
           console.log(
@@ -305,18 +307,20 @@ const addSupplierToIngredient = (req, res) => {
         console.log('-----> ingredient: ', ingredient);
         ingredient
           .save()
-          .then(ingredientSaved => {
-            if (!ingredientSaved) {
+
+          // #ingredientSaved was needed here..
+          .then(ingredient => {
+            if (!ingredient) {
               errors.ingredient =
                 'We could save the supplier to this ingredient';
               return res.status(404).json(errors);
             }
 
-            console.log('-----> ingredientSaved: ', ingredientSaved);
+            console.log('-----> ingredient: ', ingredient);
 
             return res.status(200).json({
               message: 'Ingredient & Supplier Saved',
-              ingredientSaved
+              ingredient
             });
           })
           .catch(err => {

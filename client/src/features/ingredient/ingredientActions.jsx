@@ -106,46 +106,52 @@ export const setSelectedIngredient = (
         return null;
       }
     );
-  }
-  // Update suppliers with profile supplier data
-  if (
-    confirmedProfileIngredient.length > 0 &&
-    selectedIngredient.suppliers !== null
-  ) {
-    updatedSelectedIngredient = updateSelectedIngredientSupplierDetails(
-      confirmedProfileIngredient[0].suppliers,
-      selectedIngredient.suppliers
-    );
 
-    if (updatedSelectedIngredient.length > 0) {
-      selectedIngredient.suppliers = updatedSelectedIngredient;
-    }
-
-    console.log('----> selectedIngredient: ', selectedIngredient);
-
-    if (selectIngredientSupplier === true) {
-      const selectedIngredientSupplier = selectedIngredient.suppliers.filter(
-        supplier => {
-          return supplier.prefered === true;
-        }
+    if (
+      confirmedProfileIngredient.length > 0 &&
+      selectedIngredient.suppliers !== null
+    ) {
+      updatedSelectedIngredient = updateSelectedIngredientSupplierDetails(
+        confirmedProfileIngredient[0].suppliers,
+        selectedIngredient.suppliers
       );
-      if (selectedIngredientSupplier.length > 0) {
-        dispatch(
-          setSelectedIngredientSupplier(selectedIngredientSupplier[0])
-        );
+
+      if (updatedSelectedIngredient.length > 0) {
+        selectedIngredient.suppliers = updatedSelectedIngredient;
       }
+
+      console.log('----> selectedIngredient: ', selectedIngredient);
+
+      if (selectIngredientSupplier === true) {
+        const selectedIngredientSupplier = selectedIngredient.suppliers.filter(
+          supplier => {
+            return supplier.prefered === true;
+          }
+        );
+        if (selectedIngredientSupplier.length > 0) {
+          dispatch(
+            setSelectedIngredientSupplier(
+              selectedIngredientSupplier[0]
+            )
+          );
+        } else {
+          console.log('Ingredeint has prefered profile suppliers.');
+          dispatch(removeSelectedIngredient());
+        }
+      }
+    } else {
+      console.log('Ingredeint has no profile suppliers.');
+      dispatch(removeSelectedIngredient());
     }
   } else {
-    console.log(
-      'Ingredeint supplier is not in profile ingredients...'
-    );
+    console.log('Ingredient has no suppliers');
+    dispatch(removeSelectedIngredient());
   }
 
   // Filters ingredient supplier names and puts them in ABC order
   selectedIngredient.suppliers = sortIngredientSuppliersIntoAbcOrder(
     selectedIngredient.suppliers
   );
-
   dispatch({
     type: SET_SELECTED_INGREDIENT,
     payload: selectedIngredient
@@ -175,17 +181,14 @@ export const addOrEditProfileIngredientSupplier = (
   if (prefered) {
     profileIngredientSupplierData.prefered = true;
   }
-  console.log(
-    '****** selectedIngredient.suppliers: ',
-    selectedIngredient.suppliers
-  );
+  console.log('****** selectedIngredient: ', selectedIngredient);
   console.log('****** supplier: ', supplier);
   console.log(
     '****** profileIngredientSupplierData: ',
     profileIngredientSupplierData
   );
 
-  // dispatch(setIngredientsLoading());
+  dispatch(setIngredientsLoading());
   axios
     .post(
       `api/profile/ingredient/${selectedIngredient._id}/${
@@ -233,7 +236,7 @@ export const setSelectedIngredientSupplier = selectedIngredientSupplier => dispa
   updatedSelectedIngredientSupplier.packageGrams = selectedIngredientSupplier.packageGrams.toString();
 
   console.log(
-    'selectedIngredientSupplier: ',
+    'updatedSelectedIngredientSupplier: ',
     updatedSelectedIngredientSupplier
   );
 
@@ -273,11 +276,11 @@ export const addAndSetSelectedIngredientSupplier = (
       // Add ingredient.. ?
       // What should I do about this?
 
-      if (res.data.ingredientSaved.suppliers.length > 0) {
+      if (res.data.ingredient.suppliers.length > 0) {
         console.log('[INNER] - res.data: ', res.data);
         let count = 0;
         let index = 0;
-        const updatedIngredientSuppliers = res.data.ingredientSaved.suppliers.map(
+        const updatedIngredientSuppliers = res.data.ingredient.suppliers.map(
           ingredientSupplierData => {
             console.log(
               'newIngredientSupplier: ',
@@ -369,11 +372,11 @@ export const addAndSetSelectedIngredientSupplier = (
           updatedIngredientSuppliers
         );
 
-        res.data.ingredientSaved.suppliers = updatedIngredientSuppliers;
+        res.data.ingredient.suppliers = updatedIngredientSuppliers;
 
         dispatch({
           type: SET_SELECTED_INGREDIENT,
-          payload: res.data.ingredientSaved
+          payload: res.data.ingredient
         });
         dispatch({
           type: SET_SELECTED_INGREDIENT_SUPPLIER,
