@@ -42,9 +42,6 @@ const SelectIngredient = ({
         return ingredientOption.value === selectedIngredient._id;
       });
     }
-    console.group('Selected Option');
-    console.log(selectedOption[0]);
-    console.groupEnd();
 
     formContent = (
       <SelectInput

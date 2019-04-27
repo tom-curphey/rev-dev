@@ -41,10 +41,42 @@ class SupplierPanel extends Component {
       selectedIngredient,
       selectedIngredientSupplier
     } = this.props.ingredient;
-
     const { suppliers } = this.props.supplier;
-
     const { filteredSearchSuppliersArray } = this.state;
+    let notAnIngredientSuppliers = [];
+
+    // console.log('Supplier: ', suppliers);
+    // console.log('selectedIngredient: ', selectedIngredient);
+
+    if (suppliers !== null && selectedIngredient !== null) {
+      for (let s = 0; s < suppliers.length; s++) {
+        let check = 0;
+        for (
+          let sI = 0;
+          sI < selectedIngredient.suppliers.length;
+          sI++
+        ) {
+          // console.group('suppliers s');
+          // console.log(suppliers[s]);
+          // console.groupEnd();
+          // console.group('selectedIngredient.suppliers sI');
+          // console.log(selectedIngredient.suppliers[sI]);
+          // console.groupEnd();
+          if (
+            suppliers[s]._id ===
+            selectedIngredient.suppliers[sI].supplier._id
+          ) {
+            check = 1;
+          }
+        }
+        if (check === 0) {
+          notAnIngredientSuppliers.push(suppliers[s]);
+        }
+      }
+    }
+    // console.group('notAnIngredientSuppliers');
+    // console.log(notAnIngredientSuppliers);
+    // console.groupEnd();
 
     let supplierContent = '';
     let addSupplierForm = '';
@@ -90,7 +122,7 @@ class SupplierPanel extends Component {
           <form style={{ border: 'none' }}>
             <SelectSupplier
               getSelectedSupplier={this.getSelectedSupplier}
-              suppliers={suppliers}
+              suppliers={notAnIngredientSuppliers}
             />
           </form>
           <ul className="filterList">
