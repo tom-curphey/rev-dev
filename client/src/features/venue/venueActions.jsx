@@ -38,12 +38,14 @@ export const addOrEditVenue = (venueData, history) => dispatch => {
   dispatch(setVenueLoading());
   axios
     .post('/api/venue', venueData)
-    .then(res =>
+    .then(res => {
+      history.push('/dashboard');
       dispatch({
         type: SAVE_VENUE,
         payload: res.data
-      })
-    )
+      });
+    })
+    .then(res => history.push('/dashboard'))
     .catch(err => {
       dispatch({
         type: GET_ERRORS,

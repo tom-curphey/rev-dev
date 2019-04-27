@@ -1,9 +1,5 @@
 import axios from 'axios';
-import {
-  GET_SUPPLIERS,
-  SUPPLIERS_LOADING,
-  SET_SELECTED_INGREDIENT_SUPPLIER
-} from '../../redux/types';
+import { GET_SUPPLIERS, SUPPLIERS_LOADING } from '../../redux/types';
 
 // Get Suppliers and set redux state with suppliers
 export const getSuppliers = () => dispatch => {

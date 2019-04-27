@@ -1,22 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SelectInput from '../../utils/input/SelectInput';
 
 const SelectIngredient = ({
-  getSelectedIngredient,
   ingredients,
+  selectedIngredient,
+  getSelectedIngredient,
   searchIngredientClicked
 }) => {
-  console.log('this.props.ingredients -->', ingredients);
-
   const getSelectedValue = selectedValue => {
-    console.log('getSelectedValue -->', selectedValue);
-    console.log('getSelectedValue -->', ingredients);
-
     const selectIngredient = ingredients.filter(ingredient => {
       return ingredient._id === selectedValue.value;
     });
-    console.log('getSelectedValue -->', selectIngredient);
     getSelectedIngredient(selectIngredient[0]);
   };
 
@@ -27,8 +22,6 @@ const SelectIngredient = ({
   let formContent = '';
 
   if (ingredients !== null) {
-    console.log('Before options', ingredients);
-
     const options = ingredients.map(ingredient => {
       let selectData = {};
       selectData.label = ingredient.displayName;
@@ -36,11 +29,27 @@ const SelectIngredient = ({
       return selectData;
     });
 
-    console.log('options: ', options);
+    console.log(selectedIngredient);
+
+    let selectedOption = [
+      {
+        label: 'Select Ingredient',
+        value: 'no-ingredient-selected'
+      }
+    ];
+    if (selectedIngredient !== null) {
+      selectedOption = options.filter(ingredientOption => {
+        return ingredientOption.value === selectedIngredient._id;
+      });
+    }
+    console.group('Selected Option');
+    console.log(selectedOption[0]);
+    console.groupEnd();
 
     formContent = (
       <SelectInput
         label="Search Ingredient"
+        value={selectedOption[0]}
         name="ingredient"
         options={options}
         getSelectedValue={getSelectedValue}
@@ -56,6 +65,7 @@ const SelectIngredient = ({
 
 SelectIngredient.propTypes = {
   ingredients: PropTypes.array.isRequired,
+  selectedIngredient: PropTypes.object,
   getSelectedIngredient: PropTypes.func.isRequired,
   searchIngredientClicked: PropTypes.func.isRequired
 };

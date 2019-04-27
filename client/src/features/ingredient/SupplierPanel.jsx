@@ -12,25 +12,16 @@ import SelectSupplier from './SelectSupplier';
 
 class SupplierPanel extends Component {
   state = {
-    searchedSupplierName: '',
     filteredSearchSuppliersArray: []
   };
 
   // handles the event when the user clicks on the supplier
   handleSelectIngredientSupplier = e => {
-    console.log('Clicked..');
-
     const clickedOnIngredientSupplier = this.props.selectedIngredient.suppliers.filter(
       clickedOnSupplier => {
         return clickedOnSupplier.supplier._id === e.target.id;
       }
     );
-
-    console.log(
-      'this.props.selectedIngredient.suppliers: ',
-      this.props.selectedIngredient.suppliers
-    );
-
     this.props.setSelectedIngredientSupplier(
       clickedOnIngredientSupplier[0]
       // this.props.selectedIngredient
@@ -38,7 +29,6 @@ class SupplierPanel extends Component {
   };
 
   getSelectedSupplier = selectedSupplier => {
-    console.log('---> selectedSupplier', selectedSupplier);
     this.props.addAndSetSelectedIngredientSupplier(
       selectedSupplier,
       this.props.ingredient.selectedIngredient
@@ -54,10 +44,7 @@ class SupplierPanel extends Component {
 
     const { suppliers } = this.props.supplier;
 
-    const {
-      searchedSupplierName,
-      filteredSearchSuppliersArray
-    } = this.state;
+    const { filteredSearchSuppliersArray } = this.state;
 
     let supplierContent = '';
     let addSupplierForm = '';

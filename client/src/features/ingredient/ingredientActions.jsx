@@ -9,8 +9,6 @@ import {
   SET_SELECTED_INGREDIENT_SUPPLIER,
   REMOVE_SELECTED_INGREDIENT
 } from '../../redux/types';
-import { select } from 'async';
-import { isValid } from 'ipaddr.js';
 
 // Get Ingredients and set redux state with ingredients
 export const getIngredients = () => dispatch => {
@@ -59,12 +57,12 @@ export const updateSelectedIngredientSupplierDetails = (
 ) => {
   let updatedSuppliers = [];
   for (var dis = 0; dis < selectedIngredientSuppliers.length; dis++) {
+    let updatedSupplierDetails = {};
     for (var pis = 0; pis < profileSuppliers.length; pis++) {
       if (
         selectedIngredientSuppliers[dis].supplier._id ===
         profileSuppliers[pis].supplier
       ) {
-        let updatedSupplierDetails = {};
         updatedSupplierDetails.supplier = {};
         updatedSupplierDetails._id =
           selectedIngredientSuppliers[dis]._id;
@@ -82,8 +80,11 @@ export const updateSelectedIngredientSupplierDetails = (
         updatedSuppliers.push(updatedSupplierDetails);
       }
     }
+    if (Object.keys(updatedSupplierDetails).length > 0) {
+      selectedIngredientSuppliers[dis] = updatedSupplierDetails;
+    }
   }
-  return updatedSuppliers;
+  return selectedIngredientSuppliers;
 };
 
 export const setSelectedIngredient = (
@@ -106,7 +107,6 @@ export const setSelectedIngredient = (
         return null;
       }
     );
-
     if (
       confirmedProfileIngredient.length > 0 &&
       selectedIngredient.suppliers !== null
@@ -115,13 +115,9 @@ export const setSelectedIngredient = (
         confirmedProfileIngredient[0].suppliers,
         selectedIngredient.suppliers
       );
-
       if (updatedSelectedIngredient.length > 0) {
         selectedIngredient.suppliers = updatedSelectedIngredient;
       }
-
-      console.log('----> selectedIngredient: ', selectedIngredient);
-
       if (selectIngredientSupplier === true) {
         const selectedIngredientSupplier = selectedIngredient.suppliers.filter(
           supplier => {
@@ -135,16 +131,13 @@ export const setSelectedIngredient = (
             )
           );
         } else {
-          console.log('Ingredeint has prefered profile suppliers.');
           dispatch(removeSelectedIngredient());
         }
       }
     } else {
-      console.log('Ingredeint has no profile suppliers.');
       dispatch(removeSelectedIngredient());
     }
   } else {
-    console.log('Ingredient has no suppliers');
     dispatch(removeSelectedIngredient());
   }
 
@@ -169,24 +162,13 @@ export const addOrEditProfileIngredientSupplier = (
   prefered
 ) => dispatch => {
   const { supplier } = profileIngredientSupplierData;
-  console.log(
-    '^^^^^^^^%%^^^^^ selectedIngredient.suppliers: ',
-    selectedIngredient.suppliers
-  );
-  console.log(
-    'profileIngredientSupplierData: ',
-    profileIngredientSupplierData
-  );
-  console.log('prefered....: ', prefered);
+
+  console.group('Before API');
+  console.log(profileIngredientSupplierData);
+  console.groupEnd();
   if (prefered) {
     profileIngredientSupplierData.prefered = true;
   }
-  console.log('****** selectedIngredient: ', selectedIngredient);
-  console.log('****** supplier: ', supplier);
-  console.log(
-    '****** profileIngredientSupplierData: ',
-    profileIngredientSupplierData
-  );
 
   dispatch(setIngredientsLoading());
   axios
@@ -198,9 +180,12 @@ export const addOrEditProfileIngredientSupplier = (
     )
     .then(res => {
       const profile = res.data;
-      const suppliers = [];
-      console.log('profile: ', profile);
 
+      console.group('res.data -> Profile');
+      console.log(profile);
+      console.groupEnd();
+
+      const suppliers = [];
       dispatch(
         setSelectedIngredient(
           selectedIngredient,
@@ -235,11 +220,6 @@ export const setSelectedIngredientSupplier = selectedIngredientSupplier => dispa
   updatedSelectedIngredientSupplier.packageCost = selectedIngredientSupplier.packageCost.toString();
   updatedSelectedIngredientSupplier.packageGrams = selectedIngredientSupplier.packageGrams.toString();
 
-  console.log(
-    'updatedSelectedIngredientSupplier: ',
-    updatedSelectedIngredientSupplier
-  );
-
   dispatch({
     type: SET_SELECTED_INGREDIENT_SUPPLIER,
     payload: updatedSelectedIngredientSupplier
@@ -250,17 +230,9 @@ export const addAndSetSelectedIngredientSupplier = (
   newIngredientSupplier,
   selectedIngredient
 ) => dispatch => {
-  console.log('newIngredientSupplier: ', newIngredientSupplier._id);
-
   const newIngredientSupplierData = {};
   newIngredientSupplierData.packageCost = '0';
   newIngredientSupplierData.packageGrams = '0';
-
-  console.log(
-    '+++> newIngredientSupplierData: ',
-    newIngredientSupplierData
-  );
-
   axios
     .post(
       `/api/ingredient/supplier/${selectedIngredient._id}/${
@@ -269,28 +241,11 @@ export const addAndSetSelectedIngredientSupplier = (
       newIngredientSupplierData
     )
     .then(res => {
-      console.log('res.data: ', res.data);
-
-      // When I had a supplier here it is getting stuck...
-      // When you get an ingredient that is not in the profile it gets stuck
-      // Add ingredient.. ?
-      // What should I do about this?
-
       if (res.data.ingredient.suppliers.length > 0) {
-        console.log('[INNER] - res.data: ', res.data);
         let count = 0;
         let index = 0;
         const updatedIngredientSuppliers = res.data.ingredient.suppliers.map(
           ingredientSupplierData => {
-            console.log(
-              'newIngredientSupplier: ',
-              newIngredientSupplier
-            );
-            console.log(
-              'ingredientSupplierData: ',
-              ingredientSupplierData
-            );
-
             if (
               ingredientSupplierData.supplier.toString() ===
               newIngredientSupplier._id.toString()
@@ -298,7 +253,6 @@ export const addAndSetSelectedIngredientSupplier = (
               index = count;
               const resSupplierData = {};
               resSupplierData.supplier = {};
-              console.log('resSupplierData :::: ', resSupplierData);
 
               resSupplierData._id = ingredientSupplierData._id;
               resSupplierData.packageCost = ingredientSupplierData.packageCost.toString();
@@ -311,11 +265,7 @@ export const addAndSetSelectedIngredientSupplier = (
                 newIngredientSupplier.displayName;
 
               ingredientSupplierData = resSupplierData;
-              console.log('resSupplierData :::: ', resSupplierData);
-              console.log(
-                'ingredientSupplierData :::: ',
-                ingredientSupplierData
-              );
+
               // return ingredientSupplierData;
             } else {
               let currentSuppiler = selectedIngredient.suppliers.filter(
@@ -328,50 +278,11 @@ export const addAndSetSelectedIngredientSupplier = (
               );
 
               ingredientSupplierData = currentSuppiler[0];
-
-              // const currentSupplierData = {};
-              // currentSupplierData.supplier = {};
-              // console.log(
-              //   'currentSupplierData :::: ',
-              //   currentSupplierData
-              // );
-
-              // currentSupplierData._id = ingredientSupplierData._id;
-              // currentSupplierData.packageCost =
-              //   ingredientSupplierData.packageCost;
-              // currentSupplierData.packageGrams =
-              //   ingredientSupplierData.packageGrams;
-              // currentSupplierData.prefered = currentSuppiler.prefered;
-
-              // currentSupplierData.supplier._id =
-              //   ingredientSupplierData.supplier;
-              // currentSupplierData.supplier.displayName =
-              // currentSuppiler.supplier.displayName;
-
-              // ingredientSupplierData = currentSupplierData;
-
-              console.log(
-                'ingredientSupplierData: ---->',
-                ingredientSupplierData
-              );
-              console.log(
-                'selectedIngredient: ---->',
-                selectedIngredient
-              );
-              console.log('currentSuppiler: ---->', currentSuppiler);
             }
             count++;
             return ingredientSupplierData;
           }
         );
-
-        console.log('indexxxxxx', index);
-
-        console.log(
-          'updatedIngredientSuppliers: ',
-          updatedIngredientSuppliers
-        );
-
         res.data.ingredient.suppliers = updatedIngredientSuppliers;
 
         dispatch({

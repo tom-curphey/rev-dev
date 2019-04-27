@@ -37,9 +37,9 @@ const ProfileSchema = new Schema(
         venue: {
           type: Schema.ObjectId,
           ref: 'venue',
-          required: true,
-          unique: true,
-          sparse: true
+          required: true
+          // unique: true,
+          // sparse: true
         }
       }
     ],
@@ -48,9 +48,9 @@ const ProfileSchema = new Schema(
         ingredient: {
           type: Schema.ObjectId,
           ref: 'ingredient',
-          required: true,
-          unique: true,
-          sparse: true
+          required: true
+          // unique: true,
+          // sparse: true
         },
         suppliers: [
           {

@@ -1,34 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import SelectInput from '../../utils/input/SelectInput';
 
 const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
-  console.log('this.props.suppliers -->', suppliers);
-
   const getSelectedValue = selectedValue => {
-    console.log('getSelectedValue -->', selectedValue);
-    console.log('getSelectedValue -->', suppliers);
-
     const selectSupplier = suppliers.filter(supplier => {
       return supplier._id === selectedValue.value;
     });
-    console.log('getSelectedValue -->', selectSupplier);
     getSelectedSupplier(selectSupplier[0]);
   };
 
   let formContent = '';
 
   if (suppliers !== null) {
-    console.log('Before options', suppliers);
-
     const options = suppliers.map(supplier => {
       let selectData = {};
       selectData.label = supplier.displayName;
       selectData.value = supplier._id;
       return selectData;
     });
-
-    console.log('options: ', options);
 
     formContent = (
       <SelectInput

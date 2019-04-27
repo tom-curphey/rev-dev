@@ -34,13 +34,6 @@ class Ingredient extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    if (prevProps.ingredient !== this.props.ingredient) {
-      console.group('INGREDIENT CHANGED');
-      console.log('prevProps.ingredient: ', prevProps.ingredient);
-      console.log('this.props.ingredient: ', this.props.ingredient);
-      console.groupEnd();
-    }
-
     if (
       prevProps.ingredient.selectedIngredient !==
         this.props.ingredient.selectedIngredient &&
@@ -56,8 +49,6 @@ class Ingredient extends Component {
       prevProps.ingredient.selectedIngredientSupplier !==
       this.props.ingredient.selectedIngredientSupplier
     ) {
-      // console.log('YESY');
-
       this.setState({
         selectedIngredientSupplier: this.props.ingredient
           .selectedIngredientSupplier
@@ -91,10 +82,6 @@ class Ingredient extends Component {
 
   handleUpdateProfileIngredientSupplier = e => {
     e.preventDefault();
-    console.log(
-      '^^^^^^^^%%^^^^^ this.props.ingredient.selectedIngredient.suppliers: ',
-      this.props.ingredient.selectedIngredient.suppliers
-    );
 
     this.props.addOrEditProfileIngredientSupplier(
       this.props.ingredient.selectedIngredient,
@@ -103,15 +90,7 @@ class Ingredient extends Component {
     );
   };
 
-  handleOpenAddIngredientForm = e => {
-    const { searchedIngredientName } = this.state;
-
-    this.props.addIngredient(searchedIngredientName);
-  };
-
   getSelectedIngredient = selectedIngredient => {
-    console.log('getSelectedIngredient--->', selectedIngredient);
-
     let suppliers = [];
     this.props.setSelectedIngredient(
       selectedIngredient,
@@ -125,8 +104,6 @@ class Ingredient extends Component {
   };
 
   render() {
-    // console.log('this.props.ingredient: ', this.props.ingredient);
-
     const {
       ingredients,
       selectedIngredient,
@@ -138,8 +115,6 @@ class Ingredient extends Component {
       errors
     } = this.state;
 
-    // console.log('--> errors: ', errors);
-
     let ingredientContent;
     if (ingredients === null || loading === true) {
       ingredientContent = <Spinner />;
@@ -149,6 +124,7 @@ class Ingredient extends Component {
           <form style={{ border: 'none' }}>
             <SelectIngredient
               ingredients={ingredients}
+              selectedIngredient={selectedIngredient}
               getSelectedIngredient={this.getSelectedIngredient}
               searchIngredientClicked={this.searchIngredientClicked}
             />
@@ -169,10 +145,6 @@ class Ingredient extends Component {
                   onChange={this.handleIngredientSupplierChange}
                   error={errors.packageGrams}
                 />
-                {/* {console.log(
-                  'Button Supplier: ',
-                  selectedIngredientSupplier
-                )} */}
                 <ul className="supplier_buttons">
                   <li>
                     <button
@@ -210,16 +182,6 @@ class Ingredient extends Component {
               </React.Fragment>
             )}
           </form>
-
-          {/* <hr /> */}
-          {/* <h3>All Ingredients</h3>
-          <ul>
-            {ingredients &&
-              ingredients.map(ingredient => (
-                <li key={ingredient._id}>{ingredient.displayName}</li>
-              ))}
-          </ul>
-          <hr /> */}
         </div>
       );
     }

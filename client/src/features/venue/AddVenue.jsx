@@ -7,7 +7,7 @@ import { addOrEditVenue } from './venueActions';
 
 class AddVenue extends Component {
   state = {
-    name: '',
+    displayName: '',
     email: '',
     phone: '',
     address: '',
@@ -35,7 +35,7 @@ class AddVenue extends Component {
     e.preventDefault();
 
     const venueData = {
-      name: this.state.name,
+      displayName: this.state.displayName,
       email: this.state.email,
       phone: this.state.phone,
       address: this.state.address,
@@ -55,7 +55,7 @@ class AddVenue extends Component {
 
   render() {
     const {
-      name,
+      displayName,
       email,
       phone,
       address,
@@ -124,9 +124,9 @@ class AddVenue extends Component {
         <form onSubmit={this.handleOnSubmit}>
           <TextInput
             placeholder="Please provide your Venue Name"
-            name="name"
+            name="displayName"
             type="text"
-            value={name}
+            value={displayName}
             onChange={this.handleOnChange}
             label="Venue Name"
             error={errors.name}

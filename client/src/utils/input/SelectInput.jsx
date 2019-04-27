@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import Select from 'react-select';
+import React from 'react';
 import CreatableSelect from 'react-select/lib/Creatable';
 
-const SelectInput = ({ options, getSelectedValue, checkFocus }) => {
+const SelectInput = ({
+  options,
+  getSelectedValue,
+  checkFocus,
+  value
+}) => {
   const handleChange = (newValue, actionMeta) => {
-    console.group('Value Changed');
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
-
     if (newValue) {
       // Pass the selected value to the parent component
       getSelectedValue(newValue);
@@ -15,12 +15,7 @@ const SelectInput = ({ options, getSelectedValue, checkFocus }) => {
   };
 
   // What to do when input is being typed
-  const handleInputChange = (inputValue, actionMeta) => {
-    console.group('Input Changed');
-    console.log(inputValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
-  };
+  // const handleInputChange = (inputValue, actionMeta) => {};
 
   const handleOnFocus = () => {
     if (checkFocus) {
@@ -30,11 +25,11 @@ const SelectInput = ({ options, getSelectedValue, checkFocus }) => {
 
   return (
     <div>
-      {/* <Select options={options} /> */}
       <CreatableSelect
         isClearable
         onChange={handleChange}
-        onInputChange={handleInputChange}
+        // onInputChange={handleInputChange}
+        value={value}
         options={options}
         onFocus={handleOnFocus}
       />

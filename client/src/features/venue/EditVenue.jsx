@@ -9,7 +9,7 @@ import Spinner from '../../utils/spinner/Spinner';
 
 class EditVenue extends Component {
   state = {
-    name: '',
+    displayName: '',
     email: '',
     phone: '',
     address: '',
@@ -74,7 +74,7 @@ class EditVenue extends Component {
       }
 
       this.setState({
-        name: venue.displayName,
+        displayName: venue.displayName,
         email: venue.email,
         phone: venue.phone,
         address: venue.address,
@@ -96,7 +96,7 @@ class EditVenue extends Component {
     e.preventDefault();
 
     const venueData = {
-      name: this.state.name,
+      displayName: this.state.displayName,
       email: this.state.email,
       phone: this.state.phone,
       address: this.state.address,
@@ -116,7 +116,7 @@ class EditVenue extends Component {
 
   render() {
     const {
-      name,
+      displayName,
       email,
       phone,
       address,
@@ -183,9 +183,9 @@ class EditVenue extends Component {
       <form onSubmit={this.handleOnSubmit}>
         <TextInput
           placeholder="Please provide your Venue Name"
-          name="name"
+          name="displayName"
           type="text"
-          value={name}
+          value={displayName}
           onChange={this.handleOnChange}
           label="Venue Name"
           error={errors.name}
