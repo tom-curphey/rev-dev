@@ -67,7 +67,7 @@ const ProfileSchema = new Schema(
               type: Number,
               required: true
             },
-            prefered: {
+            preferred: {
               type: Boolean,
               default: false
             }

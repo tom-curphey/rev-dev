@@ -65,7 +65,7 @@ class SupplierPanel extends Component {
                 onClick={this.handleSelectIngredientSupplier}
               >
                 {supplier.supplier.displayName}
-                {supplier.prefered && '**'}
+                {supplier.preferred && '**'}
               </li>
             )
           );

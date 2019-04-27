@@ -70,8 +70,8 @@ export const updateSelectedIngredientSupplierDetails = (
           profileSuppliers[pis].packageCost;
         updatedSupplierDetails.packageGrams =
           profileSuppliers[pis].packageGrams;
-        updatedSupplierDetails.prefered =
-          profileSuppliers[pis].prefered;
+        updatedSupplierDetails.preferred =
+          profileSuppliers[pis].preferred;
 
         updatedSupplierDetails.supplier._id =
           selectedIngredientSuppliers[dis].supplier._id;
@@ -121,7 +121,7 @@ export const setSelectedIngredient = (
       if (selectIngredientSupplier === true) {
         const selectedIngredientSupplier = selectedIngredient.suppliers.filter(
           supplier => {
-            return supplier.prefered === true;
+            return supplier.preferred === true;
           }
         );
         if (selectedIngredientSupplier.length > 0) {
@@ -159,15 +159,12 @@ export const removeSelectedIngredient = () => {
 export const addOrEditProfileIngredientSupplier = (
   selectedIngredient,
   profileIngredientSupplierData,
-  prefered
+  preferred
 ) => dispatch => {
   const { supplier } = profileIngredientSupplierData;
 
-  console.group('Before API');
-  console.log(profileIngredientSupplierData);
-  console.groupEnd();
-  if (prefered) {
-    profileIngredientSupplierData.prefered = true;
+  if (preferred) {
+    profileIngredientSupplierData.preferred = true;
   }
 
   dispatch(setIngredientsLoading());
@@ -180,11 +177,6 @@ export const addOrEditProfileIngredientSupplier = (
     )
     .then(res => {
       const profile = res.data;
-
-      console.group('res.data -> Profile');
-      console.log(profile);
-      console.groupEnd();
-
       const suppliers = [];
       dispatch(
         setSelectedIngredient(
@@ -257,7 +249,7 @@ export const addAndSetSelectedIngredientSupplier = (
               resSupplierData._id = ingredientSupplierData._id;
               resSupplierData.packageCost = ingredientSupplierData.packageCost.toString();
               resSupplierData.packageGrams = ingredientSupplierData.packageGrams.toString();
-              resSupplierData.prefered = false;
+              resSupplierData.preferred = false;
 
               resSupplierData.supplier._id =
                 ingredientSupplierData.supplier;

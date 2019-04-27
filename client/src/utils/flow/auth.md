@@ -94,4 +94,4 @@
 
   - packageGrams
   - packageCost
-  - preferedSupplier is preselected and showing amounts relevant to the user profile
+  - preferredSupplier is preselected and showing amounts relevant to the user profile

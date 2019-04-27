@@ -127,10 +127,10 @@ const addOrEditProfileIngredient = (req, res) => {
       );
 
       // if (profileIngredient.length > 0) {
-      //   // if (req.body.prefered === true) {
+      //   // if (req.body.preferred === true) {
       //   const newProfileIngredient = profileIngredient[0].suppliers.map(
       //     profileIngredientSupplier => {
-      //       profileIngredientSupplier.prefered = false;
+      //       profileIngredientSupplier.preferred = false;
       //       return profileIngredientSupplier;
       //     }
       //   );
@@ -146,10 +146,10 @@ const addOrEditProfileIngredient = (req, res) => {
 
       if (profileIngredient.length > 0) {
         let setProfileIngredientSuppliersToFalse = null;
-        if (req.body.prefered === true) {
+        if (req.body.preferred === true) {
           setProfileIngredientSuppliersToFalse = profileIngredient[0].suppliers.map(
             profileIngredientSupplier => {
-              profileIngredientSupplier.prefered = false;
+              profileIngredientSupplier.preferred = false;
               return profileIngredientSupplier;
             }
           );
@@ -189,8 +189,8 @@ const addOrEditProfileIngredient = (req, res) => {
             req.body.packageCost;
           newProfileIngredientSupplier.packageGrams =
             req.body.packageGrams;
-          newProfileIngredientSupplier.prefered = req.body.prefered
-            ? req.body.prefered
+          newProfileIngredientSupplier.preferred = req.body.preferred
+            ? req.body.preferred
             : false;
           profileIngredient[0].suppliers.push(
             newProfileIngredientSupplier
@@ -202,16 +202,16 @@ const addOrEditProfileIngredient = (req, res) => {
             req.body.packageCost;
           updatedProfileIngredientSupplier.packageGrams =
             req.body.packageGrams;
-          updatedProfileIngredientSupplier.prefered = req.body
-            .prefered
-            ? req.body.prefered
+          updatedProfileIngredientSupplier.preferred = req.body
+            .preferred
+            ? req.body.preferred
             : false;
 
           console.log(
             'updatedProfileIngredientSupplier: ',
             updatedProfileIngredientSupplier
           );
-          // console.log('req.body: ', req.body.prefered);
+          // console.log('req.body: ', req.body.preferred);
 
           profileIngredient[0].suppliers[
             profileIngredientSupplierIndex
@@ -229,8 +229,8 @@ const addOrEditProfileIngredient = (req, res) => {
           req.body.packageCost;
         newProfileIngredient.suppliers.packageGrams =
           req.body.packageGrams;
-        newProfileIngredient.suppliers.prefered = req.body.prefered
-          ? req.body.prefered
+        newProfileIngredient.suppliers.preferred = req.body.preferred
+          ? req.body.preferred
           : false;
 
         profile.ingredients.push(newProfileIngredient);

@@ -70,7 +70,7 @@ class Ingredient extends Component {
     }));
   };
 
-  handleUpdateAndSetPreferedProfileIngredientSupplier = e => {
+  handleUpdateAndSetpreferredProfileIngredientSupplier = e => {
     e.preventDefault();
 
     this.props.addOrEditProfileIngredientSupplier(
@@ -161,12 +161,12 @@ class Ingredient extends Component {
                     </button>
                   </li>
                   <li>
-                    {!selectedIngredientSupplier.prefered && (
+                    {!selectedIngredientSupplier.preferred && (
                       <button
                         type="submit"
                         onClick={
                           this
-                            .handleUpdateAndSetPreferedProfileIngredientSupplier
+                            .handleUpdateAndSetpreferredProfileIngredientSupplier
                         }
                       >
                         Confirm{' '}
@@ -174,7 +174,7 @@ class Ingredient extends Component {
                           selectedIngredientSupplier.supplier
                             .displayName
                         }{' '}
-                        as your prefered Supplier
+                        as your preferred Supplier
                       </button>
                     )}
                   </li>
