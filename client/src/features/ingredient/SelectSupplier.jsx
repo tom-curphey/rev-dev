@@ -4,10 +4,23 @@ import SelectInput from '../../utils/input/SelectInput';
 
 const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
   const getSelectedValue = selectedValue => {
-    const selectSupplier = suppliers.filter(supplier => {
-      return supplier._id === selectedValue.value;
-    });
-    getSelectedSupplier(selectSupplier[0]);
+    let addSupplier = false;
+    let selectSupplier = [];
+    console.log(selectedValue);
+
+    if (selectedValue.__isNew__) {
+      console.log('NEW');
+      addSupplier = true;
+      const newSupplier = {};
+      newSupplier.displayName = selectedValue.label;
+      newSupplier.new = true;
+      selectSupplier.push(newSupplier);
+    } else {
+      selectSupplier = suppliers.filter(supplier => {
+        return supplier._id === selectedValue.value;
+      });
+    }
+    getSelectedSupplier(selectSupplier[0], addSupplier);
   };
 
   let formContent = '';

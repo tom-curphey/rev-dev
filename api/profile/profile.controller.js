@@ -121,28 +121,6 @@ const addOrEditProfileIngredient = (req, res) => {
           );
         }
       );
-      console.log(
-        '------->profileIngredient --> that was filtered',
-        profileIngredient
-      );
-
-      // if (profileIngredient.length > 0) {
-      //   // if (req.body.preferred === true) {
-      //   const newProfileIngredient = profileIngredient[0].suppliers.map(
-      //     profileIngredientSupplier => {
-      //       profileIngredientSupplier.preferred = false;
-      //       return profileIngredientSupplier;
-      //     }
-      //   );
-      //   // }
-
-      //   console.log('newProfileIngredient: ', newProfileIngredient);
-      // }
-
-      // console.log(
-      //   '----^^--->profileIngredient.suppliers: ',
-      //   profileIngredient.suppliers
-      // );
 
       if (profileIngredient.length > 0) {
         let setProfileIngredientSuppliersToFalse = null;
@@ -158,11 +136,6 @@ const addOrEditProfileIngredient = (req, res) => {
         if (setProfileIngredientSuppliersToFalse !== null) {
           profileIngredient.suppliers = setProfileIngredientSuppliersToFalse;
         }
-
-        // console.log(
-        //   '----^^--->updatedProfileIngredient: ',
-        //   updatedProfileIngredient[0]
-        // );
 
         console.log('YOU NEED TO EDIT THE INGREDIENT SUPPLIERS');
         let supplierIndex = null;

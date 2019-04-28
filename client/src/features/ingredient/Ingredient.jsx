@@ -18,14 +18,14 @@ import TextInput from '../../utils/input/TextInput';
 import SupplierPanel from './SupplierPanel';
 import SelectIngredient from './SelectIngredient';
 import AddIngredientPanel from './AddIngredientPanel';
+import AddSupplierPanel from './AddSupplierPanel';
 
 class Ingredient extends Component {
   state = {
     errors: {},
     selectedIngredient: null,
     selectedIngredientSupplier: {},
-    currentProfileIngredientSupplier: {},
-    filteredIngredientSuppilersArray: []
+    currentProfileIngredientSupplier: {}
   };
 
   componentDidMount() {
@@ -118,9 +118,9 @@ class Ingredient extends Component {
       loading,
       openIngredientPanel
     } = this.props.ingredient;
-    const { selectedIngredient } = this.state;
+    const { openSupplierPanel } = this.props.supplier;
     const {
-      filteredIngredientSuppilersArray,
+      selectedIngredient,
       selectedIngredientSupplier,
       errors
     } = this.state;
@@ -229,6 +229,7 @@ class Ingredient extends Component {
           {supplierContent && supplierContent}
         </section>
         {openIngredientPanel && <AddIngredientPanel />}
+        {openSupplierPanel && <AddSupplierPanel />}
       </div>
     );
   }
@@ -248,7 +249,7 @@ const actions = {
 
 const mapState = state => ({
   ingredient: state.ingredient,
-  suppliers: state.supplier,
+  supplier: state.supplier,
   errors: state.errors,
   auth: state.auth,
   profile: state.profile

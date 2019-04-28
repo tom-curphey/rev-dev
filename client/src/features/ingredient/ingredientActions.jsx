@@ -203,8 +203,6 @@ export const addOrEditProfileIngredientSupplier = (
       dispatch(ingredientsLoadingFalse());
     })
     .catch(err => {
-      // console.log('-------->> err: ', err);
-
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data

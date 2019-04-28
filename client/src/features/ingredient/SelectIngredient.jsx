@@ -27,15 +27,6 @@ class SelectIngredient extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log(
-    //   'this.props.ingredient.selectedIngredient: ',
-    //   this.props.ingredient.selectedIngredient
-    // );
-    // console.log(
-    //   'prevProps.ingredient.selectedIngredient: ',
-    //   prevProps.ingredient.selectedIngredient
-    // );
-
     if (
       this.props.ingredient.selectedIngredient !== null &&
       prevProps.ingredient.selectedIngredient !==
@@ -57,7 +48,6 @@ class SelectIngredient extends Component {
   getSelectedValue = selectedValue => {
     let addIngredient = false;
     let selectIngredient = [];
-    console.log(selectedValue);
     if (selectedValue.__isNew__) {
       addIngredient = true;
       const newIngredient = {};
@@ -84,8 +74,6 @@ class SelectIngredient extends Component {
   render() {
     const { ingredients } = this.props.ingredient;
     const { selectedValue } = this.state;
-
-    console.log('----- selectedValue: ', selectedValue);
 
     let formContent = '';
 

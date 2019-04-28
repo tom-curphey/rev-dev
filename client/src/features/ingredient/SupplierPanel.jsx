@@ -5,6 +5,7 @@ import {
   setSelectedIngredientSupplier,
   addAndSetSelectedIngredientSupplier
 } from './ingredientActions';
+import { openAddSupplierPanel } from './supplierActions';
 import isEmpty from '../../utils/validation/is.empty';
 import Spinner from '../../utils/spinner/Spinner';
 // import TextInput from '../../utils/input/TextInput';
@@ -17,7 +18,11 @@ class SupplierPanel extends Component {
 
   // handles the event when the user clicks on the supplier
   handleSelectIngredientSupplier = e => {
-    const clickedOnIngredientSupplier = this.props.selectedIngredient.suppliers.filter(
+    console.log(
+      'this.props.selectedIngredient: ',
+      this.props.ingredient.selectedIngredient
+    );
+    const clickedOnIngredientSupplier = this.props.ingredient.selectedIngredient.suppliers.filter(
       clickedOnSupplier => {
         return clickedOnSupplier.supplier._id === e.target.id;
       }
@@ -28,11 +33,17 @@ class SupplierPanel extends Component {
     );
   };
 
-  getSelectedSupplier = selectedSupplier => {
-    this.props.addAndSetSelectedIngredientSupplier(
-      selectedSupplier,
-      this.props.ingredient.selectedIngredient
-    );
+  getSelectedSupplier = (selectedSupplier, addSupplier) => {
+    console.log('addSupplier: ', addSupplier);
+
+    if (addSupplier) {
+      this.props.openAddSupplierPanel(selectedSupplier);
+    } else {
+      this.props.addAndSetSelectedIngredientSupplier(
+        selectedSupplier,
+        this.props.ingredient.selectedIngredient
+      );
+    }
   };
 
   render() {
@@ -62,12 +73,6 @@ class SupplierPanel extends Component {
           sI < selectedIngredient.suppliers.length;
           sI++
         ) {
-          // console.group('suppliers s');
-          // console.log(suppliers[s]);
-          // console.groupEnd();
-          // console.group('selectedIngredient.suppliers sI');
-          // console.log(selectedIngredient.suppliers[sI]);
-          // console.groupEnd();
           if (
             suppliers[s]._id ===
             selectedIngredient.suppliers[sI].supplier._id
@@ -80,9 +85,6 @@ class SupplierPanel extends Component {
         }
       }
     }
-    // console.group('notAnIngredientSuppliers');
-    // console.log(notAnIngredientSuppliers);
-    // console.groupEnd();
 
     let supplierContent = '';
     let addSupplierForm = '';
@@ -173,7 +175,8 @@ class SupplierPanel extends Component {
 
 const actions = {
   setSelectedIngredientSupplier,
-  addAndSetSelectedIngredientSupplier
+  addAndSetSelectedIngredientSupplier,
+  openAddSupplierPanel
 };
 
 const mapState = state => ({
@@ -184,7 +187,8 @@ const mapState = state => ({
 });
 
 SupplierPanel.propTypes = {
-  setSelectedIngredientSupplier: PropTypes.func.isRequired
+  setSelectedIngredientSupplier: PropTypes.func.isRequired,
+  openAddSupplierPanel: PropTypes.func.isRequired
 };
 
 export default connect(

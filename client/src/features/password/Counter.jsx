@@ -15,10 +15,10 @@ class Counter extends Component {
   }
 
   // this is called right after render
-  componentDidMount() {
-    console.log('Component Did Mount');
-    console.log('-------------------');
-  }
+  // componentDidMount() {
+  //   console.log('Component Did Mount');
+  //   console.log('-------------------');
+  // }
 
   render() {
     console.log('Render');

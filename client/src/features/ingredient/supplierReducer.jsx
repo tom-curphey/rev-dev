@@ -1,12 +1,12 @@
 import {
   GET_SUPPLIERS,
-  SUPPLIERS_LOADING
-  // CLEAR_CURRENT_VENUE,
-  // SAVE_VENUE
+  SUPPLIERS_LOADING,
+  OPEN_SUPPLIER_PANEL
 } from '../../redux/types';
 
 const initialState = {
   suppliers: null,
+  openSupplierPanel: false,
   loading: false
 };
 
@@ -22,6 +22,11 @@ export default function(state = initialState, action) {
         ...state,
         suppliers: action.payload,
         loading: false
+      };
+    case OPEN_SUPPLIER_PANEL:
+      return {
+        ...state,
+        openSupplierPanel: true
       };
     default:
       return state;
