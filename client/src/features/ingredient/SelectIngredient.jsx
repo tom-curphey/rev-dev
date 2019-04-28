@@ -1,70 +1,127 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SelectInput from '../../utils/input/SelectInput';
 
-const SelectIngredient = ({
-  ingredients,
-  selectedIngredient,
-  getSelectedIngredient,
-  searchIngredientClicked
-}) => {
-  const getSelectedValue = selectedValue => {
-    const selectIngredient = ingredients.filter(ingredient => {
-      return ingredient._id === selectedValue.value;
-    });
-    getSelectedIngredient(selectIngredient[0]);
-  };
-
-  const checkFocus = () => {
-    searchIngredientClicked();
-  };
-
-  let formContent = '';
-
-  if (ingredients !== null) {
-    const options = ingredients.map(ingredient => {
-      let selectData = {};
-      selectData.label = ingredient.displayName;
-      selectData.value = ingredient._id;
-      return selectData;
-    });
-
-    console.log(selectedIngredient);
-
-    let selectedOption = [
-      {
-        label: 'Select Ingredient',
-        value: 'no-ingredient-selected'
-      }
-    ];
-    if (selectedIngredient !== null) {
-      selectedOption = options.filter(ingredientOption => {
-        return ingredientOption.value === selectedIngredient._id;
-      });
+class SelectIngredient extends Component {
+  state = {
+    selectedValue: {
+      label: 'Select Ingredient',
+      value: 'no-ingredient-selected'
     }
+  };
 
-    formContent = (
-      <SelectInput
-        label="Search Ingredient"
-        value={selectedOption[0]}
-        name="ingredient"
-        options={options}
-        getSelectedValue={getSelectedValue}
-        checkFocus={checkFocus}
-      />
-    );
+  componentDidMount() {
+    if (this.props.ingredient.selectedIngredient !== null) {
+      const { selectedIngredient } = this.props.ingredient;
+      // console.log('selectedIngredient: ', selectedIngredient);
+      let selectedValue = {
+        label: selectedIngredient.displayName,
+        value: selectedIngredient._id
+      };
+      this.setState({ selectedValue: selectedValue });
+      // this.updateSelectedValue(
+      //   this.props.ingredient.selectedIngredient
+      // );
+    }
   }
 
-  return (
-    <React.Fragment>{formContent && formContent}</React.Fragment>
-  );
-};
+  componentDidUpdate(prevProps, prevState) {
+    // console.log(
+    //   'this.props.ingredient.selectedIngredient: ',
+    //   this.props.ingredient.selectedIngredient
+    // );
+    // console.log(
+    //   'prevProps.ingredient.selectedIngredient: ',
+    //   prevProps.ingredient.selectedIngredient
+    // );
+
+    if (
+      this.props.ingredient.selectedIngredient !== null &&
+      prevProps.ingredient.selectedIngredient !==
+        this.props.ingredient.selectedIngredient
+    ) {
+      const { selectedIngredient } = this.props.ingredient;
+      // console.log('selectedIngredient: ', selectedIngredient);
+      let selectedValue = {
+        label: selectedIngredient.displayName,
+        value: selectedIngredient._id
+      };
+      this.setState({ selectedValue: selectedValue });
+      // this.updateSelectedValue(
+      //   this.props.ingredient.selectedIngredient
+      // );
+    }
+  }
+
+  getSelectedValue = selectedValue => {
+    let addIngredient = false;
+    let selectIngredient = [];
+    console.log(selectedValue);
+    if (selectedValue.__isNew__) {
+      addIngredient = true;
+      const newIngredient = {};
+      newIngredient.displayName = selectedValue.label;
+      newIngredient.new = true;
+      selectIngredient.push(newIngredient);
+    } else {
+      selectIngredient = this.props.ingredient.ingredients.filter(
+        ingredient => {
+          return ingredient._id === selectedValue.value;
+        }
+      );
+    }
+    this.props.getSelectedIngredient(
+      selectIngredient[0],
+      addIngredient
+    );
+  };
+
+  checkFocus = () => {
+    this.props.searchIngredientClicked();
+  };
+
+  render() {
+    const { ingredients } = this.props.ingredient;
+    const { selectedValue } = this.state;
+
+    console.log('----- selectedValue: ', selectedValue);
+
+    let formContent = '';
+
+    if (ingredients !== null) {
+      const options = ingredients.map(ingredient => {
+        let selectData = {};
+        selectData.label = ingredient.displayName;
+        selectData.value = ingredient._id;
+        return selectData;
+      });
+
+      formContent = (
+        <SelectInput
+          label="Search Ingredient"
+          value={selectedValue}
+          name="ingredient"
+          options={options}
+          getSelectedValue={this.getSelectedValue}
+          checkFocus={this.checkFocus}
+        />
+      );
+    }
+    return (
+      <React.Fragment>{formContent && formContent}</React.Fragment>
+    );
+  }
+}
+
+const mapState = state => ({
+  ingredient: state.ingredient
+});
 
 SelectIngredient.propTypes = {
-  ingredients: PropTypes.array.isRequired,
-  selectedIngredient: PropTypes.object,
+  ingredient: PropTypes.object.isRequired,
   getSelectedIngredient: PropTypes.func.isRequired,
   searchIngredientClicked: PropTypes.func.isRequired
 };
 
-export default SelectIngredient;
+export default connect(mapState)(SelectIngredient);

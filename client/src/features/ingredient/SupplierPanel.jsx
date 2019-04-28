@@ -48,7 +48,13 @@ class SupplierPanel extends Component {
     // console.log('Supplier: ', suppliers);
     // console.log('selectedIngredient: ', selectedIngredient);
 
-    if (suppliers !== null && selectedIngredient !== null) {
+    console.log('selectedIngredient: ', selectedIngredient);
+
+    if (
+      suppliers !== null &&
+      selectedIngredient !== null &&
+      selectedIngredient.new !== true
+    ) {
       for (let s = 0; s < suppliers.length; s++) {
         let check = 0;
         for (
@@ -85,7 +91,10 @@ class SupplierPanel extends Component {
       supplierContent = <Spinner />;
     } else {
       if (!isEmpty(selectedIngredient)) {
-        if (selectedIngredient.suppliers.length > 0) {
+        if (
+          selectedIngredient.new !== true &&
+          selectedIngredient.suppliers.length > 0
+        ) {
           /// Check to see if this updates when the redux state changes..
 
           supplierContent = selectedIngredient.suppliers.map(

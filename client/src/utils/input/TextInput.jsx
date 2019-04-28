@@ -10,7 +10,8 @@ const TextInput = ({
   info,
   type,
   onChange,
-  disabled
+  disabled,
+  id
 }) => {
   return (
     <label htmlFor={name}>
@@ -22,6 +23,7 @@ const TextInput = ({
         value={value}
         placeholder={placeholder}
         disabled={disabled}
+        id={id}
       />
       {info && <small>{info}</small>}
       {error && <span>{error}</span>}

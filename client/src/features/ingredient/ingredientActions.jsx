@@ -7,8 +7,11 @@ import {
   INGREDIENTS_LOADING_FALSE,
   SET_SELECTED_INGREDIENT,
   SET_SELECTED_INGREDIENT_SUPPLIER,
-  REMOVE_SELECTED_INGREDIENT
+  REMOVE_SELECTED_INGREDIENT,
+  OPEN_INGREDIENT_PANEL,
+  CLOSE_INGREDIENT_PANEL
 } from '../../redux/types';
+import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 
 // Get Ingredients and set redux state with ingredients
 export const getIngredients = () => dispatch => {
@@ -96,6 +99,10 @@ export const setSelectedIngredient = (
   let confirmedProfileIngredient = null;
   let updatedSelectedIngredient = null;
 
+  console.group('setSelectedIngredient');
+  console.log('selectedIngredient: ', selectedIngredient);
+  console.groupEnd();
+
   // Check if the ingredient selected is in the profile ingredients
   if (selectedIngredient.suppliers.length > 0) {
     confirmedProfileIngredient = profile.ingredients.filter(
@@ -138,6 +145,8 @@ export const setSelectedIngredient = (
       dispatch(removeSelectedIngredient());
     }
   } else {
+    console.log('in set');
+
     dispatch(removeSelectedIngredient());
   }
 
@@ -291,6 +300,48 @@ export const addAndSetSelectedIngredientSupplier = (
       dispatch({
         type: GET_ERRORS,
         payload: err
+      });
+    });
+};
+
+export const openAddIngredientPanel = newIngredient => dispatch => {
+  newIngredient.displayName = capitalizeFirstLetter(
+    newIngredient.displayName
+  );
+  dispatch({
+    type: OPEN_INGREDIENT_PANEL
+  });
+  dispatch({
+    type: SET_SELECTED_INGREDIENT,
+    payload: newIngredient
+  });
+};
+
+export const closeAddIngredientPanel = removeSelectedIngredientData => dispatch => {
+  if (removeSelectedIngredientData === true) {
+    dispatch(removeSelectedIngredient());
+  }
+  dispatch({
+    type: CLOSE_INGREDIENT_PANEL
+  });
+};
+
+export const addNewIngredient = newIngredient => dispatch => {
+  console.log('Actions: new ingredient: ', newIngredient);
+  axios
+    .post('api/ingredient', newIngredient)
+    .then(res => {
+      let profile = null;
+      let suppliers = null;
+      dispatch(
+        setSelectedIngredient(res.data, profile, suppliers, false)
+      );
+      dispatch(closeAddIngredientPanel(false));
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
       });
     });
 };

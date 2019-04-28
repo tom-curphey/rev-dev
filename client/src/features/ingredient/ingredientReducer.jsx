@@ -4,14 +4,18 @@ import {
   INGREDIENTS_LOADING_FALSE,
   SET_SELECTED_INGREDIENT,
   SET_SELECTED_INGREDIENT_SUPPLIER,
-  REMOVE_SELECTED_INGREDIENT
+  REMOVE_SELECTED_INGREDIENT,
+  OPEN_INGREDIENT_PANEL,
+  CLOSE_INGREDIENT_PANEL
 } from '../../redux/types';
 
 const initialState = {
   ingredients: null,
   loading: false,
   selectedIngredient: null,
-  selectedIngredientSupplier: null
+  selectedIngredientSupplier: null,
+  openIngredientPanel: false,
+  newIngredient: null
 };
 
 export default function(state = initialState, action) {
@@ -47,6 +51,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         selectedIngredientSupplier: action.payload
+      };
+    case OPEN_INGREDIENT_PANEL:
+      return {
+        ...state,
+        openIngredientPanel: true
+      };
+    case CLOSE_INGREDIENT_PANEL:
+      return {
+        ...state,
+        openIngredientPanel: false
       };
     default:
       return state;

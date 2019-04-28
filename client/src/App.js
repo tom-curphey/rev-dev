@@ -21,6 +21,7 @@ import Login from './features/auth/login/Login';
 import Register from './features/auth/register/Register';
 import Dashboard from './features/dashboard/Dashboard';
 import Test from './features/test/Test';
+import TestSelect from './features/test/TestSelect';
 import Password from './features/password/Password';
 import AddVenue from './features/venue/AddVenue';
 import EditVenue from './features/venue/EditVenue';
@@ -58,6 +59,7 @@ class App extends Component {
             <Route exact path="/" component={Home} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
+            <Route exact path="/test" component={TestSelect} />
             <Switch>
               <PrivateRoute
                 exact

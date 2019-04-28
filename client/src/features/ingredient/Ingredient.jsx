@@ -7,17 +7,22 @@ import {
   getIngredients,
   addOrEditProfileIngredientSupplier,
   setSelectedIngredient,
-  removeSelectedIngredient
+  removeSelectedIngredient,
+  closeAddIngredientPanel,
+  openAddIngredientPanel,
+  addNewIngredient
 } from './ingredientActions';
 import { getSuppliers } from './supplierActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import SupplierPanel from './SupplierPanel';
 import SelectIngredient from './SelectIngredient';
+import AddIngredientPanel from './AddIngredientPanel';
 
 class Ingredient extends Component {
   state = {
     errors: {},
+    selectedIngredient: null,
     selectedIngredientSupplier: {},
     currentProfileIngredientSupplier: {},
     filteredIngredientSuppilersArray: []
@@ -40,8 +45,7 @@ class Ingredient extends Component {
       this.props.ingredient.selectedIngredient !== null
     ) {
       this.setState({
-        searchedIngredientName: this.props.ingredient
-          .selectedIngredient.displayName
+        selectedIngredient: this.props.ingredient.selectedIngredient
       });
     }
 
@@ -90,15 +94,20 @@ class Ingredient extends Component {
     );
   };
 
-  getSelectedIngredient = selectedIngredient => {
-    let suppliers = [];
-    this.props.setSelectedIngredient(
-      selectedIngredient,
-      this.props.profile.profile,
-      suppliers,
-      true
-    );
+  getSelectedIngredient = (selectedIngredient, addIngredient) => {
+    if (addIngredient) {
+      this.props.openAddIngredientPanel(selectedIngredient);
+    } else {
+      let suppliers = [];
+      this.props.setSelectedIngredient(
+        selectedIngredient,
+        this.props.profile.profile,
+        suppliers,
+        true
+      );
+    }
   };
+
   searchIngredientClicked = () => {
     this.props.removeSelectedIngredient();
   };
@@ -106,16 +115,19 @@ class Ingredient extends Component {
   render() {
     const {
       ingredients,
-      selectedIngredient,
-      loading
+      loading,
+      openIngredientPanel
     } = this.props.ingredient;
+    const { selectedIngredient } = this.state;
     const {
       filteredIngredientSuppilersArray,
       selectedIngredientSupplier,
       errors
     } = this.state;
+    // const { closeAddIngredientPanel } = this.props;
 
     let ingredientContent;
+    let supplierContent;
     if (ingredients === null || loading === true) {
       ingredientContent = <Spinner />;
     } else {
@@ -123,8 +135,8 @@ class Ingredient extends Component {
         <div>
           <form style={{ border: 'none' }}>
             <SelectIngredient
-              ingredients={ingredients}
-              selectedIngredient={selectedIngredient}
+              // ingredients={ingredients}
+              // selectedIngredient={selectedIngredient}
               getSelectedIngredient={this.getSelectedIngredient}
               searchIngredientClicked={this.searchIngredientClicked}
             />
@@ -186,6 +198,27 @@ class Ingredient extends Component {
       );
     }
 
+    if (selectedIngredient === null) {
+      supplierContent = '';
+    } else {
+      if (selectedIngredient.new !== true) {
+        console.log(
+          'selectedIngredient.suppliers: ',
+          selectedIngredient.suppliers
+        );
+
+        supplierContent = (
+          <SupplierPanel
+          // filteredSuppliers={filteredIngredientSuppilersArray}
+          // selectedIngredient={selectedIngredient}
+          // handleSelectIngredientSupplier={
+          //   this.handleSelectIngredientSupplier
+          // }
+          />
+        );
+      }
+    }
+
     return (
       <div className="ingredient_page">
         <section className="ingredient_left">
@@ -193,14 +226,9 @@ class Ingredient extends Component {
           {ingredientContent && ingredientContent}
         </section>
         <section className="ingredient_right">
-          <SupplierPanel
-            filteredSuppliers={filteredIngredientSuppilersArray}
-            selectedIngredient={selectedIngredient}
-            handleSelectIngredientSupplier={
-              this.handleSelectIngredientSupplier
-            }
-          />
+          {supplierContent && supplierContent}
         </section>
+        {openIngredientPanel && <AddIngredientPanel />}
       </div>
     );
   }
@@ -212,7 +240,10 @@ const actions = {
   getSuppliers,
   addOrEditProfileIngredientSupplier,
   setSelectedIngredient,
-  removeSelectedIngredient
+  removeSelectedIngredient,
+  openAddIngredientPanel,
+  closeAddIngredientPanel,
+  addNewIngredient
 };
 
 const mapState = state => ({
@@ -229,7 +260,10 @@ Ingredient.propTypes = {
   setSelectedIngredient: PropTypes.func.isRequired,
   getSuppliers: PropTypes.func.isRequired,
   addOrEditProfileIngredientSupplier: PropTypes.func.isRequired,
-  removeSelectedIngredient: PropTypes.func.isRequired
+  removeSelectedIngredient: PropTypes.func.isRequired,
+  openAddIngredientPanel: PropTypes.func.isRequired,
+  closeAddIngredientPanel: PropTypes.func.isRequired,
+  addNewIngredient: PropTypes.func.isRequired
 };
 
 export default connect(
