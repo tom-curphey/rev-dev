@@ -20,6 +20,9 @@ const SupplierSchema = new Schema({
     type: String,
     required: true
   },
+  website: {
+    type: String
+  },
   address: {
     type: String,
     required: true

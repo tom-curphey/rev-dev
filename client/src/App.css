@@ -158,6 +158,11 @@ section.panel span {
   display: block;
 }
 
+section.panel form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
 /* 
 /
 / Navbar

@@ -2,9 +2,13 @@ import axios from 'axios';
 import {
   GET_SUPPLIERS,
   SUPPLIERS_LOADING,
-  OPEN_SUPPLIER_PANEL
+  OPEN_SUPPLIER_PANEL,
+  CLOSE_SUPPLIER_PANEL,
+  SET_SELECTED_INGREDIENT_SUPPLIER,
+  GET_ERRORS
 } from '../../redux/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
+import { addAndSetSelectedIngredientSupplier } from './ingredientActions';
 
 // Get Suppliers and set redux state with suppliers
 export const getSuppliers = () => dispatch => {
@@ -31,16 +35,49 @@ export const setSuppliersLoading = () => {
 };
 
 export const openAddSupplierPanel = newSupplier => dispatch => {
-  console.log('New Supplier: ', newSupplier);
-
-  newSupplier.displayName = capitalizeFirstLetter(
-    newSupplier.displayName
+  newSupplier.supplier.displayName = capitalizeFirstLetter(
+    newSupplier.supplier.displayName
   );
   dispatch({
     type: OPEN_SUPPLIER_PANEL
   });
-  // dispatch({
-  //   type: SET_SELECTED_INGREDIENT,
-  //   payload: newSupplier
-  // });
+  dispatch({
+    type: SET_SELECTED_INGREDIENT_SUPPLIER,
+    payload: newSupplier
+  });
+};
+
+export const closeAddSupplierPanel = removeSelectedSupplierData => dispatch => {
+  console.log('Close Panel');
+  dispatch({
+    type: CLOSE_SUPPLIER_PANEL
+  });
+};
+
+export const addNewSupplier = (
+  newSupplier,
+  selectedIngredient
+) => dispatch => {
+  console.log('Actions newSupplier: ', newSupplier);
+  console.log('Actions selectedIngredient: ', selectedIngredient);
+  axios
+    .post('api/supplier', newSupplier)
+    .then(res => {
+      console.log('res.data: ', res.data);
+      dispatch(
+        addAndSetSelectedIngredientSupplier(
+          res.data,
+          selectedIngredient
+        )
+      );
+      dispatch({
+        type: CLOSE_SUPPLIER_PANEL
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+    });
 };

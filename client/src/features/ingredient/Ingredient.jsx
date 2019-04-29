@@ -126,6 +126,11 @@ class Ingredient extends Component {
     } = this.state;
     // const { closeAddIngredientPanel } = this.props;
 
+    // console.log(
+    //   'selectedIngredientSupplier: ',
+    //   selectedIngredientSupplier
+    // );
+
     let ingredientContent;
     let supplierContent;
     if (ingredients === null || loading === true) {
@@ -157,6 +162,7 @@ class Ingredient extends Component {
                   onChange={this.handleIngredientSupplierChange}
                   error={errors.packageGrams}
                 />
+
                 <ul className="supplier_buttons">
                   <li>
                     <button

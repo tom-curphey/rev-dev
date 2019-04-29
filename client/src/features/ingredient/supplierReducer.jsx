@@ -1,7 +1,8 @@
 import {
   GET_SUPPLIERS,
   SUPPLIERS_LOADING,
-  OPEN_SUPPLIER_PANEL
+  OPEN_SUPPLIER_PANEL,
+  CLOSE_SUPPLIER_PANEL
 } from '../../redux/types';
 
 const initialState = {
@@ -27,6 +28,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         openSupplierPanel: true
+      };
+    case CLOSE_SUPPLIER_PANEL:
+      return {
+        ...state,
+        openSupplierPanel: false
       };
     default:
       return state;

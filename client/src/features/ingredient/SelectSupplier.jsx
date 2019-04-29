@@ -12,7 +12,11 @@ const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
       console.log('NEW');
       addSupplier = true;
       const newSupplier = {};
-      newSupplier.displayName = selectedValue.label;
+      newSupplier.packageCost = '0';
+      newSupplier.packageGrams = '0';
+
+      newSupplier.supplier = {};
+      newSupplier.supplier.displayName = selectedValue.label;
       newSupplier.new = true;
       selectSupplier.push(newSupplier);
     } else {

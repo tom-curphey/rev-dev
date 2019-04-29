@@ -11,21 +11,26 @@ import {
 class AddSupplierPanel extends Component {
   state = {
     newSupplier: {
-      displayName: ''
+      displayName: '',
+      email: '',
+      phone: '',
+      website: '',
+      address: ''
     },
     errors: {}
   };
 
   componentDidMount() {
-    if (this.props.selectedIngredient) {
+    if (this.props.selectedIngredientSupplier) {
       console.log(
-        'this.props.selectedIngredient: ',
-        this.props.selectedIngredient
+        'this.props.selectedIngredientSupplier: ',
+        this.props.selectedIngredientSupplier
       );
       this.setState(prevState => ({
-        newIngredient: {
-          ...prevState.newIngredient,
-          displayName: this.props.selectedIngredient.displayName
+        newSupplier: {
+          ...prevState.newSupplier,
+          displayName: this.props.selectedIngredientSupplier.supplier
+            .displayName
         }
       }));
       document.getElementById('add-ingredient-name').focus();
@@ -42,86 +47,100 @@ class AddSupplierPanel extends Component {
     }
   }
 
-  handleIngredientChange = e => {
+  handleSupplierChange = e => {
     console.log('name: ', e.target);
 
     const capInput = capitalizeFirstLetter(e.target.value);
     e.persist();
     this.setState(prevState => ({
-      newIngredient: {
-        ...prevState.newIngredient,
+      newSupplier: {
+        ...prevState.newSupplier,
         [e.target.name]: capInput
       }
     }));
   };
 
-  handleCancelAddIngredient = e => {
+  handleCancelAddSupplier = e => {
     e.preventDefault();
     console.log('Cancel');
-    this.props.closeAddIngredientPanel(true);
+    this.props.closeAddSupplierPanel(true);
   };
 
-  handleAddIngredient = e => {
+  handleAddSupplier = e => {
     e.preventDefault();
-    console.log(this.state.newIngredient);
-    this.props.addNewIngredient(this.state.newIngredient);
+    this.props.addNewSupplier(
+      this.state.newSupplier,
+      this.props.selectedIngredient
+    );
   };
 
   render() {
-    const { newIngredient, errors } = this.state;
-    console.log('newIngredient: ', newIngredient);
+    const { newSupplier, errors } = this.state;
+    const { selectedIngredient } = this.props;
+    console.log('newSupplier: ', newSupplier);
 
     let content = null;
-    if (newIngredient === null) {
-      content = '<p>Loading</p>';
-    } else {
-      content = (
-        <form>
-          <TextInput
-            label="Supplier Name"
-            name="displayName"
-            value={newIngredient.displayName}
-            onChange={this.handleIngredientChange}
-            id="add-ingredient-name"
-            error={errors.displayName}
-          />
-          {/* <hr />
-          <h3>Ingredient Metrics</h3>
-          <p>Ingredeint in metric grams</p>
-          <TextInput
-            label="Cup"
-            name="cup"
-            value={newIngredient.cup}
-            onChange={this.handleIngredientChange}
-            error={errors.cup}
-          /> */}
-          <ul className="supplier_buttons">
-            <li>
-              <button
-                type="submit"
-                // onClick={this.handleCancelAddIngredient}
-              >
-                cancel
-              </button>
-            </li>
-            <li>
-              <button
-                type="submit"
-                // onClick={this.handleAddIngredient}
-              >
-                + Add Supplier
-              </button>
-            </li>
-          </ul>
-        </form>
-      );
-    }
+    content = (
+      <form>
+        <TextInput
+          label="Supplier Name"
+          name="displayName"
+          value={newSupplier.displayName}
+          onChange={this.handleSupplierChange}
+          id="add-ingredient-name"
+          error={errors.displayName}
+        />
+        <TextInput
+          label="Email"
+          name="email"
+          value={newSupplier.email}
+          onChange={this.handleSupplierChange}
+          error={errors.email}
+        />
+        <TextInput
+          label="Phone"
+          name="phone"
+          value={newSupplier.phone}
+          onChange={this.handleSupplierChange}
+          error={errors.phone}
+        />
+        <TextInput
+          label="Website"
+          name="website"
+          value={newSupplier.website}
+          onChange={this.handleSupplierChange}
+          error={errors.website}
+        />
+        <TextInput
+          label="Address"
+          name="address"
+          value={newSupplier.address}
+          onChange={this.handleSupplierChange}
+          error={errors.address}
+        />
+        <ul className="supplier_buttons">
+          <li>
+            <button
+              type="submit"
+              onClick={this.handleCancelAddSupplier}
+            >
+              cancel
+            </button>
+          </li>
+          <li>
+            <button type="submit" onClick={this.handleAddSupplier}>
+              + Add Supplier
+            </button>
+          </li>
+        </ul>
+      </form>
+    );
 
     return (
       <section className="side_panel">
         <section
           className="cover"
-          // onClick={this.handleCancelAddIngredient}
+          onClick={this.handleCancelAddSupplier}
         />
         <section className="panel">
           <h1>Add New Supplier</h1>
@@ -133,13 +152,22 @@ class AddSupplierPanel extends Component {
 }
 
 const mapState = state => ({
-  // selectedIngredient: state.ingredient.selectedIngredient,
-  // errors: state.errors
+  selectedIngredientSupplier:
+    state.ingredient.selectedIngredientSupplier,
+  selectedIngredient: state.ingredient.selectedIngredient,
+  errors: state.errors
 });
 
-const actions = {};
+const actions = {
+  addNewSupplier,
+  closeAddSupplierPanel
+};
 
-// AddSuppplierPanel.propTypes = {};
+AddSupplierPanel.propTypes = {
+  selectedIngredientSupplier: PropTypes.object.isRequired,
+  selectedIngredient: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
 
 export default connect(
   mapState,

@@ -35,6 +35,7 @@ class SupplierPanel extends Component {
 
   getSelectedSupplier = (selectedSupplier, addSupplier) => {
     console.log('addSupplier: ', addSupplier);
+    console.log('selectedSupplier: ', selectedSupplier);
 
     if (addSupplier) {
       this.props.openAddSupplierPanel(selectedSupplier);
