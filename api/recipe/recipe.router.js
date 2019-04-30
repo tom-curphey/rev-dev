@@ -36,7 +36,7 @@ router.get(
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  recipeController.addRecipe
+  supplierController.addRecipe
 );
 
 // @route   POST api/recipe/ingredient

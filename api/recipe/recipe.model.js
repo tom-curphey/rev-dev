@@ -8,6 +8,10 @@ const RecipeSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user'
     },
+    venue: {
+      type: Schema.Types.ObjectId,
+      ref: 'venue'
+    },
     displayName: {
       type: String,
       required: true
@@ -59,24 +63,3 @@ const RecipeSchema = new Schema(
 );
 
 module.exports = Recipe = mongoose.model('recipe', RecipeSchema);
-
-// ingredients: [
-//   {
-//     ingredient: {
-//       type: Schema.Types.ObjectId,
-//       ref: 'ingredient'
-//     },
-//     amount: {
-//       type: Number,
-//       required: true
-//     },
-//     metric: {
-//       type: Number,
-//       required: true
-//     },
-//     grams: {
-//       type: Number,
-//       required: true
-//     }
-//   }
-// ];

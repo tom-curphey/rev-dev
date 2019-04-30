@@ -52,6 +52,8 @@ const getRecipeByID = (req, res) => {
 module.exports.getRecipeByID = getRecipeByID;
 
 const addRecipe = (req, res) => {
+  console.log('ADD RECIPE');
+
   const { errors, isValid } = validateRecipeInput(req.body);
 
   // Check Validation
