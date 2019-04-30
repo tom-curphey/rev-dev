@@ -88,6 +88,9 @@ const addIngredient = (req, res) => {
     ingredientFields.metrics.teaspoon =
       ingredientFields.metrics.tablespoon / 48;
   }
+  if (req.body.whole) {
+    ingredientFields.metrics.whole = req.body.whole;
+  }
 
   // return res.status(400).json(ingredientFields);
 

@@ -15,13 +15,9 @@ const SelectInput = ({
   };
 
   // What to do when input is being typed
-  // const handleInputChange = (inputValue, actionMeta) => {};
-
-  const handleOnFocus = () => {
-    if (checkFocus) {
-      checkFocus(true);
-    }
-  };
+  // const handleInputChange = (inputValue, actionMeta) => {
+  //   console.log('Input Changed..');
+  // };
 
   return (
     <div>
@@ -31,7 +27,6 @@ const SelectInput = ({
         // onInputChange={handleInputChange}
         value={value}
         options={options}
-        onFocus={handleOnFocus}
       />
     </div>
   );

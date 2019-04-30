@@ -29,7 +29,6 @@ class SupplierPanel extends Component {
     );
     this.props.setSelectedIngredientSupplier(
       clickedOnIngredientSupplier[0]
-      // this.props.selectedIngredient
     );
   };
 
@@ -56,11 +55,6 @@ class SupplierPanel extends Component {
     const { suppliers } = this.props.supplier;
     const { filteredSearchSuppliersArray } = this.state;
     let notAnIngredientSuppliers = [];
-
-    // console.log('Supplier: ', suppliers);
-    // console.log('selectedIngredient: ', selectedIngredient);
-
-    console.log('selectedIngredient: ', selectedIngredient);
 
     if (
       suppliers !== null &&

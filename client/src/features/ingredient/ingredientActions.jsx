@@ -15,7 +15,7 @@ import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 
 // Get Ingredients and set redux state with ingredients
 export const getIngredients = () => dispatch => {
-  dispatch(setIngredientsLoading());
+  // dispatch(setIngredientsLoading());
   axios
     .get('api/ingredient/all')
     .then(res =>
@@ -93,15 +93,10 @@ export const updateSelectedIngredientSupplierDetails = (
 export const setSelectedIngredient = (
   selectedIngredient,
   profile,
-  suppliers,
   selectIngredientSupplier
 ) => dispatch => {
   let confirmedProfileIngredient = null;
   let updatedSelectedIngredient = null;
-
-  console.group('setSelectedIngredient');
-  console.log('selectedIngredient: ', selectedIngredient);
-  console.groupEnd();
 
   // Check if the ingredient selected is in the profile ingredients
   if (selectedIngredient.suppliers.length > 0) {
@@ -188,12 +183,7 @@ export const addOrEditProfileIngredientSupplier = (
       const profile = res.data;
       const suppliers = [];
       dispatch(
-        setSelectedIngredient(
-          selectedIngredient,
-          profile,
-          suppliers,
-          false
-        )
+        setSelectedIngredient(selectedIngredient, profile, false)
       );
       dispatch({
         type: SAVE_PROFILE_INGREDIENT,
@@ -284,6 +274,11 @@ export const addAndSetSelectedIngredientSupplier = (
         );
         res.data.ingredient.suppliers = updatedIngredientSuppliers;
 
+        // Filters ingredient supplier names and puts them in ABC order
+        // res.data.ingredient.suppliers = sortIngredientSuppliersIntoAbcOrder(
+        //   res.data.ingredient.suppliers
+        // );
+        dispatch(getIngredients());
         dispatch({
           type: SET_SELECTED_INGREDIENT,
           payload: res.data.ingredient
@@ -329,11 +324,9 @@ export const addNewIngredient = newIngredient => dispatch => {
   axios
     .post('api/ingredient', newIngredient)
     .then(res => {
+      dispatch(getIngredients());
       let profile = null;
-      let suppliers = null;
-      dispatch(
-        setSelectedIngredient(res.data, profile, suppliers, false)
-      );
+      dispatch(setSelectedIngredient(res.data, profile, false));
       dispatch(closeAddIngredientPanel(false));
     })
     .catch(err => {

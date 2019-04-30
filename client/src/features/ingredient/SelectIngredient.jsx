@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SelectInput from '../../utils/input/SelectInput';
+import { removeSelectedIngredient } from './ingredientActions';
 
 class SelectIngredient extends Component {
   state = {
@@ -14,15 +15,11 @@ class SelectIngredient extends Component {
   componentDidMount() {
     if (this.props.ingredient.selectedIngredient !== null) {
       const { selectedIngredient } = this.props.ingredient;
-      // console.log('selectedIngredient: ', selectedIngredient);
       let selectedValue = {
         label: selectedIngredient.displayName,
         value: selectedIngredient._id
       };
       this.setState({ selectedValue: selectedValue });
-      // this.updateSelectedValue(
-      //   this.props.ingredient.selectedIngredient
-      // );
     }
   }
 
@@ -33,15 +30,28 @@ class SelectIngredient extends Component {
         this.props.ingredient.selectedIngredient
     ) {
       const { selectedIngredient } = this.props.ingredient;
-      // console.log('selectedIngredient: ', selectedIngredient);
       let selectedValue = {
         label: selectedIngredient.displayName,
         value: selectedIngredient._id
       };
       this.setState({ selectedValue: selectedValue });
-      // this.updateSelectedValue(
-      //   this.props.ingredient.selectedIngredient
-      // );
+    }
+
+    if (
+      prevProps.ingredient.openIngredientPanel !==
+      this.props.ingredient.openIngredientPanel
+    ) {
+      if (
+        this.props.ingredient.openIngredientPanel === false &&
+        this.props.ingredient.selectedIngredient === null
+      ) {
+        this.setState({
+          selectedValue: {
+            label: 'Select Ingredient',
+            value: 'no-ingredient-selected'
+          }
+        });
+      }
     }
   }
 
@@ -49,6 +59,7 @@ class SelectIngredient extends Component {
     let addIngredient = false;
     let selectIngredient = [];
     if (selectedValue.__isNew__) {
+      this.props.removeSelectedIngredient();
       addIngredient = true;
       const newIngredient = {};
       newIngredient.displayName = selectedValue.label;
@@ -65,10 +76,6 @@ class SelectIngredient extends Component {
       selectIngredient[0],
       addIngredient
     );
-  };
-
-  checkFocus = () => {
-    this.props.searchIngredientClicked();
   };
 
   render() {
@@ -92,7 +99,6 @@ class SelectIngredient extends Component {
           name="ingredient"
           options={options}
           getSelectedValue={this.getSelectedValue}
-          checkFocus={this.checkFocus}
         />
       );
     }
@@ -102,6 +108,10 @@ class SelectIngredient extends Component {
   }
 }
 
+const actions = {
+  removeSelectedIngredient
+};
+
 const mapState = state => ({
   ingredient: state.ingredient
 });
@@ -109,7 +119,10 @@ const mapState = state => ({
 SelectIngredient.propTypes = {
   ingredient: PropTypes.object.isRequired,
   getSelectedIngredient: PropTypes.func.isRequired,
-  searchIngredientClicked: PropTypes.func.isRequired
+  removeSelectedIngredient: PropTypes.func.isRequired
 };
 
-export default connect(mapState)(SelectIngredient);
+export default connect(
+  mapState,
+  actions
+)(SelectIngredient);

@@ -98,18 +98,12 @@ class Ingredient extends Component {
     if (addIngredient) {
       this.props.openAddIngredientPanel(selectedIngredient);
     } else {
-      let suppliers = [];
       this.props.setSelectedIngredient(
         selectedIngredient,
         this.props.profile.profile,
-        suppliers,
         true
       );
     }
-  };
-
-  searchIngredientClicked = () => {
-    this.props.removeSelectedIngredient();
   };
 
   render() {
@@ -124,12 +118,6 @@ class Ingredient extends Component {
       selectedIngredientSupplier,
       errors
     } = this.state;
-    // const { closeAddIngredientPanel } = this.props;
-
-    // console.log(
-    //   'selectedIngredientSupplier: ',
-    //   selectedIngredientSupplier
-    // );
 
     let ingredientContent;
     let supplierContent;
@@ -140,10 +128,7 @@ class Ingredient extends Component {
         <div>
           <form style={{ border: 'none' }}>
             <SelectIngredient
-              // ingredients={ingredients}
-              // selectedIngredient={selectedIngredient}
               getSelectedIngredient={this.getSelectedIngredient}
-              searchIngredientClicked={this.searchIngredientClicked}
             />
 
             {!isEmpty(selectedIngredientSupplier) && (
@@ -208,20 +193,7 @@ class Ingredient extends Component {
       supplierContent = '';
     } else {
       if (selectedIngredient.new !== true) {
-        console.log(
-          'selectedIngredient.suppliers: ',
-          selectedIngredient.suppliers
-        );
-
-        supplierContent = (
-          <SupplierPanel
-          // filteredSuppliers={filteredIngredientSuppilersArray}
-          // selectedIngredient={selectedIngredient}
-          // handleSelectIngredientSupplier={
-          //   this.handleSelectIngredientSupplier
-          // }
-          />
-        );
+        supplierContent = <SupplierPanel />;
       }
     }
 

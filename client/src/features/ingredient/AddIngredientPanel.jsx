@@ -12,7 +12,8 @@ class AddIngredientPanel extends Component {
   state = {
     newIngredient: {
       displayName: '',
-      cup: ''
+      cup: '',
+      whole: ''
     },
     errors: {}
   };
@@ -45,20 +46,22 @@ class AddIngredientPanel extends Component {
 
   handleIngredientChange = e => {
     console.log('name: ', e.target);
+    let input = e.target.value;
+    if (e.target.name === 'displayName') {
+      input = capitalizeFirstLetter(e.target.value);
+    }
 
-    const capInput = capitalizeFirstLetter(e.target.value);
     e.persist();
     this.setState(prevState => ({
       newIngredient: {
         ...prevState.newIngredient,
-        [e.target.name]: capInput
+        [e.target.name]: input
       }
     }));
   };
 
   handleCancelAddIngredient = e => {
     e.preventDefault();
-    console.log('Cancel');
     this.props.closeAddIngredientPanel(true);
   };
 
@@ -70,8 +73,6 @@ class AddIngredientPanel extends Component {
 
   render() {
     const { newIngredient, errors } = this.state;
-    console.log('newIngredient: ', newIngredient);
-
     let content = null;
     if (newIngredient === null) {
       content = '<p>Loading</p>';
@@ -95,6 +96,13 @@ class AddIngredientPanel extends Component {
             value={newIngredient.cup}
             onChange={this.handleIngredientChange}
             error={errors.cup}
+          />
+          <TextInput
+            label="Whole"
+            name="whole"
+            value={newIngredient.whole}
+            onChange={this.handleIngredientChange}
+            error={errors.whole}
           />
           <ul className="supplier_buttons">
             <li>

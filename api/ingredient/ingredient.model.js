@@ -21,18 +21,6 @@ const IngredientSchema = new Schema({
       type: Number,
       required: true
     },
-    handful: {
-      type: Number
-    },
-    ml: {
-      type: Number
-    },
-    sheet: {
-      type: Number
-    },
-    slice: {
-      type: Number
-    },
     tablespoon: {
       type: Number
     },

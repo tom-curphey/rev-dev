@@ -14,8 +14,7 @@ const initialState = {
   loading: false,
   selectedIngredient: null,
   selectedIngredientSupplier: null,
-  openIngredientPanel: false,
-  newIngredient: null
+  openIngredientPanel: false
 };
 
 export default function(state = initialState, action) {

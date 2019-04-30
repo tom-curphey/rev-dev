@@ -49,13 +49,15 @@ class AddSupplierPanel extends Component {
 
   handleSupplierChange = e => {
     console.log('name: ', e.target);
-
-    const capInput = capitalizeFirstLetter(e.target.value);
+    let input = e.target.value;
+    if (e.target.name === 'displayName') {
+      input = capitalizeFirstLetter(e.target.value);
+    }
     e.persist();
     this.setState(prevState => ({
       newSupplier: {
         ...prevState.newSupplier,
-        [e.target.name]: capInput
+        [e.target.name]: input
       }
     }));
   };
@@ -76,7 +78,6 @@ class AddSupplierPanel extends Component {
 
   render() {
     const { newSupplier, errors } = this.state;
-    const { selectedIngredient } = this.props;
     console.log('newSupplier: ', newSupplier);
 
     let content = null;
