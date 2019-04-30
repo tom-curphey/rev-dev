@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from '../../utils/validation/is.empty';
+import roundNumber from '../../utils/functions/roundNumber';
 import { getUserProfile } from '../profile/profileActions';
 import {
   getIngredients,
@@ -10,9 +11,10 @@ import {
   removeSelectedIngredient,
   closeAddIngredientPanel,
   openAddIngredientPanel,
-  addNewIngredient
+  addNewIngredient,
+  clearIngredients
 } from './ingredientActions';
-import { getSuppliers } from './supplierActions';
+import { getSuppliers, clearSuppliers } from './supplierActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import SupplierPanel from './SupplierPanel';
@@ -62,6 +64,11 @@ class Ingredient extends Component {
     if (prevProps.suppliers !== this.props.suppliers) {
       this.setState({ suppliers: this.props.suppliers });
     }
+  }
+
+  componentWillUnmount() {
+    this.props.clearIngredients();
+    this.props.clearSuppliers();
   }
 
   handleIngredientSupplierChange = e => {
@@ -121,6 +128,7 @@ class Ingredient extends Component {
 
     let ingredientContent;
     let supplierContent;
+    let metricContent = '';
     if (ingredients === null || loading === true) {
       ingredientContent = <Spinner />;
     } else {
@@ -195,6 +203,125 @@ class Ingredient extends Component {
       if (selectedIngredient.new !== true) {
         supplierContent = <SupplierPanel />;
       }
+
+      if (selectedIngredient.metrics) {
+        let cupPrice = '-';
+        let gramPrice = '-';
+        let teaspoonPrice = '-';
+        let tablespoonPrice = '-';
+
+        console.log(
+          'selectedIngredientSupplier: ',
+          selectedIngredientSupplier
+        );
+
+        if (
+          selectedIngredientSupplier !== null &&
+          Object.keys(selectedIngredientSupplier).length > 0
+        ) {
+          if (
+            selectedIngredientSupplier.packageCost > 0 &&
+            selectedIngredientSupplier.packageGrams > 0
+          ) {
+            console.log(
+              'selectedIngredientSupplier.packageCost: ',
+              selectedIngredientSupplier.packageCost
+            );
+            const gramCalcPrice =
+              selectedIngredientSupplier.packageCost /
+              selectedIngredientSupplier.packageGrams;
+
+            console.log('gram: ', gramCalcPrice);
+
+            if (isNaN(gramCalcPrice)) {
+              console.log('gram: ', gramCalcPrice);
+              cupPrice = 0;
+              gramPrice = 0;
+              teaspoonPrice = 0;
+              tablespoonPrice = 0;
+            } else {
+              cupPrice = roundNumber(
+                gramCalcPrice * +selectedIngredient.metrics.cup,
+                4
+              );
+              gramPrice = roundNumber(gramCalcPrice, 4);
+              tablespoonPrice = roundNumber(
+                gramCalcPrice *
+                  +selectedIngredient.metrics.tablespoon,
+                4
+              );
+
+              teaspoonPrice = roundNumber(
+                gramCalcPrice * +selectedIngredient.metrics.teaspoon,
+                4
+              );
+
+              if (cupPrice === 0.0) {
+                cupPrice = '-';
+              }
+              if (gramPrice === 0.0) {
+                gramPrice = '-';
+              }
+              if (tablespoonPrice === 0.0) {
+                tablespoonPrice = '-';
+              }
+              if (teaspoonPrice === 0.0) {
+                teaspoonPrice = '-';
+              }
+            }
+          }
+        }
+
+        console.log('gramPrice: ', gramPrice);
+
+        metricContent = (
+          <section className="metric_details">
+            <h1>
+              {selectedIngredient.displayName} Metric Details & Costs
+            </h1>
+
+            <ul>
+              <li>
+                <div>Metric</div>
+                <div>Grams</div>
+                <div>Cost</div>
+              </li>
+              <li>
+                <div>Cup</div>
+                <div>
+                  {roundNumber(selectedIngredient.metrics.cup, 4)}
+                </div>
+                <div>{cupPrice}</div>
+              </li>
+              <li>
+                <div>Gram</div>
+                <div>1</div>
+                <div>{gramPrice}</div>
+              </li>
+              <li>
+                <div>Tablespoon</div>
+                <div>
+                  {roundNumber(
+                    selectedIngredient.metrics.tablespoon,
+                    4
+                  )}
+                </div>
+                <div>{tablespoonPrice}</div>
+              </li>
+              <li>
+                <div>Teaspoon</div>
+                <div>
+                  {roundNumber(
+                    selectedIngredient.metrics.teaspoon,
+                    4
+                  )}
+                </div>
+                <div>{teaspoonPrice}</div>
+              </li>
+            </ul>
+          </section>
+        );
+      }
     }
 
     return (
@@ -202,6 +329,7 @@ class Ingredient extends Component {
         <section className="ingredient_left">
           <h1>Ingredient Page</h1>
           {ingredientContent && ingredientContent}
+          {metricContent && metricContent}
         </section>
         <section className="ingredient_right">
           {supplierContent && supplierContent}
@@ -222,7 +350,9 @@ const actions = {
   removeSelectedIngredient,
   openAddIngredientPanel,
   closeAddIngredientPanel,
-  addNewIngredient
+  addNewIngredient,
+  clearIngredients,
+  clearSuppliers
 };
 
 const mapState = state => ({

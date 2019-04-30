@@ -9,7 +9,8 @@ import {
   SET_SELECTED_INGREDIENT_SUPPLIER,
   REMOVE_SELECTED_INGREDIENT,
   OPEN_INGREDIENT_PANEL,
-  CLOSE_INGREDIENT_PANEL
+  CLOSE_INGREDIENT_PANEL,
+  REMOVE_INGREDIENTS
 } from '../../redux/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 
@@ -18,16 +19,23 @@ export const getIngredients = () => dispatch => {
   // dispatch(setIngredientsLoading());
   axios
     .get('api/ingredient/all')
-    .then(res =>
+    .then(res => {
+      const sortedIngredients = sortIngredientsIntoAbcOrder(res.data);
       dispatch({
         type: GET_INGREDIENTS,
-        payload: res.data
-      })
-    )
+        payload: sortedIngredients
+      });
+    })
     .catch({
       GET_INGREDIENTS,
       payload: {}
     });
+};
+
+export const clearIngredients = () => dispatch => {
+  dispatch({
+    type: REMOVE_INGREDIENTS
+  });
 };
 
 // Ingredients loading
@@ -41,6 +49,16 @@ export const ingredientsLoadingFalse = () => {
   return {
     type: INGREDIENTS_LOADING_FALSE
   };
+};
+
+export const sortIngredientsIntoAbcOrder = ingredients => {
+  if (ingredients.length > 0) {
+    ingredients = ingredients.sort((a, b) =>
+      a.displayName.localeCompare(b.displayName)
+    );
+    return ingredients;
+  }
+  return ingredients;
 };
 
 export const sortIngredientSuppliersIntoAbcOrder = selectedIngredientSuppliers => {
@@ -181,7 +199,6 @@ export const addOrEditProfileIngredientSupplier = (
     )
     .then(res => {
       const profile = res.data;
-      const suppliers = [];
       dispatch(
         setSelectedIngredient(selectedIngredient, profile, false)
       );

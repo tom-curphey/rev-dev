@@ -6,7 +6,8 @@ import {
   SET_SELECTED_INGREDIENT_SUPPLIER,
   REMOVE_SELECTED_INGREDIENT,
   OPEN_INGREDIENT_PANEL,
-  CLOSE_INGREDIENT_PANEL
+  CLOSE_INGREDIENT_PANEL,
+  REMOVE_INGREDIENTS
 } from '../../redux/types';
 
 const initialState = {
@@ -34,6 +35,15 @@ export default function(state = initialState, action) {
         ...state,
         ingredients: action.payload,
         loading: false
+      };
+    case REMOVE_INGREDIENTS:
+      return {
+        ...state,
+        ingredients: null,
+        loading: false,
+        selectedIngredient: null,
+        selectedIngredientSupplier: null,
+        openIngredientPanel: false
       };
     case SET_SELECTED_INGREDIENT:
       return {

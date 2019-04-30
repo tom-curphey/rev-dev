@@ -2,6 +2,8 @@ import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 import jwt_decode from 'jwt-decode';
 import { GET_ERRORS, SET_CURRENT_USER } from '../../redux/types';
+import { clearIngredients } from '../ingredient/ingredientActions';
+import { clearSuppliers } from '../ingredient/supplierActions';
 
 // Register User
 export const registerUser = (userData, history) => dispatch => {
@@ -60,6 +62,8 @@ export const logoutUser = () => dispatch => {
   // Set the current user to an empty {} which will set isAuthenticated to false
   // If set current user recieves an empty object it will turn isAuthenticated to false
   dispatch(setCurrentUser({}));
+  dispatch(clearIngredients());
+  dispatch(clearSuppliers());
 };
 
 export const reactivateUser = () => dispatch => {

@@ -5,7 +5,8 @@ import {
   OPEN_SUPPLIER_PANEL,
   CLOSE_SUPPLIER_PANEL,
   SET_SELECTED_INGREDIENT_SUPPLIER,
-  GET_ERRORS
+  GET_ERRORS,
+  REMOVE_SUPPLIERS
 } from '../../redux/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 import { addAndSetSelectedIngredientSupplier } from './ingredientActions';
@@ -25,6 +26,12 @@ export const getSuppliers = () => dispatch => {
       GET_SUPPLIERS,
       payload: {}
     });
+};
+
+export const clearSuppliers = () => dispatch => {
+  dispatch({
+    type: REMOVE_SUPPLIERS
+  });
 };
 
 // Suppliers loading
