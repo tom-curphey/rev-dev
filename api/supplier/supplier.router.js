@@ -48,8 +48,6 @@ router.put(
   supplierController.editSupplierByID
 );
 
-module.exports = router;
-
 // @route   DELETE api/supplier
 // @desc    Delete supplier
 // @access  Private

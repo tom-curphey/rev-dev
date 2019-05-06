@@ -9,7 +9,7 @@ const profile = require('./api/profile/profile.router');
 const item = require('./api/item/item.router');
 const user = require('./api/user/user.router');
 const venue = require('./api/venue/venue.router');
-// const recipe = require('./api/recipe/recipe.router');
+const recipe = require('./api/recipe/recipe.router');
 const ingredient = require('./api/ingredient/ingredient.router');
 const supplier = require('./api/supplier/supplier.router');
 
@@ -52,7 +52,7 @@ app.use('/api/profile', profile);
 app.use('/api/item', item);
 app.use('/api/user', user);
 app.use('/api/venue', venue);
-// app.use('/api/recipe', recipe);
+app.use('/api/recipe', recipe);
 app.use('/api/ingredient', ingredient);
 app.use('/api/supplier', supplier);
 

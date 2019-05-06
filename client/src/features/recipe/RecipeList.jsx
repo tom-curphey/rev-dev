@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getRecipes } from './recipeActions';
 
 class RecipeList extends Component {
+  componentDidMount() {
+    this.props.getRecipes();
+  }
+
   render() {
-    const { recipes } = this.props;
+    const { recipes } = this.props.recipe;
 
     let recipeList;
 
-    if (recipes === null) {
+    console.log('Recipes: ', recipes);
+    if (recipes !== null && recipes.length > 0) {
       recipeList = (
         <ul>
           {recipes.map((recipe, i) => (
@@ -19,18 +26,24 @@ class RecipeList extends Component {
       recipeList = <p>No Recipes were found</p>;
     }
 
-    return (
-      <div>
-        <h1>Recipes</h1>
-        {recipeList}
-      </div>
-    );
+    return <div>{recipeList}</div>;
   }
 }
 
+const actions = {
+  getRecipes
+};
+
 const mapState = state => ({
   auth: state.auth,
-  recipes: state.auth
+  recipe: state.recipe
 });
 
-export default connect(mapState)(RecipeList);
+RecipeList.propTypes = {
+  recipe: PropTypes.object.isRequired
+};
+
+export default connect(
+  mapState,
+  actions
+)(RecipeList);

@@ -3,53 +3,35 @@ const router = express.Router();
 const passport = require('passport');
 const recipeController = require('./recipe.controller');
 
-// @route   GET api/recipes
-// @desc    Get all Recipes for user
+// @route   GET api/recipe/all
+// @desc    Get all recipes
 // @access  Private
 router.get(
   '/all',
   passport.authenticate('jwt', { session: false }),
-  recipeController.getAllRecipes
-);
-
-// @route   GET api/recipe/:recipe_name
-// @desc    Get recipe by name
-// @access  Private
-router.get(
-  '/:recipe_name',
-  passport.authenticate('jwt', { session: false }),
-  recipeController.getRecipeByName
-);
-
-// @route   GET api/recipe/:recipe_id
-// @desc    Get recipe by id
-// @access  Private
-router.get(
-  '/id/:recipe_id',
-  passport.authenticate('jwt', { session: false }),
-  recipeController.getRecipeByID
+  recipeController.getAllUserRecipes
 );
 
 // @route   POST api/recipe
-// @desc    Create Recipe
+// @desc    Create recipe
 // @access  Private
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  supplierController.addRecipe
+  recipeController.addRecipe
 );
 
-// @route   POST api/recipe/ingredient
-// @desc    Add Ingredient to Recipe
+// @route   PUT api/recipe/:recipe_id
+// @desc    edit recipe
 // @access  Private
-// router.post(
-//   '/ingredient/:recipe_id/:ingredient_id',
-//   passport.authenticate('jwt', { session: false }),
-//   recipeController.addIngredientToRecipe
-// );
+router.put(
+  '/:recipe_id',
+  passport.authenticate('jwt', { session: false }),
+  recipeController.editRecipeByID
+);
 
-// @route   POST api/recipe
-// @desc    Delete Recipe
+// @route   DELETE api/recipe/:recipe_id
+// @desc    Delete recipe
 // @access  Private
 router.delete(
   '/:recipe_id',

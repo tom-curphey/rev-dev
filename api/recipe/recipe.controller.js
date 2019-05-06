@@ -1,217 +1,180 @@
 const User = require('../user/user.model');
 const Recipe = require('./recipe.model');
-const Ingredient = require('../ingredient/ingredient.model');
+const Venue = require('../venue/venue.model');
 
-// Load Input Validation
 const validateRecipeInput = require('../../config/validation/recipe');
-const validateRecipeIngredientInput = require('../../config/validation/RecipeIngredient');
 
-const getAllRecipes = (req, res) => {
-  Recipe.find({ user: req.user.id })
-    .sort({ createdAt: -1 })
-    .populate('user', ['name'])
-    .then(recipes => {
-      if (!recipes) {
-        res
-          .status(404)
-          .json({ message: "You don't have any saved recipes" });
-      }
-      console.log('Recipes: ', recipes);
-
-      return res.status(200).json({ recipes: recipes });
-    });
+const getAllUserRecipes = (req, res) => {
+  let errors = {};
+  console.log('Here');
+  Recipe.find({ user: req.user.id }).then(recipes => {
+    if (recipes.length < 1) {
+      console.log(recipes);
+      errors.recipe = 'There are no recipes for this user';
+      return res.status(404).json(errors);
+    }
+    return res.json(recipes);
+  });
 };
-module.exports.getAllRecipes = getAllRecipes;
+module.exports.getAllUserRecipes = getAllUserRecipes;
 
-const getRecipeByName = (req, res) => {
-  Recipe.findOne({ urlName: req.params.recipe_name })
-    .populate('user', ['name'])
-    .then(recipe => {
-      if (!recipe) {
-        return res
-          .status(404)
-          .json({ message: "You don't have a recipe by this name" });
-      }
-      return res.status(200).json(recipe);
-    });
-};
-module.exports.getRecipeByName = getRecipeByName;
-
-const getRecipeByID = (req, res) => {
-  Recipe.findById(req.params.recipe_id)
-    .populate('user', ['name'])
-    .then(recipe => {
-      if (!recipe) {
-        return res
-          .status(404)
-          .json({ message: "You don't have a recipe by this id" });
-      }
-      return res.status(200).json(recipe);
-    });
-};
-module.exports.getRecipeByID = getRecipeByID;
-
+// Add a recipe
 const addRecipe = (req, res) => {
-  console.log('ADD RECIPE');
-
   const { errors, isValid } = validateRecipeInput(req.body);
 
   // Check Validation
   if (!isValid) {
-    // If any errors, send status 400 with errors object
+    // If any error, sent status 400 with errors object
     return res.status(400).json(errors);
   }
 
-  const recipeFields = {};
-  recipeFields.user = req.user.id;
-  if (req.body.displayName) {
-    recipeFields.displayName = req.body.displayName;
-    recipeFields.urlName = req.body.displayName
-      .trim()
-      .replace(/\s+/g, '-')
-      .toLowerCase();
-  }
-  if (req.body.serves) recipeFields.serves = req.body.serves;
-  if (req.body.salePricePerServe)
-    recipeFields.salePricePerServe = req.body.salePricePerServe;
-  if (req.body.staffTimeInSeconds)
-    recipeFields.staffTimeInSeconds = req.body.staffTimeInSeconds;
-  if (req.body.totalCookingTime)
-    recipeFields.totalCookingTime = req.body.totalCookingTime;
-  if (req.body.expectedSalesPerDay)
-    recipeFields.expectedSalesPerDay = req.body.expectedSalesPerDay;
-  if (req.body.internalRecipe)
-    recipeFields.internalRecipe = req.body.internalRecipe;
+  Venue.findOne({ user: req.user.id })
+    .then(venue => {
+      console.log('isValid: ', isValid);
+      console.log('Venue: ', venue);
+      if (!venue) {
+        errors.venue =
+          'Please confirm the venue this recipe will be served in';
+        return res.status(400).json(errors);
+      }
 
-  Recipe.findOne({ urlName: recipeFields.urlName }).then(recipe => {
-    if (recipe) {
-      return res.status(400).json({
-        message: `You have already created a recipe called: ${
-          recipe.displayName
-        }`
-      });
-    } else {
-      const newRecipe = new Recipe(recipeFields);
+      const recipeFields = {};
+      recipeFields.user = req.user.id;
+      recipeFields.venue = venue._id;
+      if (req.body.displayName) {
+        recipeFields.displayName = req.body.displayName;
+        recipeFields.urlName = req.body.displayName
+          .trim()
+          .replace(/\s+/g, '-')
+          .toLowerCase();
+      }
+      if (req.body.serves) recipeFields.serves = req.body.serves;
+      if (req.body.salePricePerServe)
+        recipeFields.salePricePerServe = req.body.salePricePerServe;
+      if (req.body.staffTime)
+        recipeFields.staffTime = req.body.staffTime;
+      if (req.body.totalCookingTime)
+        recipeFields.totalCookingTime = req.body.totalCookingTime;
+      if (req.body.expectedSalesPerDay)
+        recipeFields.expectedSalesPerDay =
+          req.body.expectedSalesPerDay;
+      if (req.body.internalRecipe)
+        recipeFields.internalRecipe = req.body.internalRecipe;
 
-      console.log(newRecipe);
+      Recipe.findOne({
+        urlName: recipeFields.urlName
+      }).then(recipe => {
+        if (recipe) {
+          console.log('Recipe Exists: ', recipe);
+          errors.recipe =
+            'This recipe already exists for this venue, no need to create a new one.. To compare recipes use the compare recipe feature on the recipe results page. [link to page]';
+          return res.status(400).json(errors);
+        } else {
+          const newRecipe = new Recipe(recipeFields);
 
-      newRecipe
-        .save()
-        .then(recipe => {
-          if (!recipe) {
-            res.status(400).json({
-              message: 'There was an error creating your recipe'
+          newRecipe
+            .save()
+            .then(recipe => {
+              if (!recipe) {
+                errors.recipe =
+                  'There was an error saving your recipe..';
+                return res.status(400).json(errors);
+              }
+              return res.status(200).json(recipe);
+            })
+            .catch(err => {
+              console.log('Err: ', err);
             });
-          }
-          return res.status(200).json(recipe);
-        })
-        .catch(err => {
-          return res.status(400).json({
-            message: 'There was an error saving your recipe',
-            error: err
-          });
-        });
-    }
-  });
+        }
+      });
+    })
+    .catch(err => {
+      console.log('Venue Error: ', err);
+    });
 };
 module.exports.addRecipe = addRecipe;
 
-const deleteRecipeByID = (req, res) => {
-  Recipe.findByIdAndDelete(req.params.recipe_id)
-    .then(recipe => {
-      if (recipe) {
-        return res.status(200).json({
-          message: `Your successfully deleted the recipe: ${
-            recipe.displayName
-          }`
-        });
-      } else {
-        return res.status(404).json({
-          message: 'We could not find an recipe by that ID'
-        });
-      }
-    })
-    .catch(err => {
-      return res.status(404).json({
-        message: 'We could not find an recipe by that ID',
-        error: err
+const editRecipeByID = (req, res) => {
+  const { errors, isValid } = validateRecipeInput(req.body);
+
+  // Check Validation
+  if (!isValid) {
+    // If any error, sent status 400 with errors object
+    return res.status(400).json(errors);
+  }
+
+  Recipe.findOne({ _id: req.params.recipe_id }).then(recipe => {
+    if (!recipe) {
+      errors.recipe = 'Could not find the recipe you want to edit';
+      return res.status(404).json(errors);
+    }
+
+    if (req.body.venue) {
+      Venue.findById(req.body.venue).then(venue => {
+        if (!venue) {
+          errors.venue = 'The selected venue could not be found';
+          return res.status(400).json(errors);
+        }
+
+        const recipeFields = {};
+        recipeFields.user = req.user.id;
+        recipeFields.venue = req.body.venue;
+        if (req.body.displayName) {
+          recipeFields.displayName = req.body.displayName;
+          recipeFields.urlName = req.body.displayName
+            .trim()
+            .replace(/\s+/g, '-')
+            .toLowerCase();
+        }
+        if (req.body.serves) recipeFields.serves = req.body.serves;
+        if (req.body.salePricePerServe)
+          recipeFields.salePricePerServe = req.body.salePricePerServe;
+        if (req.body.staffTime)
+          recipeFields.staffTime = req.body.staffTime;
+        if (req.body.totalCookingTime)
+          recipeFields.totalCookingTime = req.body.totalCookingTime;
+        if (req.body.expectedSalesPerDay)
+          recipeFields.expectedSalesPerDay =
+            req.body.expectedSalesPerDay;
+        if (req.body.internalRecipe)
+          recipeFields.internalRecipe = req.body.internalRecipe;
+
+        Recipe.findOneAndUpdate(
+          { _id: req.params.recipe_id },
+          { $set: recipeFields },
+          { new: true }
+        )
+          .then(recipe => {
+            if (!recipe) {
+              errors.recipe = 'Unable to update recipe..';
+              return res.status(400).json(errors);
+            }
+            return res.status(200).json(recipe);
+          })
+          .catch(err => {
+            'There was an error saving the recipe to the database';
+            return res.status(400).json(err.response.data);
+          });
       });
+    } else {
+      errors.venue = 'The selected venue could not be found';
+      return res.status(400).json(errors);
+    }
+  });
+};
+module.exports.editRecipeByID = editRecipeByID;
+
+const deleteRecipeByID = (req, res) => {
+  let errors = {};
+  Recipe.findByIdAndDelete(req.params.recipe_id).then(recipe => {
+    if (!recipe) {
+      errors.recipe =
+        'There was an error deleting the recipe from the database';
+      return res.status(400).json(errors);
+    }
+    return res.status(200).json({
+      message: `${recipe.displayName} was successfully deleted`
     });
+  });
 };
 module.exports.deleteRecipeByID = deleteRecipeByID;
-
-// const addIngredientToRecipe = (req, res) => {
-//   req.body.recipe_id = req.params.recipe_id;
-//   req.body.ingredient_id = req.params.ingredient_id;
-
-//   const { errors, isValid } = validateRecipeIngredientInput(req.body);
-
-//   // console.log('Valid: ', req.body);
-
-//   // Check Validation
-//   if (!isValid) {
-//     return res.status(400).json(errors);
-//   }
-
-//   // Check if ingredient exsists to add to recipe
-//   Ingredient.findById(req.body.ingredient_id).then(ingredient => {
-//     if (!ingredient) {
-//       errors.ingredient = 'We could not find the ingredient selected';
-//       return res.status(404).json(errors);
-//     }
-
-//     // Check if recipe exists to add ingredient
-//     Recipe.findById(req.body.recipe_id).then(recipe => {
-//       if (!recipe) {
-//         errors.recipe = 'We could not find the recipe selected';
-//         return res.status(404).json(errors);
-//       }
-
-//       const ingredientData = {};
-//       ingredientData.ingredient = req.body.ingredient_id;
-//       ingredientData.amount = req.body.amount;
-//       ingredientData.metric = req.body.metric;
-
-//       ingredientIndex = recipe.ingredients.findIndex(
-//         findIngredient => findIngredient.ingredient == ingredient.id
-//       );
-
-//       console.log('ingredientIndex: ', ingredientIndex);
-
-//       if (ingredientIndex === -1) {
-//         recipe.ingredients.push(ingredientData);
-//         recipe
-//           .save()
-//           .then(recipeSaved => {
-//             if (!recipeSaved) {
-//               // errors.ingredient =
-//               // 'We could save the ingredient to this supplier';
-//               return res.status(400).json({
-//                 message:
-//                   'We could not save the ingredient to this recipe'
-//               });
-//             }
-//             return res.status(200).json(recipe);
-//           })
-//           .catch(err => {
-//             return res.status(400).json(err);
-//           });
-//       } else {
-//         recipe.ingredients[ingredientIndex].amount =
-//           ingredientData.amount;
-//         recipe.ingredients[ingredientIndex].metric =
-//           ingredientData.metric;
-
-//         recipe.save().then(recipe => {
-//           if (!recipe) {
-//             errors.recipe =
-//               'We could not update the ingredient in this recipe';
-//             return res.status(404).json(errors);
-//           }
-//           return res.status(200).json(recipe);
-//         });
-//       }
-//     });
-//   });
-// };
-// module.exports.addIngredientToRecipe = addIngredientToRecipe;

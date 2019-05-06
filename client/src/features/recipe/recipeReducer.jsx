@@ -1,17 +1,19 @@
-// import {
-//   GET_RECIPE,
-//   RECIPE_LOADING,
-//   CLEAR_CURRENT_RECIPE,
-//   SAVE_RECIPE
-// } from '../../redux/types';
+import { GET_RECIPES } from '../../redux/types';
 
 const initialState = {
-  recipe: null,
+  recipes: null,
   loading: false
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
+    case GET_RECIPES:
+      return {
+        ...state,
+        recipes: action.payload,
+        loading: false
+      };
+
     default:
       return initialState;
   }

@@ -26,6 +26,7 @@ import Password from './features/password/Password';
 import AddVenue from './features/venue/AddVenue';
 import EditVenue from './features/venue/EditVenue';
 import AddRecipe from './features/recipe/AddRecipe';
+import Recipes from './features/recipe/Recipes';
 import Ingredient from './features/ingredient/Ingredient';
 
 import './App.css';
@@ -86,6 +87,13 @@ class App extends Component {
                 exact
                 path="/add-recipe"
                 component={AddRecipe}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
+                path="/recipes"
+                component={Recipes}
               />
             </Switch>
             <Switch>

@@ -28,7 +28,7 @@ const RecipeSchema = new Schema(
     salePricePerServe: {
       type: Number
     },
-    staffTimeInSeconds: {
+    staffTime: {
       type: Number
     },
     totalCookingTime: {

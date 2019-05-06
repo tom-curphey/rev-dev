@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GET_ERRORS, GET_RECIPES } from '../../redux/types';
 // import {
 //   GET_VENUE,
 //   VENUE_LOADING
@@ -29,6 +30,23 @@ import axios from 'axios';
 //       })
 //     );
 // };
+
+export const getRecipes = () => dispatch => {
+  console.log('Called');
+
+  axios
+    .get('/api/recipe/all')
+    .then(res => {
+      dispatch({
+        type: GET_RECIPES,
+        payload: res.data
+      });
+    })
+    .catch({
+      GET_RECIPES,
+      payload: {}
+    });
+};
 
 export const addRecipe = recipeData => dispatch => {
   // dispatch(setVenueLoading());

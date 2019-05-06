@@ -78,8 +78,6 @@ const addSupplier = (req, res) => {
     return res.status(400).json(errors);
   }
 
-  console.log('Al Good');
-
   const supplierFields = {};
   if (req.body.displayName) {
     supplierFields.displayName = req.body.displayName;
