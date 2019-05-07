@@ -33,8 +33,6 @@ export const setRecipeLoading = () => {
 
 export const addRecipe = recipeData => dispatch => {
   dispatch(setRecipeLoading());
-  console.log(recipeData);
-
   axios
     .post('/api/recipe', recipeData)
     .then(res => {
@@ -51,10 +49,51 @@ export const addRecipe = recipeData => dispatch => {
     });
 };
 
-export const setSelectedRecipe = (recipe, history) => dispatch => {
-  history.push(`/edit-recipe/${recipe.urlName}`);
+export const getSelectedRecipeByID = recipeID => dispatch => {
+  axios
+    .get(`/api/recipe/${recipeID}`)
+    .then(res => {
+      dispatch(setSelectedRecipe(res.data));
+    })
+    .catch(err => {
+      console.log('err', err);
+
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      });
+    });
+};
+
+export const setSelectedRecipe = recipeData => dispatch => {
+  const newRecipe = {};
+  newRecipe._id = recipeData._id;
+  newRecipe.displayName = recipeData.displayName;
+  newRecipe.serves = recipeData.serves.toString();
+  newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay.toString();
+  newRecipe.salePricePerServe = recipeData.salePricePerServe.toString();
+  newRecipe.staffTime = recipeData.staffTime.toString();
+  newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
+  newRecipe.internalRecipe = recipeData.internalRecipe;
+  newRecipe.ingredients = recipeData.ingredients;
+  console.log('newRecipe: ', newRecipe);
   dispatch({
     type: SET_SELECTED_RECIPE,
-    payload: recipe
+    payload: newRecipe
   });
+};
+
+export const editRecipe = (recipeData, venueID) => dispatch => {
+  console.log(recipeData);
+  axios
+    .put(`/api/recipe/${recipeData._id}`, recipeData)
+    .then(res => {
+      console.log('res.data: ', res.data);
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+    });
 };

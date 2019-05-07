@@ -18,6 +18,20 @@ const getAllUserRecipes = (req, res) => {
 };
 module.exports.getAllUserRecipes = getAllUserRecipes;
 
+const getRecipeByID = (req, res) => {
+  Recipe.findOne({
+    user: req.user.id,
+    _id: req.params.recipe_id
+  }).then(recipe => {
+    if (!recipe) {
+      errors.recipe = 'This recipe does not exist';
+      return res.status(404).json(errors);
+    }
+    return res.json(recipe);
+  });
+};
+module.exports.getRecipeByID = getRecipeByID;
+
 // Add a recipe
 const addRecipe = (req, res) => {
   const { errors, isValid } = validateRecipeInput(req.body);

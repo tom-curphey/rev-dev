@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getCurrentVenue } from '../venue/venueActions';
+import { getSelectedRecipeByID } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 import RecipeDetails from './RecipeDetails';
@@ -16,13 +18,17 @@ class EditRecipe extends Component {
   };
 
   componentDidMount() {
-    if (this.props.recipe.selectedRecipe === null) {
-      this.props.history.push('/recipes');
-    } else {
-      this.setState({
-        selectedRecipe: this.props.recipe.selectedRecipe
-      });
-    }
+    this.props.getSelectedRecipeByID(
+      this.props.match.params.recipe_id
+    );
+    this.props.getCurrentVenue();
+    // if (this.props.recipe.selectedRecipe === null) {
+    //   this.props.history.push('/recipes');
+    // } else {
+    //   this.setState({
+    //     selectedRecipe: this.props.recipe.selectedRecipe
+    //   });
+    // }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -30,17 +36,8 @@ class EditRecipe extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log('prevProps: ', prevProps.recipe);
-    console.log('this.props: ', this.props.recipe);
-
-    if (
-      prevProps.recipe.selectedRecipe !==
-      this.props.recipe.selectedRecipe
-    ) {
-      this.setState({
-        selectedRecipe: this.props.recipe.selectedRecipe
-      });
-    }
+    // console.log('prevProps: ', prevProps.recipe);
+    // console.log('this.props: ', this.props.recipe);
   }
 
   handleChangeToggle = selectedToggle => {
@@ -55,7 +52,7 @@ class EditRecipe extends Component {
     let recipeTitle;
     let recipeToggleButtons;
     if (loading === true || selectedRecipe === null) {
-      recipeContent = <Spinner />;
+      recipeTitle = <h1>Edit Recipe</h1>;
     } else {
       recipeTitle = (
         <h1>
@@ -63,7 +60,6 @@ class EditRecipe extends Component {
           {capitalizeFirstLetter(toggle)}
         </h1>
       );
-
       recipeToggleButtons = (
         <div>
           <button onClick={() => this.handleChangeToggle('details')}>
@@ -97,7 +93,10 @@ class EditRecipe extends Component {
   }
 }
 
-const actions = {};
+const actions = {
+  getSelectedRecipeByID,
+  getCurrentVenue
+};
 
 const mapState = state => ({
   recipe: state.recipe,
@@ -106,7 +105,9 @@ const mapState = state => ({
 
 EditRecipe.propTypes = {
   recipe: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  getCurrentVenue: PropTypes.func.isRequired,
+  getSelectedRecipeByID: PropTypes.func.isRequired
 };
 
 export default connect(

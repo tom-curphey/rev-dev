@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { getRecipes, setSelectedRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 
@@ -28,12 +28,14 @@ class RecipeList extends Component {
         recipeList = (
           <ul>
             {recipes.map((recipe, i) => (
-              <li
-                style={{ cursor: 'pointer' }}
-                key={i}
-                onClick={() => this.handleOnClick(recipe)}
-              >
-                {recipe.displayName}
+              <li>
+                <Link
+                  style={{ cursor: 'pointer' }}
+                  key={i}
+                  to={`/edit-recipe/${recipe._id}/${recipe.urlName}`}
+                >
+                  {recipe.displayName}
+                </Link>
               </li>
             ))}
           </ul>

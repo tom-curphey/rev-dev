@@ -18,7 +18,7 @@ import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 export const getIngredients = () => dispatch => {
   dispatch(setIngredientsLoading());
   axios
-    .get('api/ingredient/all')
+    .get('/api/ingredient/all')
     .then(res => {
       const sortedIngredients = sortIngredientsIntoAbcOrder(res.data);
       dispatch({

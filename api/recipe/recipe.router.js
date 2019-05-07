@@ -12,6 +12,15 @@ router.get(
   recipeController.getAllUserRecipes
 );
 
+// @route   GET api/recipe/:recipe_id
+// @desc    Get recipe by id
+// @access  Private
+router.get(
+  '/:recipe_id',
+  passport.authenticate('jwt', { session: false }),
+  recipeController.getRecipeByID
+);
+
 // @route   POST api/recipe
 // @desc    Create recipe
 // @access  Private

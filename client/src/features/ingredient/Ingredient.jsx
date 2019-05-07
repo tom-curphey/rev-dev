@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import isEmpty from '../../utils/validation/is.empty';
 import roundNumber from '../../utils/functions/roundNumber';
 import { getUserProfile } from '../profile/profileActions';
+import { getCurrentVenue } from '../venue/venueActions';
 import {
   getIngredients,
   addOrEditProfileIngredientSupplier,
@@ -34,6 +35,7 @@ class Ingredient extends Component {
     this.props.getUserProfile();
     this.props.getIngredients();
     this.props.getSuppliers();
+    this.props.getCurrentVenue();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -352,7 +354,8 @@ const actions = {
   closeAddIngredientPanel,
   addNewIngredient,
   clearIngredients,
-  clearSuppliers
+  clearSuppliers,
+  getCurrentVenue
 };
 
 const mapState = state => ({
@@ -366,6 +369,7 @@ const mapState = state => ({
 Ingredient.propTypes = {
   getUserProfile: PropTypes.func.isRequired,
   getIngredients: PropTypes.func.isRequired,
+  getCurrentVenue: PropTypes.func.isRequired,
   setSelectedIngredient: PropTypes.func.isRequired,
   getSuppliers: PropTypes.func.isRequired,
   addOrEditProfileIngredientSupplier: PropTypes.func.isRequired,

@@ -14,12 +14,13 @@ export const getCurrentVenue = () => dispatch => {
   dispatch(setVenueLoading());
   axios
     .get('/api/venue')
-    .then(res =>
+    .then(res => {
+      console.log('res.data: ', res.data);
       dispatch({
         type: GET_VENUE,
         payload: res.data
-      })
-    )
+      });
+    })
     // If there is no venue that is ok and we want to
     // pass an emply object to let the component know to
     // Promote the user to add a venue

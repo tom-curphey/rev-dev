@@ -39,7 +39,7 @@ router.post(
   ingredientController.addIngredient
 );
 
-// @route   POST api/ingredient
+// @route   POST api/ingredient/:ingredient_id
 // @desc    Edit ingredient
 // @access  Private
 router.put(

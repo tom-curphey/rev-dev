@@ -10,7 +10,7 @@ class AddRecipe extends Component {
     displayName: '',
     serves: '',
     salePricePerServe: '',
-    staffTimeInSeconds: '',
+    staffTime: '',
     totalCookingTime: '',
     expectedSalesPerDay: '',
     internalRecipe: false,
@@ -39,7 +39,7 @@ class AddRecipe extends Component {
       displayName: this.state.displayName,
       serves: this.state.serves,
       salePricePerServe: this.state.salePricePerServe,
-      staffTimeInSeconds: this.state.staffTimeInSeconds,
+      staffTime: this.state.staffTime,
       totalCookingTime: this.state.totalCookingTime,
       expectedSalesPerDay: this.state.expectedSalesPerDay,
       internalRecipe: this.state.internalRecipe
@@ -53,7 +53,7 @@ class AddRecipe extends Component {
       displayName,
       serves,
       salePricePerServe,
-      staffTimeInSeconds,
+      staffTime,
       totalCookingTime,
       expectedSalesPerDay,
       internalRecipe,
@@ -99,12 +99,12 @@ class AddRecipe extends Component {
           />
           <TextInput
             placeholder="How much time do staff spend creating the recipe"
-            name="staffTimeInSeconds"
+            name="staffTime"
             type="text"
-            value={staffTimeInSeconds}
+            value={staffTime}
             onChange={this.handleOnChange}
             label="Staff Input In Minutes"
-            error={errors.staffTimeInSeconds}
+            error={errors.staffTime}
           />
           <TextInput
             placeholder="How long does the total recipe take to make?"

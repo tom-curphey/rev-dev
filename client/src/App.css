@@ -515,3 +515,14 @@ section.recipeNav div {
 section.recipeNav div button {
   margin-left: 10px;
 }
+
+section.recipeDetails label {
+  display: grid;
+  grid-template-columns: auto 120px;
+  grid-gap: 10px;
+  margin-bottom: 10px;
+}
+section.recipeDetails input {
+  width: 100%;
+  height: 25px;
+}
