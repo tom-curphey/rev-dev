@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SelectInput from '../../utils/input/SelectInput';
+import CreatableSelectInput from '../../utils/input/CreatableSelectInput';
 
 const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
   const getSelectedValue = selectedValue => {
@@ -38,7 +38,7 @@ const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
     });
 
     formContent = (
-      <SelectInput
+      <CreatableSelectInput
         label="Search Supplier"
         name="supplier"
         options={options}

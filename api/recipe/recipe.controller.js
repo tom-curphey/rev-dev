@@ -22,6 +22,9 @@ module.exports.getAllUserRecipes = getAllUserRecipes;
 const addRecipe = (req, res) => {
   const { errors, isValid } = validateRecipeInput(req.body);
 
+  console.log('isValid: ', isValid);
+  console.log('errors: ', errors);
+
   // Check Validation
   if (!isValid) {
     // If any error, sent status 400 with errors object

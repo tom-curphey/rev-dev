@@ -1,39 +1,15 @@
 import axios from 'axios';
-import { GET_ERRORS, GET_RECIPES } from '../../redux/types';
-// import {
-//   GET_VENUE,
-//   VENUE_LOADING
-//   // CLEAR_CURRENT_VENUE,
-//   // GET_ERRORS,
-//   // SET_CURRENT_USER,
-//   // SAVE_VENUE
-// } from '../../redux/types';
-
-// // Get current venue
-// export const getCurrentVenue = () => dispatch => {
-//   dispatch(setVenueLoading());
-//   axios
-//     .get('/api/venue')
-//     .then(res =>
-//       dispatch({
-//         type: GET_VENUE,
-//         payload: res.data
-//       })
-//     )
-//     // If there is no venue that is ok and we want to
-//     // pass an emply object to let the component know to
-//     // Promote the user to add a venue
-//     .catch(err =>
-//       dispatch({
-//         type: GET_VENUE,
-//         payload: {}
-//       })
-//     );
-// };
+import {
+  GET_ERRORS,
+  GET_RECIPES,
+  RECIPE_LOADING,
+  ADD_RECIPE,
+  SET_SELECTED_RECIPE
+} from '../../redux/types';
 
 export const getRecipes = () => dispatch => {
   console.log('Called');
-
+  dispatch(setRecipeLoading());
   axios
     .get('/api/recipe/all')
     .then(res => {
@@ -48,7 +24,37 @@ export const getRecipes = () => dispatch => {
     });
 };
 
+// Ingredients loading
+export const setRecipeLoading = () => {
+  return {
+    type: RECIPE_LOADING
+  };
+};
+
 export const addRecipe = recipeData => dispatch => {
-  // dispatch(setVenueLoading());
-  axios.post('/api');
+  dispatch(setRecipeLoading());
+  console.log(recipeData);
+
+  axios
+    .post('/api/recipe', recipeData)
+    .then(res => {
+      dispatch({
+        type: ADD_RECIPE,
+        payload: res.data
+      });
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      });
+    });
+};
+
+export const setSelectedRecipe = (recipe, history) => dispatch => {
+  history.push(`/edit-recipe/${recipe.urlName}`);
+  dispatch({
+    type: SET_SELECTED_RECIPE,
+    payload: recipe
+  });
 };

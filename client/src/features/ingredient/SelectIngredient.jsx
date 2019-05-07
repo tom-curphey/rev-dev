@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import SelectInput from '../../utils/input/SelectInput';
+import CreatableSelectInput from '../../utils/input/CreatableSelectInput';
 import { removeSelectedIngredient } from './ingredientActions';
 
 class SelectIngredient extends Component {
@@ -93,7 +93,7 @@ class SelectIngredient extends Component {
       });
 
       formContent = (
-        <SelectInput
+        <CreatableSelectInput
           label="Search Ingredient"
           value={selectedValue}
           name="ingredient"

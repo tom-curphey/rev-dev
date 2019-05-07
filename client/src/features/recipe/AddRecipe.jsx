@@ -13,13 +13,19 @@ class AddRecipe extends Component {
     staffTimeInSeconds: '',
     totalCookingTime: '',
     expectedSalesPerDay: '',
-    internalRecipe: 'No',
+    internalRecipe: false,
     errors: {}
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.errors) {
+  //     this.setState({ errors: nextProps.errors });
+  //   }
+  // }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors });
     }
   }
 
@@ -29,7 +35,6 @@ class AddRecipe extends Component {
 
   handleOnSubmit = e => {
     e.preventDefault();
-    alert('Add Recipe');
     const recipeData = {
       displayName: this.state.displayName,
       serves: this.state.serves,
@@ -57,13 +62,13 @@ class AddRecipe extends Component {
 
     // Select options for status
     const options = [
-      { label: 'Yes', value: 'yes' },
-      { label: 'No', value: 'no' }
+      { label: 'No', value: false },
+      { label: 'Yes', value: true }
     ];
 
     return (
       <section className="recipe">
-        <h1>Add Recipe</h1>
+        <h1>Add Recipe Details</h1>
         <form onSubmit={this.handleOnSubmit}>
           <TextInput
             placeholder="Please provide your Recipe Name"
@@ -71,7 +76,7 @@ class AddRecipe extends Component {
             type="text"
             value={displayName}
             onChange={this.handleOnChange}
-            label="Venue Name"
+            label="Recipe Name"
             error={errors.displayName}
           />
           <TextInput
@@ -121,7 +126,6 @@ class AddRecipe extends Component {
           />
           <SelectInput
             // info="Is this recipe made internally to be added to other recipes?"
-            placeholder="Yes or No?"
             name="internalRecipe"
             options={options}
             value={internalRecipe}

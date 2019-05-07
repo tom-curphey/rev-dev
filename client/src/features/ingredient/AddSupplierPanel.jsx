@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import TextInput from '../../utils/input/TextInput';
-import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
+import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 import {
   addNewSupplier,
   closeAddSupplierPanel

@@ -8,7 +8,7 @@ import {
   GET_ERRORS,
   REMOVE_SUPPLIERS
 } from '../../redux/types';
-import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
+import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 import { addAndSetSelectedIngredientSupplier } from './ingredientActions';
 
 // Get Suppliers and set redux state with suppliers

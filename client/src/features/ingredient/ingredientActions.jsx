@@ -12,11 +12,11 @@ import {
   CLOSE_INGREDIENT_PANEL,
   REMOVE_INGREDIENTS
 } from '../../redux/types';
-import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
+import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 
 // Get Ingredients and set redux state with ingredients
 export const getIngredients = () => dispatch => {
-  // dispatch(setIngredientsLoading());
+  dispatch(setIngredientsLoading());
   axios
     .get('api/ingredient/all')
     .then(res => {

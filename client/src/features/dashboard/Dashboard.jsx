@@ -43,7 +43,7 @@ class Dashboard extends Component {
           <div>
             <h1>Welcome {user.name}</h1>
             <Link to="/edit-venue">Edit Venue</Link>
-            <Link to="/add-recipe">Add Recipe</Link>
+            <Link to="/recipes">Recipes</Link>
             <Link to="/ingredient">Ingredients</Link>
             <button onClick={this.handleDeleteVenue}>
               Delete Account

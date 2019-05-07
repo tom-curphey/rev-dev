@@ -3,31 +3,26 @@ import CreatableSelect from 'react-select/lib/Creatable';
 
 const SelectInput = ({
   options,
+  label,
   getSelectedValue,
   checkFocus,
-  value
+  onChange,
+  value,
+  name
 }) => {
-  const handleChange = (newValue, actionMeta) => {
-    if (newValue) {
-      // Pass the selected value to the parent component
-      getSelectedValue(newValue);
-    }
-  };
-
-  // What to do when input is being typed
-  // const handleInputChange = (inputValue, actionMeta) => {
-  //   console.log('Input Changed..');
-  // };
-
+  const selectOptions = options.map(option => (
+    <option key={option.label} value={option.value}>
+      {option.label}
+    </option>
+  ));
   return (
     <div>
-      <CreatableSelect
-        isClearable
-        onChange={handleChange}
-        // onInputChange={handleInputChange}
-        value={value}
-        options={options}
-      />
+      <label htmlFor={name}>
+        {label}{' '}
+        <select name={name} value={value} onChange={onChange}>
+          {selectOptions}
+        </select>
+      </label>
     </div>
   );
 };
