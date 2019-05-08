@@ -15,7 +15,7 @@ export const getCurrentVenue = () => dispatch => {
   axios
     .get('/api/venue')
     .then(res => {
-      console.log('res.data: ', res.data);
+      // console.log('res.data: ', res.data);
       dispatch({
         type: GET_VENUE,
         payload: res.data

@@ -6,9 +6,10 @@ import {
   ADD_RECIPE,
   SET_SELECTED_RECIPE
 } from '../../redux/types';
+import { getIngredients } from '../ingredient/ingredientActions';
 
 export const getRecipes = () => dispatch => {
-  console.log('Called');
+  // console.log('Called');
   dispatch(setRecipeLoading());
   axios
     .get('/api/recipe/all')
@@ -53,10 +54,11 @@ export const getSelectedRecipeByID = recipeID => dispatch => {
   axios
     .get(`/api/recipe/${recipeID}`)
     .then(res => {
+      axios.get(`/api/recipe/${recipeID}`);
       dispatch(setSelectedRecipe(res.data));
     })
     .catch(err => {
-      console.log('err', err);
+      // console.log('err', err);
 
       dispatch({
         type: GET_ERRORS,
@@ -77,7 +79,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
   newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
   newRecipe.internalRecipe = recipeData.internalRecipe;
   newRecipe.ingredients = recipeData.ingredients;
-  console.log('new Selected Recipe: ', newRecipe);
+  // console.log('new Selected Recipe: ', newRecipe);
   dispatch({
     type: SET_SELECTED_RECIPE,
     payload: newRecipe
@@ -85,7 +87,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
 };
 
 export const editRecipe = (recipeData, venueID) => dispatch => {
-  console.log(recipeData);
+  // console.log(recipeData);
   dispatch(setRecipeLoading());
   axios
     .put(`/api/recipe/${recipeData._id}`, recipeData)
@@ -98,4 +100,14 @@ export const editRecipe = (recipeData, venueID) => dispatch => {
         payload: err.response.data
       });
     });
+};
+
+export const addSuppliersToRecipeIngredients = (
+  selectedRecipe,
+  Ingredients,
+  Profile
+) => dispatch => {
+  console.log('selectedRecipe', selectedRecipe);
+  selectedRecipe.kalindi = 'hi';
+  dispatch(setSelectedRecipe(selectedRecipe));
 };

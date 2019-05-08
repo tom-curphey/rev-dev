@@ -10,6 +10,7 @@ import {
   setCurrentUser,
   logoutUser
 } from './features/auth/authActions';
+import { getUserProfile } from './features/profile/profileActions';
 import { clearCurrentVenue } from './features/venue/venueActions';
 import { Provider } from 'react-redux';
 import store from './redux/store';
@@ -40,6 +41,7 @@ if (localStorage.jwtToken) {
   const decodedData = jwt_decode(localStorage.jwtToken);
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decodedData));
+  store.dispatch(getUserProfile());
   // Check for expired token
   const currentTime = Date.now() / 1000;
   if (decodedData.exp < currentTime) {

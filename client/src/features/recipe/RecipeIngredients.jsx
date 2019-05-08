@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../../utils/spinner/Spinner';
+import SelectIngredient from './SelectIngredient';
+import RecipeIngredientForm from './RecipeIngredientForm';
 
 class RecipeIngredients extends Component {
   state = {
@@ -10,9 +12,6 @@ class RecipeIngredients extends Component {
 
   componentDidMount() {
     if (this.props.recipe.selectedRecipe !== null) {
-      // if (this.props.recipe.selectedRecipe.ingredients.length === 0) {
-      console.log('Mounted...');
-
       this.setState({
         recipeIngredients: this.props.recipe.selectedRecipe
           .ingredients
@@ -25,8 +24,8 @@ class RecipeIngredients extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log('prevProps: ', prevProps.recipe.selectedRecipe);
-    console.log('this.props: ', this.props.recipe.selectedRecipe);
+    // console.log('prevProps: ', prevProps.recipe.selectedRecipe);
+    // console.log('this.props: ', this.props.recipe.selectedRecipe);
 
     if (
       prevProps.recipe.selectedRecipe !==
@@ -41,17 +40,37 @@ class RecipeIngredients extends Component {
 
   render() {
     const { selectedRecipe, loading } = this.props.recipe;
+    const { ingredients } = this.props.ingredient;
 
-    let recipeContent;
+    if (ingredients !== null) {
+      console.log('ingredients: ', ingredients);
+    }
+
+    let recipeIngredientContent;
     if (loading === true || selectedRecipe === null) {
-      recipeContent = <Spinner />;
+      recipeIngredientContent = <Spinner />;
     } else {
-      recipeContent = (
-        <h1>Edit Recipe {selectedRecipe.displayName} Ingredients</h1>
+      recipeIngredientContent = (
+        <React.Fragment>
+          <section className="recipeIngredientsHeader">
+            <div>Edit</div>
+            <div>Ingredients</div>
+            <div>Quantity</div>
+            <div>Price</div>
+            <div>Grams</div>
+            <div>del</div>
+          </section>
+          <RecipeIngredientForm />
+          <SelectIngredient />
+        </React.Fragment>
       );
     }
 
-    return <section>{recipeContent}</section>;
+    return (
+      <section className="recipeIngredients">
+        {recipeIngredientContent}
+      </section>
+    );
   }
 }
 
@@ -59,11 +78,13 @@ const actions = {};
 
 const mapState = state => ({
   recipe: state.recipe,
+  ingredient: state.ingredient,
   errors: state.errors
 });
 
 RecipeIngredients.propTypes = {
   recipe: PropTypes.object.isRequired,
+  ingredient: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 
