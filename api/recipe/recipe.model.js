@@ -48,12 +48,16 @@ const RecipeSchema = new Schema(
           ref: 'ingredient',
           required: true
         },
-        amount: {
+        quantity: {
           type: Number,
           required: true
         },
         metric: {
           type: String,
+          required: true
+        },
+        grams: {
+          type: Number,
           required: true
         }
       }

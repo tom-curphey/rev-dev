@@ -48,4 +48,13 @@ router.delete(
   recipeController.deleteRecipeByID
 );
 
+// @route   POST api/recipe/ingredient/:recipe_id/:ingredient_id
+// @desc    Add recipe ingredient
+// @access  Private
+router.post(
+  '/ingredient/:recipe_id/:ingredient_id',
+  passport.authenticate('jwt', { session: false }),
+  recipeController.addOrEditRecipeIngredient
+);
+
 module.exports = router;

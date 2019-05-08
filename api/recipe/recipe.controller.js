@@ -3,6 +3,7 @@ const Recipe = require('./recipe.model');
 const Venue = require('../venue/venue.model');
 
 const validateRecipeInput = require('../../config/validation/recipe');
+const validateRecipeIngredientInput = require('../../config/validation/recipeIngredient');
 
 const getAllUserRecipes = (req, res) => {
   let errors = {};
@@ -195,3 +196,95 @@ const deleteRecipeByID = (req, res) => {
   });
 };
 module.exports.deleteRecipeByID = deleteRecipeByID;
+
+const addOrEditRecipeIngredient = (req, res) => {
+  if (req.params.recipe_id) {
+    req.body.recipe_id = req.params.recipe_id;
+  }
+  if (req.params.ingredient_id) {
+    req.body.ingredient_id = req.params.ingredient_id;
+  }
+
+  const { errors, isValid } = validateRecipeIngredientInput(req.body);
+
+  // Check Validation
+  if (!isValid) {
+    // If any error, sent status 400 with errors object
+    return res.status(400).json(errors);
+  }
+
+  Recipe.findById(req.body.recipe_id)
+    .then(recipe => {
+      if (!recipe) {
+        errors.recipe = 'Selected recipe could not be found';
+        res.status(404).json(errors);
+      }
+
+      Ingredient.findById(req.body.ingredient_id)
+        .then(ingredient => {
+          if (!ingredient) {
+            errors.recipe = 'Selected ingredient could not be found';
+            res.status(404).json(errors);
+          }
+
+          const RecipeIngredientData = {};
+          RecipeIngredientData.ingredient = req.body.ingredient_id;
+          RecipeIngredientData.quantity = req.body.quantity;
+          RecipeIngredientData.metric = req.body.metric;
+          RecipeIngredientData.grams = req.body.grams;
+
+          let updateCheck = 0;
+          for (
+            let index = 0;
+            index < recipe.ingredients.length;
+            index++
+          ) {
+            if (
+              recipe.ingredients[index].ingredient ==
+              req.body.ingredient_id
+            ) {
+              RecipeIngredientData._id =
+                recipe.ingredients[index]._id;
+              recipe.ingredients[index] = RecipeIngredientData;
+              updateCheck = 1;
+            }
+          }
+
+          console.log('recipe.ingredients: ', recipe.ingredients);
+
+          if (updateCheck === 0) {
+            console.log('ADD RECIPE INGREDIENT');
+            recipe.ingredients.push(RecipeIngredientData);
+          }
+
+          recipe
+            .save()
+            .then(recipeSaved => {
+              if (!recipeSaved) {
+                errors.recipe =
+                  'There was an error saving the ingredient to the recipe';
+                return res.status(400).json(err.response.data);
+              }
+              res.status(200).json(recipe);
+            })
+            .catch(err => {
+              errors.recipe =
+                'There was an error saving the ingredient to the recipe in the database';
+              return res.status(400).json(err);
+            });
+        })
+        .catch(err => {
+          errors.recipe =
+            'There was an error retrieving the ingredient to add to the recipe in the database';
+          return res.status(400).json(err);
+        });
+    })
+    .catch(err => {
+      errors.recipe =
+        'There was an error adding the ingredient to the recipe in the database';
+      return res.status(400).json(err.response.data);
+    });
+
+  // console.log('isValid REQ: ', req.body);
+};
+module.exports.addOrEditRecipeIngredient = addOrEditRecipeIngredient;
