@@ -100,6 +100,13 @@ class App extends Component {
             <Switch>
               <PrivateRoute
                 exact
+                path="/edit-recipe/:recipe_id/:recipe_name/:recipe_toggle"
+                component={EditRecipe}
+              />
+            </Switch>
+            <Switch>
+              <PrivateRoute
+                exact
                 path="/recipes"
                 component={Recipes}
               />

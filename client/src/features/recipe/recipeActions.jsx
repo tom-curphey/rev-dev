@@ -69,6 +69,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
   const newRecipe = {};
   newRecipe._id = recipeData._id;
   newRecipe.displayName = recipeData.displayName;
+  newRecipe.urlName = recipeData.urlName;
   newRecipe.serves = recipeData.serves.toString();
   newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay.toString();
   newRecipe.salePricePerServe = recipeData.salePricePerServe.toString();
@@ -76,7 +77,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
   newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
   newRecipe.internalRecipe = recipeData.internalRecipe;
   newRecipe.ingredients = recipeData.ingredients;
-  console.log('newRecipe: ', newRecipe);
+  console.log('new Selected Recipe: ', newRecipe);
   dispatch({
     type: SET_SELECTED_RECIPE,
     payload: newRecipe
@@ -85,10 +86,11 @@ export const setSelectedRecipe = recipeData => dispatch => {
 
 export const editRecipe = (recipeData, venueID) => dispatch => {
   console.log(recipeData);
+  dispatch(setRecipeLoading());
   axios
     .put(`/api/recipe/${recipeData._id}`, recipeData)
     .then(res => {
-      console.log('res.data: ', res.data);
+      dispatch(setSelectedRecipe(res.data));
     })
     .catch(err => {
       dispatch({

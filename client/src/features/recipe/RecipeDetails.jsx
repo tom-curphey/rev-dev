@@ -93,9 +93,6 @@ class RecipeDetails extends Component {
       { label: 'Yes', value: true }
     ];
 
-    console.log('loading: ', loading);
-    console.log('selectedRecipe: ', selectedRecipe);
-
     let recipeContent;
     if (loading === true || selectedRecipe === null) {
       recipeContent = <Spinner />;

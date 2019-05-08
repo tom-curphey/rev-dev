@@ -512,7 +512,15 @@ section.recipeNav div {
   margin-top: 20px;
 }
 
-section.recipeNav div button {
+section.recipeNav div a {
+  padding: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid #e0e0e0;
+  background-color: #f1f1f1;
+  display: flex;
+  align-self: center;
+  color: #000;
   margin-left: 10px;
 }
 

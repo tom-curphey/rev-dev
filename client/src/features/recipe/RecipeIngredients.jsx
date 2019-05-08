@@ -4,12 +4,18 @@ import PropTypes from 'prop-types';
 import Spinner from '../../utils/spinner/Spinner';
 
 class RecipeIngredients extends Component {
+  state = {
+    recipeIngredients: []
+  };
+
   componentDidMount() {
-    if (this.props.recipe.selectedRecipe === null) {
-      this.props.history.push('/recipes');
-    } else {
+    if (this.props.recipe.selectedRecipe !== null) {
+      // if (this.props.recipe.selectedRecipe.ingredients.length === 0) {
+      console.log('Mounted...');
+
       this.setState({
-        selectedRecipe: this.props.recipe.selectedRecipe
+        recipeIngredients: this.props.recipe.selectedRecipe
+          .ingredients
       });
     }
   }
@@ -19,15 +25,16 @@ class RecipeIngredients extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log('prevProps: ', prevProps.recipe);
-    console.log('this.props: ', this.props.recipe);
+    console.log('prevProps: ', prevProps.recipe.selectedRecipe);
+    console.log('this.props: ', this.props.recipe.selectedRecipe);
 
     if (
       prevProps.recipe.selectedRecipe !==
       this.props.recipe.selectedRecipe
     ) {
       this.setState({
-        selectedRecipe: this.props.recipe.selectedRecipe
+        recipeIngredients: this.props.recipe.selectedRecipe
+          .ingredients
       });
     }
   }

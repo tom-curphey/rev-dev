@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { getCurrentVenue } from '../venue/venueActions';
 import { getSelectedRecipeByID } from './recipeActions';
-import Spinner from '../../utils/spinner/Spinner';
+import { getIngredients } from '../ingredient/ingredientActions';
 import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 import RecipeDetails from './RecipeDetails';
 import RecipeIngredients from './RecipeIngredients';
@@ -12,9 +13,6 @@ import RecipeResults from './RecipeResults';
 class EditRecipe extends Component {
   state = {
     toggle: 'details'
-    // recipeDetails: true,
-    // recipeIngredients: false,
-    // recipeResults: false
   };
 
   componentDidMount() {
@@ -22,13 +20,12 @@ class EditRecipe extends Component {
       this.props.match.params.recipe_id
     );
     this.props.getCurrentVenue();
-    // if (this.props.recipe.selectedRecipe === null) {
-    //   this.props.history.push('/recipes');
-    // } else {
-    //   this.setState({
-    //     selectedRecipe: this.props.recipe.selectedRecipe
-    //   });
-    // }
+    this.props.getIngredients();
+    if (this.props.match.params.recipe_toggle) {
+      this.setState({
+        toggle: this.props.match.params.recipe_toggle
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,6 +33,15 @@ class EditRecipe extends Component {
       this.setState({ errors: this.props.errors });
     }
 
+    if (
+      prevProps.match.params.recipe_toggle !==
+      this.props.match.params.recipe_toggle
+    ) {
+      this.setState({
+        toggle: this.props.match.params.recipe_toggle
+      });
+    }
+    // console.log(this.props.match.params.recipe_toggle);
     // console.log('prevProps: ', prevProps.recipe);
     // console.log('this.props: ', this.props.recipe);
   }
@@ -47,47 +53,65 @@ class EditRecipe extends Component {
   render() {
     const { selectedRecipe, loading } = this.props.recipe;
     const { toggle } = this.state;
+    const { recipe_name } = this.props.match.params;
 
     let recipeContent;
     let recipeTitle;
     let recipeToggleButtons;
     if (loading === true || selectedRecipe === null) {
-      recipeTitle = <h1>Edit Recipe</h1>;
+      recipeTitle = (
+        <h1>
+          {capitalizeFirstLetter(recipe_name)}{' '}
+          {capitalizeFirstLetter(toggle)}
+        </h1>
+      );
     } else {
       recipeTitle = (
         <h1>
-          {selectedRecipe.displayName} Recipe{' '}
-          {capitalizeFirstLetter(toggle)}
+          {selectedRecipe.displayName} {capitalizeFirstLetter(toggle)}
         </h1>
       );
       recipeToggleButtons = (
         <div>
-          <button onClick={() => this.handleChangeToggle('details')}>
+          <Link
+            style={{ cursor: 'pointer' }}
+            to={`/edit-recipe/${selectedRecipe._id}/${
+              selectedRecipe.urlName
+            }/details`}
+          >
             Details
-          </button>
-          <button
-            onClick={() => this.handleChangeToggle('ingredients')}
+          </Link>
+          <Link
+            style={{ cursor: 'pointer' }}
+            to={`/edit-recipe/${selectedRecipe._id}/${
+              selectedRecipe.urlName
+            }/ingredients`}
           >
             Ingredients
-          </button>
-          <button onClick={() => this.handleChangeToggle('results')}>
+          </Link>
+          <Link
+            style={{ cursor: 'pointer' }}
+            to={`/edit-recipe/${selectedRecipe._id}/${
+              selectedRecipe.urlName
+            }/results`}
+          >
             Results
-          </button>
+          </Link>
         </div>
       );
-
-      recipeContent = (
-        <React.Fragment>
-          <section className="recipeNav">
-            {recipeTitle}
-            {recipeToggleButtons}
-          </section>
-          {toggle === 'details' && <RecipeDetails />}
-          {toggle === 'ingredients' && <RecipeIngredients />}
-          {toggle === 'results' && <RecipeResults />}
-        </React.Fragment>
-      );
     }
+
+    recipeContent = (
+      <React.Fragment>
+        <section className="recipeNav">
+          {recipeTitle}
+          {recipeToggleButtons}
+        </section>
+        {toggle === 'details' && <RecipeDetails />}
+        {toggle === 'ingredients' && <RecipeIngredients />}
+        {toggle === 'results' && <RecipeResults />}
+      </React.Fragment>
+    );
 
     return <section className="editRecipe">{recipeContent}</section>;
   }
@@ -95,7 +119,8 @@ class EditRecipe extends Component {
 
 const actions = {
   getSelectedRecipeByID,
-  getCurrentVenue
+  getCurrentVenue,
+  getIngredients
 };
 
 const mapState = state => ({
@@ -107,7 +132,8 @@ EditRecipe.propTypes = {
   recipe: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   getCurrentVenue: PropTypes.func.isRequired,
-  getSelectedRecipeByID: PropTypes.func.isRequired
+  getSelectedRecipeByID: PropTypes.func.isRequired,
+  getIngredients: PropTypes.func.isRequired
 };
 
 export default connect(

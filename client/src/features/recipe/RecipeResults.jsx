@@ -5,13 +5,9 @@ import Spinner from '../../utils/spinner/Spinner';
 
 class RecipeResults extends Component {
   componentDidMount() {
-    if (this.props.recipe.selectedRecipe === null) {
-      this.props.history.push('/recipes');
-    } else {
-      this.setState({
-        selectedRecipe: this.props.recipe.selectedRecipe
-      });
-    }
+    this.setState({
+      selectedRecipe: this.props.recipe.selectedRecipe
+    });
   }
 
   componentDidUpdate(prevProps, prevState) {
