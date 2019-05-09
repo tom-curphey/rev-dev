@@ -189,6 +189,15 @@ export const addOrEditProfileIngredientSupplier = (
     profileIngredientSupplierData.preferred = true;
   }
 
+  // console.log(
+  //   '---> Update: selectedIngredient: ',
+  //   selectedIngredient
+  // );
+  // console.log(
+  //   '---> Update: profileIngredientSupplierData: ',
+  //   profileIngredientSupplierData
+  // );
+
   dispatch(setIngredientsLoading());
   axios
     .post(
@@ -239,6 +248,7 @@ export const addAndSetSelectedIngredientSupplier = (
   const newIngredientSupplierData = {};
   newIngredientSupplierData.packageCost = '0';
   newIngredientSupplierData.packageGrams = '0';
+
   axios
     .post(
       `/api/ingredient/supplier/${selectedIngredient._id}/${

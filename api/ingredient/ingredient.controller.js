@@ -199,7 +199,7 @@ const deleteIngredientByID = (req, res) => {
 };
 module.exports.deleteIngredientByID = deleteIngredientByID;
 
-const addSupplierToIngredient = (req, res) => {
+const addOrEditSupplierIngredient = (req, res) => {
   req.body.ingredient_id = req.params.ingredient_id;
   req.body.supplier_id = req.params.supplier_id;
 
@@ -237,22 +237,22 @@ const addSupplierToIngredient = (req, res) => {
 
       const SupplierIngredientData = {};
       SupplierIngredientData.ingredient = ingredient.id;
-      console.log(
-        '-------> ingredientSupplierData: ',
-        ingredientSupplierData
-      );
-      console.log(
-        '-------> SupplierIngredientData: ',
-        SupplierIngredientData
-      );
+      // console.log(
+      //   '-------> ingredientSupplierData: ',
+      //   ingredientSupplierData
+      // );
+      // console.log(
+      //   '-------> SupplierIngredientData: ',
+      //   SupplierIngredientData
+      // );
 
       // Check if ingredient already has the supplier
       const confirmIngredientSupplier = ingredient.suppliers.filter(
         ingredientSupplier => {
-          console.log(
-            '-------> ingredientSupplier: ',
-            ingredientSupplier
-          );
+          // console.log(
+          //   '-------> ingredientSupplier: ',
+          //   ingredientSupplier
+          // );
 
           return ingredientSupplier.supplier == supplier.id;
         }
@@ -263,21 +263,21 @@ const addSupplierToIngredient = (req, res) => {
         }
       );
 
-      console.log(
-        'confirmIngredientSupplier: ',
-        confirmIngredientSupplier.length
-      );
-      console.log(
-        'confirmIngredientSupplier: ',
-        confirmSupplierIngredientID.length
-      );
-      console.log('SupplierIngredientData: ', SupplierIngredientData);
+      // console.log(
+      //   'confirmIngredientSupplier: ',
+      //   confirmIngredientSupplier.length
+      // );
+      // console.log(
+      //   'confirmIngredientSupplier: ',
+      //   confirmSupplierIngredientID.length
+      // );
+      // console.log('SupplierIngredientData: ', SupplierIngredientData);
 
       if (
         confirmIngredientSupplier.length === 0 &&
         confirmSupplierIngredientID.length === 0
       ) {
-        console.log('Add Ingredient To Supplier');
+        console.log('ADD INGREDIENT TO SUPPLER');
         supplier.ingredients.push(SupplierIngredientData);
         supplier
           .save()
@@ -307,7 +307,6 @@ const addSupplierToIngredient = (req, res) => {
         );
 
         ingredient.suppliers.push(ingredientSupplierData);
-        console.log('-----> ingredient: ', ingredient);
         ingredient
           .save()
 
@@ -332,7 +331,7 @@ const addSupplierToIngredient = (req, res) => {
             return res.status(404).json({ errors, mongoError: err });
           });
       } else {
-        console.log('Update Supplier On The Ingredient');
+        console.log('UPDATE SUPPLIER ON INGREDIENT');
         console.log(
           'confirmIngredientSupplier[0]',
           confirmIngredientSupplier[0]
@@ -355,4 +354,4 @@ const addSupplierToIngredient = (req, res) => {
     });
   });
 };
-module.exports.addSupplierToIngredient = addSupplierToIngredient;
+module.exports.addOrEditSupplierIngredient = addOrEditSupplierIngredient;

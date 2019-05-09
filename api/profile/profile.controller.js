@@ -122,6 +122,7 @@ const addOrEditProfileIngredient = (req, res) => {
         }
       );
 
+      const updatedIngredientSupplier = {};
       if (profileIngredient.length > 0) {
         let setProfileIngredientSuppliersToFalse = null;
         if (req.body.preferred === true) {
@@ -138,7 +139,20 @@ const addOrEditProfileIngredient = (req, res) => {
         }
 
         console.log('YOU NEED TO EDIT THE INGREDIENT SUPPLIERS');
-        let supplierIndex = null;
+        const ingredientSupplierIndex = ingredient.suppliers.findIndex(
+          ingredientSupplier => {
+            return (
+              ingredientSupplier.supplier.toString() ===
+              confirmedIngredientSupplier[0].supplier.toString()
+            );
+          }
+        );
+
+        console.log(
+          'ingredientSupplierIndex: ',
+          ingredientSupplierIndex
+        );
+
         const profileIngredientSupplierIndex = profileIngredient[0].suppliers.findIndex(
           profileIngredientSupplier => {
             return (
@@ -148,10 +162,10 @@ const addOrEditProfileIngredient = (req, res) => {
           }
         );
 
-        console.log(
-          '--profileIngredientSupplierIndex: ',
-          profileIngredientSupplierIndex
-        );
+        // console.log(
+        //   '--profileIngredientSupplierIndex: ',
+        //   profileIngredientSupplierIndex
+        // );
 
         if (profileIngredientSupplierIndex === -1) {
           console.log('YOU NEED TO ADD THE INGREDIENT SUPPLIER');
@@ -180,10 +194,67 @@ const addOrEditProfileIngredient = (req, res) => {
             ? req.body.preferred
             : false;
 
-          console.log(
-            'updatedProfileIngredientSupplier: ',
-            updatedProfileIngredientSupplier
-          );
+          if (
+            req.body.packageCost.toString() !== '0' &&
+            req.body.packageGrams.toString() !== '0'
+          ) {
+            console.log('Ingredient: ', ingredient);
+
+            console.log(
+              'pSuppliers: ',
+              profileIngredient[0].suppliers[
+                profileIngredientSupplierIndex
+              ]
+            );
+
+            console.log(
+              '^^^updatedProfileIngredientSupplier: ',
+              updatedProfileIngredientSupplier
+            );
+
+            console.log(
+              '####confirmedIngredientSupplier: ',
+              confirmedIngredientSupplier[0]
+            );
+            console.log(
+              '####confirmedIngredientSupplier: ',
+              confirmedIngredientSupplier[0].packageGrams
+            );
+
+            if (
+              confirmedIngredientSupplier[0].profileSaveCount === 0
+            ) {
+              updatedIngredientSupplier.profileSaveCount = 1;
+              updatedIngredientSupplier._id =
+                confirmedIngredientSupplier[0]._id;
+              updatedIngredientSupplier.supplier =
+                confirmedIngredientSupplier[0].supplier;
+              updatedIngredientSupplier.packageCost =
+                profileIngredient[0].suppliers[
+                  profileIngredientSupplierIndex
+                ].packageCost;
+              updatedIngredientSupplier.packageGrams =
+                profileIngredient[0].suppliers[
+                  profileIngredientSupplierIndex
+                ].packageGrams;
+
+              console.log(
+                '+++++updatedIngredientSupplier: ',
+                updatedIngredientSupplier
+              );
+            }
+
+            if (Object.keys(updatedIngredientSupplier).length > 0) {
+              ingredient.suppliers[ingredientSupplierIndex].set(
+                updatedIngredientSupplier
+              );
+              console.log(
+                'ingredient.suppliers[ingredientSupplierIndex]: ',
+                ingredient.suppliers[ingredientSupplierIndex]
+              );
+            }
+          }
+
           // console.log('req.body: ', req.body.preferred);
 
           profileIngredient[0].suppliers[
@@ -209,19 +280,33 @@ const addOrEditProfileIngredient = (req, res) => {
         profile.ingredients.push(newProfileIngredient);
       }
 
-      console.log('>>----->>-----profileIngredient: ', profile);
+      console.log('>>----->>-----Ingredient: ', ingredient);
 
-      profile
+      ingredient
         .save()
-        .then(profileSaved => {
-          if (!profileSaved) {
+        .then(ingredientSaved => {
+          if (!ingredientSaved) {
             const errors = {};
             errors.ingredient =
-              'We could save the ingredient to your account';
+              'We could not save the ingredient to your account';
             return res.status(400).json(errors);
           }
-          // console.log('profileSaved: ', profileSaved);
-          return res.status(200).json(profileSaved);
+          profile
+            .save()
+            .then(profileSaved => {
+              if (!profileSaved) {
+                const errors = {};
+                errors.ingredient =
+                  'We could not save the profile ingredient to your account';
+                return res.status(400).json(errors);
+              }
+              // console.log('profileSaved: ', profileSaved);
+
+              return res.status(200).json(profileSaved);
+            })
+            .catch(err => {
+              return res.status(400).json(err);
+            });
         })
         .catch(err => {
           return res.status(400).json(err);

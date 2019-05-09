@@ -16,6 +16,12 @@ const IngredientSchema = new Schema({
     required: true,
     unique: true
   },
+  packageGrams: {
+    type: Number
+  },
+  packageCost: {
+    type: Number
+  },
   metrics: {
     cup: {
       type: Number,
@@ -46,6 +52,10 @@ const IngredientSchema = new Schema({
       packageGrams: {
         type: Number,
         required: true
+      },
+      profileSaveCount: {
+        type: Number,
+        default: 0
       }
     }
   ]

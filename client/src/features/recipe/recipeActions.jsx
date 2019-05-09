@@ -76,14 +76,15 @@ export const setSelectedRecipe = recipeData => dispatch => {
       console.log('res.data: ', res.data);
       const ingredients = res.data;
 
-      // const updatedRecipengredients = recipeData.ingredients.map(
-      //   rIngredient => {
-      //     if (!rIngredient.supplier) {
-      //       console.log('rIngredient: ', rIngredient);
-      //       ingredients.fi
-      //     }
-      //   }
-      // );
+      const updatedRecipengredients = recipeData.ingredients.map(
+        rIngredient => {
+          if (!rIngredient.supplier) {
+            console.log('rIngredient: ', rIngredient);
+            // ingredients.fi;
+          }
+          return rIngredient;
+        }
+      );
 
       const newRecipe = {};
       newRecipe._id = recipeData._id;

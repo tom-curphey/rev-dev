@@ -65,7 +65,7 @@ module.exports = router;
 router.post(
   '/supplier/:ingredient_id/:supplier_id',
   passport.authenticate('jwt', { session: false }),
-  ingredientController.addSupplierToIngredient
+  ingredientController.addOrEditSupplierIngredient
 );
 
 module.exports = router;
