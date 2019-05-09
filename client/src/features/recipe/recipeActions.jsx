@@ -50,11 +50,13 @@ export const addRecipe = recipeData => dispatch => {
     });
 };
 
-export const getSelectedRecipeByID = recipeID => dispatch => {
+export const getSelectedRecipeByID = (
+  recipeID,
+  profileIngredients
+) => dispatch => {
   axios
     .get(`/api/recipe/${recipeID}`)
     .then(res => {
-      axios.get(`/api/recipe/${recipeID}`);
       dispatch(setSelectedRecipe(res.data));
     })
     .catch(err => {
@@ -68,22 +70,45 @@ export const getSelectedRecipeByID = recipeID => dispatch => {
 };
 
 export const setSelectedRecipe = recipeData => dispatch => {
-  const newRecipe = {};
-  newRecipe._id = recipeData._id;
-  newRecipe.displayName = recipeData.displayName;
-  newRecipe.urlName = recipeData.urlName;
-  newRecipe.serves = recipeData.serves.toString();
-  newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay.toString();
-  newRecipe.salePricePerServe = recipeData.salePricePerServe.toString();
-  newRecipe.staffTime = recipeData.staffTime.toString();
-  newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
-  newRecipe.internalRecipe = recipeData.internalRecipe;
-  newRecipe.ingredients = recipeData.ingredients;
-  // console.log('new Selected Recipe: ', newRecipe);
-  dispatch({
-    type: SET_SELECTED_RECIPE,
-    payload: newRecipe
-  });
+  axios
+    .get(`/api/ingredient/all`)
+    .then(res => {
+      console.log('res.data: ', res.data);
+      const ingredients = res.data;
+
+      // const updatedRecipengredients = recipeData.ingredients.map(
+      //   rIngredient => {
+      //     if (!rIngredient.supplier) {
+      //       console.log('rIngredient: ', rIngredient);
+      //       ingredients.fi
+      //     }
+      //   }
+      // );
+
+      const newRecipe = {};
+      newRecipe._id = recipeData._id;
+      newRecipe.displayName = recipeData.displayName;
+      newRecipe.urlName = recipeData.urlName;
+      newRecipe.serves = recipeData.serves.toString();
+      newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay.toString();
+      newRecipe.salePricePerServe = recipeData.salePricePerServe.toString();
+      newRecipe.staffTime = recipeData.staffTime.toString();
+      newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
+      newRecipe.internalRecipe = recipeData.internalRecipe;
+      newRecipe.ingredients = recipeData.ingredients;
+      // console.log('new Selected Recipe: ', newRecipe);
+      dispatch({
+        type: SET_SELECTED_RECIPE,
+        payload: newRecipe
+      });
+    })
+    .catch(err => {
+      // console.log('err', err);
+      dispatch({
+        type: GET_ERRORS,
+        payload: err
+      });
+    });
 };
 
 export const editRecipe = (recipeData, venueID) => dispatch => {

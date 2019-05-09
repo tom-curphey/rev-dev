@@ -30,7 +30,71 @@ const getRecipeByID = (req, res) => {
         errors.recipe = 'This recipe does not exist';
         return res.status(404).json(errors);
       }
-      return res.json(recipe);
+
+      Profile.findOne({ user: req.user._id }).then(profile => {
+        if (!profile) {
+          errors.profile = 'This profile does not exist';
+          return res.status(404).json(errors);
+        }
+
+        const updatedRecipeIngredients = [];
+        let recipeIngredientSupplierData = {};
+        for (let r = 0; r < recipe.ingredients.length; r++) {
+          // console.log('RRRI: ', recipe.ingredients[r].ingredient._id);
+          let check = 0;
+          for (let p = 0; p < profile.ingredients.length; p++) {
+            // console.log('PI: ', profile.ingredients[p].ingredient);
+            if (
+              recipe.ingredients[r].ingredient._id.toString() ==
+              profile.ingredients[p].ingredient.toString()
+            ) {
+              const preferredSupplier = profile.ingredients[
+                p
+              ].suppliers.filter(supplier => {
+                return supplier.preferred === true;
+              });
+              console.log('----------: ', r);
+              if (preferredSupplier[0]) {
+                // console.log('PIS:: ', preferredSupplier[0]);
+                // console.log('RI::: ', recipe.ingredients[r]);
+
+                check = 1;
+                recipeIngredientSupplierData;
+                recipeIngredientSupplierData._id =
+                  recipe.ingredients[r].ingredient._id;
+                recipeIngredientSupplierData.displayName =
+                  recipe.ingredients[r].ingredient.displayName;
+                recipeIngredientSupplierData.metrics =
+                  recipe.ingredients[r].ingredient.metrics;
+                recipeIngredientSupplierData.supplier = {};
+                recipeIngredientSupplierData.supplier.supplier =
+                  preferredSupplier[0].supplier;
+                recipeIngredientSupplierData.supplier.packageCost =
+                  preferredSupplier[0].packageCost;
+                recipeIngredientSupplierData.supplier.packageGrams =
+                  preferredSupplier[0].packageGrams;
+              }
+            }
+          }
+          if (check === 0) {
+            updatedRecipeIngredients.push(
+              recipe.ingredients[r].ingredient
+            );
+          } else {
+            updatedRecipeIngredients.push(
+              recipeIngredientSupplierData
+            );
+          }
+        }
+
+        const newRecipe = {
+          ...recipe._doc,
+          ingredients: updatedRecipeIngredients
+        };
+        console.log(newRecipe);
+
+        return res.json(newRecipe);
+      });
     });
 };
 module.exports.getRecipeByID = getRecipeByID;

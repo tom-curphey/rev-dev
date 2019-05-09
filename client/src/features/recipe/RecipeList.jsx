@@ -28,10 +28,9 @@ class RecipeList extends Component {
         recipeList = (
           <ul>
             {recipes.map((recipe, i) => (
-              <li>
+              <li key={i}>
                 <Link
                   style={{ cursor: 'pointer' }}
-                  key={i}
                   to={`/edit-recipe/${recipe._id}/${recipe.urlName}`}
                 >
                   {recipe.displayName}
