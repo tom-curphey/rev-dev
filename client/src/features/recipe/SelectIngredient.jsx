@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class SelectIngredient extends Component {
   render() {
-    return <div>SelectIngredient</div>;
+    return <div>Select Recipe Ingredient</div>;
   }
 }
 

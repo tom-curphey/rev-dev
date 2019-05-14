@@ -216,33 +216,58 @@ const addOrEditProfileIngredient = (req, res) => {
               '####confirmedIngredientSupplier: ',
               confirmedIngredientSupplier[0]
             );
-            console.log(
-              '####confirmedIngredientSupplier: ',
-              confirmedIngredientSupplier[0].packageGrams
-            );
 
+            let averageSupplierCost = 0;
             if (
               confirmedIngredientSupplier[0].profileSaveCount === 0
             ) {
               updatedIngredientSupplier.profileSaveCount = 1;
-              updatedIngredientSupplier._id =
-                confirmedIngredientSupplier[0]._id;
-              updatedIngredientSupplier.supplier =
-                confirmedIngredientSupplier[0].supplier;
-              updatedIngredientSupplier.packageCost =
+              averageSupplierCost =
                 profileIngredient[0].suppliers[
                   profileIngredientSupplierIndex
                 ].packageCost;
-              updatedIngredientSupplier.packageGrams =
-                profileIngredient[0].suppliers[
-                  profileIngredientSupplierIndex
-                ].packageGrams;
+            } else {
+              updatedIngredientSupplier.profileSaveCount =
+                parseFloat(
+                  confirmedIngredientSupplier[0].profileSaveCount
+                ) + 1;
+
+              // Get the average of the supplier amounts
+
+              let ingredientCostFor1Gram =
+                req.body.packageCost / req.body.packageGrams;
+
+              let inputIngredientCostFor100Grams =
+                ingredientCostFor1Gram * 100;
+
+              let currentCostTimesCount =
+                confirmedIngredientSupplier[0].profileSaveCount *
+                confirmedIngredientSupplier[0].packageCostFor100Grams;
+
+              let currentCostPlusNewCost =
+                inputIngredientCostFor100Grams +
+                currentCostTimesCount;
+
+              averageSupplierCost =
+                currentCostPlusNewCost /
+                updatedIngredientSupplier.profileSaveCount;
 
               console.log(
-                '+++++updatedIngredientSupplier: ',
-                updatedIngredientSupplier
+                '>>> averageSupplierCost: ',
+                averageSupplierCost
               );
             }
+            updatedIngredientSupplier._id =
+              confirmedIngredientSupplier[0]._id;
+            updatedIngredientSupplier.supplier =
+              confirmedIngredientSupplier[0].supplier;
+
+            updatedIngredientSupplier.packageCost = averageSupplierCost;
+
+            console.log(
+              '+++++updatedIngredientSupplier: ',
+              updatedIngredientSupplier
+            );
 
             if (Object.keys(updatedIngredientSupplier).length > 0) {
               ingredient.suppliers[ingredientSupplierIndex].set(

@@ -45,7 +45,7 @@ const addUser = (req, res) => {
           password: req.body.password
         });
 
-        console.log('newUser', newUser);
+        // console.log('newUser', newUser);
 
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -105,7 +105,7 @@ const login = (req, res) => {
         return res.status(404).json(errors);
       }
 
-      console.log('Check User: ', user);
+      // console.log('Check User: ', user);
 
       // Check password
       bcrypt
@@ -145,7 +145,7 @@ const login = (req, res) => {
 module.exports.login = login;
 
 const currentUser = (req, res) => {
-  console.log('Current User: ', req.user);
+  // console.log('Current User: ', req.user);
 
   // Create a custom return object
   res.json({
@@ -166,7 +166,7 @@ const reactivateUser = (req, res) => {
     { new: true }
   )
     .then(user => {
-      console.log('reactivateUser: ', user);
+      // console.log('reactivateUser: ', user);
 
       const payload = {
         id: user.id,

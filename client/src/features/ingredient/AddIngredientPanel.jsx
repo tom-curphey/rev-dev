@@ -67,7 +67,7 @@ class AddIngredientPanel extends Component {
 
   handleAddIngredient = e => {
     e.preventDefault();
-    console.log(this.state.newIngredient);
+    console.log('ADD PANEL -> ', this.state.newIngredient);
     this.props.addNewIngredient(this.state.newIngredient);
   };
 

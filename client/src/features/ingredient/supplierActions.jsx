@@ -6,7 +6,9 @@ import {
   CLOSE_SUPPLIER_PANEL,
   SET_SELECTED_INGREDIENT_SUPPLIER,
   GET_ERRORS,
-  REMOVE_SUPPLIERS
+  REMOVE_SUPPLIERS,
+  INGREDIENTS_LOADING,
+  INGREDIENTS_LOADING_FALSE
 } from '../../redux/types';
 import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
 import { addAndSetSelectedIngredientSupplier } from './ingredientActions';
@@ -67,6 +69,9 @@ export const addNewSupplier = (
 ) => dispatch => {
   console.log('Actions newSupplier: ', newSupplier);
   console.log('Actions selectedIngredient: ', selectedIngredient);
+  dispatch({
+    type: INGREDIENTS_LOADING
+  });
   axios
     .post('api/supplier', newSupplier)
     .then(res => {
@@ -85,6 +90,9 @@ export const addNewSupplier = (
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
+      });
+      dispatch({
+        type: INGREDIENTS_LOADING_FALSE
       });
     });
 };

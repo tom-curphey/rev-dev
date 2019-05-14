@@ -47,11 +47,11 @@ const IngredientSchema = new Schema({
       },
       packageCost: {
         type: Number,
-        required: true
+        default: 0
       },
       packageGrams: {
         type: Number,
-        required: true
+        default: 0
       },
       profileSaveCount: {
         type: Number,

@@ -28,6 +28,10 @@ const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
   };
 
   let formContent = '';
+  let initialSelectSupplierValue = {
+    label: 'Please Type or select a supplier',
+    value: 'no-supplier-selected'
+  };
 
   if (suppliers !== null) {
     const options = suppliers.map(supplier => {
@@ -42,6 +46,7 @@ const SelectSupplier = ({ getSelectedSupplier, suppliers }) => {
         label="Search Supplier"
         name="supplier"
         options={options}
+        value={initialSelectSupplierValue}
         getSelectedValue={getSelectedValue}
       />
     );

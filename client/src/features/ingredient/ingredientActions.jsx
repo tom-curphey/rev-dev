@@ -65,14 +65,16 @@ export const sortIngredientSuppliersIntoAbcOrder = selectedIngredientSuppliers =
   if (selectedIngredientSuppliers.length > 0) {
     selectedIngredientSuppliers = selectedIngredientSuppliers.sort(
       (a, b) =>
-        a.supplier.displayName.localeCompare(b.supplier.displayName)
+        a.ingredientSupplier.displayName.localeCompare(
+          b.ingredientSupplier.displayName
+        )
     );
     return selectedIngredientSuppliers;
   }
   return selectedIngredientSuppliers;
 };
 
-export const updateSelectedIngredientSupplierDetails = (
+export const updateSelectedProfileIngredientSupplierDetails = (
   profileSuppliers,
   selectedIngredientSuppliers
 ) => {
@@ -93,6 +95,7 @@ export const updateSelectedIngredientSupplierDetails = (
           profileSuppliers[pis].packageGrams;
         updatedSupplierDetails.preferred =
           profileSuppliers[pis].preferred;
+        updatedSupplierDetails.profileSupplier = true;
 
         updatedSupplierDetails.supplier._id =
           selectedIngredientSuppliers[dis].supplier._id;
@@ -108,6 +111,34 @@ export const updateSelectedIngredientSupplierDetails = (
   return selectedIngredientSuppliers;
 };
 
+export const updateIngredientSuppliersDetails = ingredientSuppliers => {
+  if (ingredientSuppliers.length > 0) {
+    ingredientSuppliers = ingredientSuppliers.map(supplier => {
+      // console.log('ingredientSupplier: ', supplier);
+
+      if (!supplier.profileSupplier) {
+        const updatedSupplierDetails = {};
+        updatedSupplierDetails.supplier = {};
+
+        updatedSupplierDetails._id = supplier._id;
+        updatedSupplierDetails.packageCost = supplier.packageCost;
+        updatedSupplierDetails.packageGrams = 100;
+        updatedSupplierDetails.preferred = false;
+        updatedSupplierDetails.profileSupplier = false;
+
+        updatedSupplierDetails.supplier._id = supplier.supplier._id;
+        updatedSupplierDetails.supplier.displayName =
+          supplier.supplier.displayName;
+
+        return updatedSupplierDetails;
+      }
+
+      return supplier;
+    });
+    return ingredientSuppliers;
+  }
+};
+
 export const setSelectedIngredient = (
   selectedIngredient,
   profile,
@@ -115,6 +146,11 @@ export const setSelectedIngredient = (
 ) => dispatch => {
   let confirmedProfileIngredient = null;
   let updatedSelectedIngredient = null;
+
+  // console.log(
+  //   ' selectedIngredient.suppliers --> IN',
+  //   selectedIngredient
+  // );
 
   // Check if the ingredient selected is in the profile ingredients
   if (selectedIngredient.suppliers.length > 0) {
@@ -127,11 +163,18 @@ export const setSelectedIngredient = (
         return null;
       }
     );
+
+    // console.log(
+    //   'confirmedProfileIngredient.length',
+    //   confirmedProfileIngredient.length
+    // );
+    // console.log('selectedIngredient', selectedIngredient);
+
     if (
       confirmedProfileIngredient.length > 0 &&
       selectedIngredient.suppliers !== null
     ) {
-      updatedSelectedIngredient = updateSelectedIngredientSupplierDetails(
+      updatedSelectedIngredient = updateSelectedProfileIngredientSupplierDetails(
         confirmedProfileIngredient[0].suppliers,
         selectedIngredient.suppliers
       );
@@ -158,10 +201,18 @@ export const setSelectedIngredient = (
       dispatch(removeSelectedIngredient());
     }
   } else {
-    console.log('in set');
-
     dispatch(removeSelectedIngredient());
   }
+
+  // // Updates the selectedIngredient.suppliers array
+  // selectedIngredient.suppliers = updateIngredientSuppliersDetails(
+  //   selectedIngredient.suppliers
+  // );
+
+  // console.log(
+  //   ' selectedIngredient.suppliers --> OUT',
+  //   selectedIngredient
+  // );
 
   // Filters ingredient supplier names and puts them in ABC order
   selectedIngredient.suppliers = sortIngredientSuppliersIntoAbcOrder(
@@ -232,6 +283,11 @@ export const setSelectedIngredientSupplier = selectedIngredientSupplier => dispa
     ...selectedIngredientSupplier
   };
 
+  console.log(
+    'selectedIngredientSupplier: ',
+    selectedIngredientSupplier
+  );
+
   updatedSelectedIngredientSupplier.packageCost = selectedIngredientSupplier.packageCost.toString();
   updatedSelectedIngredientSupplier.packageGrams = selectedIngredientSupplier.packageGrams.toString();
 
@@ -257,11 +313,25 @@ export const addAndSetSelectedIngredientSupplier = (
       newIngredientSupplierData
     )
     .then(res => {
+      console.log(
+        'res.data.ingredient.suppliers: ',
+        res.data.ingredient.suppliers
+      );
+
       if (res.data.ingredient.suppliers.length > 0) {
         let count = 0;
         let index = 0;
         const updatedIngredientSuppliers = res.data.ingredient.suppliers.map(
           ingredientSupplierData => {
+            console.log(
+              'ingredientSupplierData.supplier: ',
+              ingredientSupplierData.supplier
+            );
+            console.log(
+              'newIngredientSupplier: ',
+              newIngredientSupplier
+            );
+
             if (
               ingredientSupplierData.supplier.toString() ===
               newIngredientSupplier._id.toString()
@@ -272,7 +342,7 @@ export const addAndSetSelectedIngredientSupplier = (
 
               resSupplierData._id = ingredientSupplierData._id;
               resSupplierData.packageCost = ingredientSupplierData.packageCost.toString();
-              resSupplierData.packageGrams = ingredientSupplierData.packageGrams.toString();
+              resSupplierData.packageGrams = '0';
               resSupplierData.preferred = false;
 
               resSupplierData.supplier._id =
@@ -281,8 +351,6 @@ export const addAndSetSelectedIngredientSupplier = (
                 newIngredientSupplier.displayName;
 
               ingredientSupplierData = resSupplierData;
-
-              // return ingredientSupplierData;
             } else {
               let currentSuppiler = selectedIngredient.suppliers.filter(
                 currentSuppiler => {
@@ -292,6 +360,8 @@ export const addAndSetSelectedIngredientSupplier = (
                   );
                 }
               );
+
+              console.log('currentSupplier[0]: ', currentSuppiler[0]);
 
               ingredientSupplierData = currentSuppiler[0];
             }
@@ -305,6 +375,9 @@ export const addAndSetSelectedIngredientSupplier = (
         // res.data.ingredient.suppliers = sortIngredientSuppliersIntoAbcOrder(
         //   res.data.ingredient.suppliers
         // );
+
+        console.log('RES INGREDIENT: ', res.data.ingredient);
+
         dispatch(getIngredients());
         dispatch({
           type: SET_SELECTED_INGREDIENT,
@@ -325,6 +398,8 @@ export const addAndSetSelectedIngredientSupplier = (
 };
 
 export const openAddIngredientPanel = newIngredient => dispatch => {
+  console.log('NEW INGREDIENT', newIngredient);
+
   newIngredient.displayName = capitalizeFirstLetter(
     newIngredient.displayName
   );
@@ -347,10 +422,13 @@ export const closeAddIngredientPanel = removeSelectedIngredientData => dispatch 
 };
 
 export const addNewIngredient = newIngredient => dispatch => {
-  console.log('Actions: new ingredient: ', newIngredient);
   axios
     .post('api/ingredient', newIngredient)
     .then(res => {
+      console.log('Actions: new ingredient: ', res.data);
+
+      res.data.suppliers = [];
+
       dispatch(getIngredients());
       let profile = null;
       dispatch(setSelectedIngredient(res.data, profile, false));
@@ -359,7 +437,7 @@ export const addNewIngredient = newIngredient => dispatch => {
     .catch(err => {
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       });
     });
 };

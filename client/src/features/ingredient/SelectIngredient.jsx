@@ -13,6 +13,8 @@ class SelectIngredient extends Component {
   };
 
   componentDidMount() {
+    // console.log('SELECT MOUNT this.props: ', this.props.ingredient);
+
     if (this.props.ingredient.selectedIngredient !== null) {
       const { selectedIngredient } = this.props.ingredient;
       let selectedValue = {
@@ -24,6 +26,9 @@ class SelectIngredient extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // console.log('SELECT prevProps: ', prevProps);
+    // console.log('SELECT this.props: ', this.props);
+
     if (
       this.props.ingredient.selectedIngredient !== null &&
       prevProps.ingredient.selectedIngredient !==
@@ -57,23 +62,45 @@ class SelectIngredient extends Component {
 
   getSelectedValue = selectedValue => {
     let addIngredient = false;
-    let selectIngredient = [];
+    let selectedIngredient = [];
     if (selectedValue.__isNew__) {
       this.props.removeSelectedIngredient();
       addIngredient = true;
       const newIngredient = {};
       newIngredient.displayName = selectedValue.label;
       newIngredient.new = true;
-      selectIngredient.push(newIngredient);
+      selectedIngredient.push(newIngredient);
     } else {
-      selectIngredient = this.props.ingredient.ingredients.filter(
+      // console.log(
+      //   'this.props.ingredient.ingredients: ',
+      //   this.props.ingredient.ingredients
+      // );
+
+      // for (
+      //   let index = 0;
+      //   index < this.props.ingredient.ingredients.length;
+      //   index++
+      // ) {
+      //   if (
+      //     this.props.ingredient.ingredients[index]._id ===
+      //     selectedValue.value
+      //   ) {
+      //     selectedIngredient = this.props.ingredient.ingredients[
+      //       index
+      //     ];
+      //   }
+      //   // let ingredient = this.props.ingredient.ingredients[index];
+      // }
+
+      selectedIngredient = this.props.ingredient.ingredients.filter(
         ingredient => {
           return ingredient._id === selectedValue.value;
         }
       );
     }
+    // console.log('selectIngredient: ', selectedIngredient[0]);
     this.props.getSelectedIngredient(
-      selectIngredient[0],
+      selectedIngredient[0],
       addIngredient
     );
   };

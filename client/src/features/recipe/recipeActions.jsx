@@ -79,8 +79,8 @@ export const setSelectedRecipe = recipeData => dispatch => {
       const updatedRecipengredients = recipeData.ingredients.map(
         rIngredient => {
           if (!rIngredient.supplier) {
+            // If ingredient doesn't have a supplier.. Add ingredient price from the base ingredient
             console.log('rIngredient: ', rIngredient);
-            // ingredients.fi;
           }
           return rIngredient;
         }

@@ -103,11 +103,9 @@ const addSupplier = (req, res) => {
     ]
   }).then(supplier => {
     if (supplier) {
-      errors.supplier =
+      errors.displayName =
         'There is already a supplier registered with these details';
-      return res.status(400).json({
-        errors: errors
-      });
+      return res.status(400).json(errors);
     } else {
       const newSupplier = new Supplier(supplierFields);
 
@@ -117,9 +115,7 @@ const addSupplier = (req, res) => {
           if (!supplier) {
             errors.supplier =
               'There was an error creating your supplier';
-            return res.status(400).json({
-              errors: errors
-            });
+            return res.status(400).json(errors);
           }
           return res.status(200).json(supplier);
         })

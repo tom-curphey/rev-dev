@@ -39,6 +39,9 @@ class Ingredient extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // console.log('prevProps: ', prevProps.ingredient);
+    // console.log('this.props: ', this.props.ingredient);
+
     if (prevProps.errors !== this.props.errors) {
       this.setState({ errors: this.props.errors });
     }
@@ -212,10 +215,10 @@ class Ingredient extends Component {
         let teaspoonPrice = '-';
         let tablespoonPrice = '-';
 
-        console.log(
-          'selectedIngredientSupplier: ',
-          selectedIngredientSupplier
-        );
+        // console.log(
+        //   'selectedIngredientSupplier: ',
+        //   selectedIngredientSupplier
+        // );
 
         if (
           selectedIngredientSupplier !== null &&
@@ -225,18 +228,18 @@ class Ingredient extends Component {
             selectedIngredientSupplier.packageCost > 0 &&
             selectedIngredientSupplier.packageGrams > 0
           ) {
-            console.log(
-              'selectedIngredientSupplier.packageCost: ',
-              selectedIngredientSupplier.packageCost
-            );
+            // console.log(
+            //   'selectedIngredientSupplier.packageCost: ',
+            //   selectedIngredientSupplier.packageCost
+            // );
             const gramCalcPrice =
               selectedIngredientSupplier.packageCost /
               selectedIngredientSupplier.packageGrams;
 
-            console.log('gram: ', gramCalcPrice);
+            // console.log('gram: ', gramCalcPrice);
 
             if (isNaN(gramCalcPrice)) {
-              console.log('gram: ', gramCalcPrice);
+              // console.log('gram: ', gramCalcPrice);
               cupPrice = 0;
               gramPrice = 0;
               teaspoonPrice = 0;
@@ -274,7 +277,7 @@ class Ingredient extends Component {
           }
         }
 
-        console.log('gramPrice: ', gramPrice);
+        // console.log('gramPrice: ', gramPrice);
 
         metricContent = (
           <section className="metric_details">

@@ -15,6 +15,9 @@ module.exports = function validateSupplierInput(data) {
   if (Validator.isEmpty(data.displayName)) {
     errors.displayName = 'Supplier name is required';
   }
+  if (!Validator.isEmail(data.email)) {
+    errors.email = 'Email is invalid';
+  }
   if (Validator.isEmpty(data.email)) {
     errors.email = 'Supplier email is required';
   }
