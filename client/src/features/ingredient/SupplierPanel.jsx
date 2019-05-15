@@ -5,7 +5,10 @@ import {
   setSelectedIngredientSupplier,
   addAndSetSelectedIngredientSupplier
 } from './ingredientActions';
-import { openAddSupplierPanel } from './supplierActions';
+import {
+  openAddSupplierPanel,
+  setSuppliersLoading
+} from './supplierActions';
 import isEmpty from '../../utils/validation/is.empty';
 import Spinner from '../../utils/spinner/Spinner';
 // import TextInput from '../../utils/input/TextInput';
@@ -49,6 +52,7 @@ class SupplierPanel extends Component {
     if (addSupplier) {
       this.props.openAddSupplierPanel(selectedSupplier);
     } else {
+      this.props.setSuppliersLoading();
       this.props.addAndSetSelectedIngredientSupplier(
         selectedSupplier,
         this.props.ingredient.selectedIngredient
@@ -182,9 +186,8 @@ class SupplierPanel extends Component {
       <section className="supplier_panel">
         <h1>Supplier Pannel</h1>
         {selectedIngredient &&
-          selectedIngredientSupplier === null && (
-            <p>** Please select a supplier</p>
-          )}
+          selectedIngredientSupplier === null &&
+          loading === false && <p>** Please select a supplier</p>}
         <ul>{supplierContent}</ul>
         {addSupplierForm}
       </section>
@@ -195,7 +198,8 @@ class SupplierPanel extends Component {
 const actions = {
   setSelectedIngredientSupplier,
   addAndSetSelectedIngredientSupplier,
-  openAddSupplierPanel
+  openAddSupplierPanel,
+  setSuppliersLoading
 };
 
 const mapState = state => ({
@@ -207,7 +211,8 @@ const mapState = state => ({
 
 SupplierPanel.propTypes = {
   setSelectedIngredientSupplier: PropTypes.func.isRequired,
-  openAddSupplierPanel: PropTypes.func.isRequired
+  openAddSupplierPanel: PropTypes.func.isRequired,
+  setSuppliersLoading: PropTypes.func.isRequired
 };
 
 export default connect(

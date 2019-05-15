@@ -307,10 +307,10 @@ export const addAndSetSelectedIngredientSupplier = (
   newIngredientSupplier,
   selectedIngredient
 ) => dispatch => {
+  dispatch(setIngredientsLoading());
   const newIngredientSupplierData = {};
   newIngredientSupplierData.packageCost = '0';
   newIngredientSupplierData.packageGrams = '0';
-
   axios
     .post(
       `/api/ingredient/supplier/${selectedIngredient._id}/${
