@@ -17,10 +17,12 @@ const IngredientSchema = new Schema({
     unique: true
   },
   packageGrams: {
-    type: Number
+    type: Number,
+    default: 0
   },
   packageCost: {
-    type: Number
+    type: Number,
+    default: 0
   },
   metrics: {
     cup: {

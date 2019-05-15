@@ -122,13 +122,12 @@ const addOrEditProfileIngredient = (req, res) => {
         }
       );
 
-      console.log(
-        'ZZZZZ - confirmedIngredientSupplier: ',
-        confirmedIngredientSupplier
-      );
-
       const updatedIngredientSupplier = {};
       let averageSupplierCost = 0;
+      let newPackageCostFor1Gram = 0;
+
+      // console.log('average--> 2', averageSupplierCost);
+
       if (profileIngredient.length > 0) {
         let setProfileIngredientSuppliersToFalse = null;
         if (req.body.preferred === true) {
@@ -152,11 +151,6 @@ const addOrEditProfileIngredient = (req, res) => {
               confirmedIngredientSupplier[0].supplier.toString()
             );
           }
-        );
-
-        console.log(
-          'ingredientSupplierIndex: ',
-          ingredientSupplierIndex
         );
 
         const profileIngredientSupplierIndex = profileIngredient[0].suppliers.findIndex(
@@ -190,13 +184,9 @@ const addOrEditProfileIngredient = (req, res) => {
           );
 
           updatedIngredientSupplier.profileSaveCount = 1;
-
           let newPackageCostFor1Gram =
             req.body.packageCost / req.body.packageGrams;
-
           averageSupplierCost = newPackageCostFor1Gram * 100;
-
-          console.log('averageSupplierCost: ', averageSupplierCost);
 
           updatedIngredientSupplier._id =
             confirmedIngredientSupplier[0]._id;
@@ -206,26 +196,9 @@ const addOrEditProfileIngredient = (req, res) => {
           updatedIngredientSupplier.packageCost = averageSupplierCost;
           updatedIngredientSupplier.packageGrams = '100';
 
-          console.log(
-            '+++++updatedIngredientSupplier: ',
-            updatedIngredientSupplier
-          );
-          console.log(
-            '+++++ingredient.suppliers[0]: ',
-            ingredient.suppliers[0]
-          );
-          console.log(
-            '+++++ingredientSupplierIndex: ',
-            ingredientSupplierIndex
-          );
-
           if (Object.keys(updatedIngredientSupplier).length > 0) {
             ingredient.suppliers[ingredientSupplierIndex].set(
               updatedIngredientSupplier
-            );
-            console.log(
-              'ingredient.suppliers[ingredientSupplierIndex]: ',
-              ingredient.suppliers[ingredientSupplierIndex]
             );
           }
         } else {
@@ -244,27 +217,6 @@ const addOrEditProfileIngredient = (req, res) => {
             req.body.packageCost.toString() !== '0' &&
             req.body.packageGrams.toString() !== '0'
           ) {
-            // console.log('Ingredient: ', ingredient);
-
-            // console.log(
-            //   'pSuppliers: ',
-            //   profileIngredient[0].suppliers[
-            //     profileIngredientSupplierIndex
-            //   ]
-            // );
-
-            // console.log(
-            //   '^^^updatedProfileIngredientSupplier: ',
-            //   updatedProfileIngredientSupplier
-            // );
-
-            console.log(
-              '####profileIngredient',
-              profileIngredient[0].suppliers[
-                profileIngredientSupplierIndex
-              ]
-            );
-
             if (
               confirmedIngredientSupplier[0].profileSaveCount === 0
             ) {
@@ -301,26 +253,15 @@ const addOrEditProfileIngredient = (req, res) => {
                 inputIngredientCostFor100Grams +
                 currentCostTimesCount;
 
-              console.group('##### -------------');
-              console.log(
-                'currentCostPlusNewCost',
-                currentCostPlusNewCost
-              );
-              console.log(
-                'updatedIngredientSupplier',
-                updatedIngredientSupplier
-              );
-
-              console.groupEnd('##### -------------');
-
               averageSupplierCost =
                 currentCostPlusNewCost /
                 updatedIngredientSupplier.profileSaveCount;
 
-              console.log(
-                '>>> averageSupplierCost: ',
-                averageSupplierCost
-              );
+              if (
+                confirmedIngredientSupplier[0].profileSaveCount === 10
+              ) {
+                updatedIngredientSupplier.profileSaveCount = 1;
+              }
             }
             updatedIngredientSupplier._id =
               confirmedIngredientSupplier[0]._id;
@@ -330,30 +271,19 @@ const addOrEditProfileIngredient = (req, res) => {
             updatedIngredientSupplier.packageCost = averageSupplierCost;
             updatedIngredientSupplier.packageGrams = '100';
 
-            console.log(
-              '+++++updatedIngredientSupplier: ',
-              updatedIngredientSupplier
-            );
-
             if (Object.keys(updatedIngredientSupplier).length > 0) {
               ingredient.suppliers[ingredientSupplierIndex].set(
                 updatedIngredientSupplier
               );
-              console.log(
-                'ingredient.suppliers[ingredientSupplierIndex]: ',
-                ingredient.suppliers[ingredientSupplierIndex]
-              );
             }
           }
-
-          // console.log('req.body: ', req.body.preferred);
-
           profileIngredient[0].suppliers[
             profileIngredientSupplierIndex
           ].set(updatedProfileIngredientSupplier);
         }
       } else {
         console.log('YOU NEED TO ADD THE INGREDIENT & SUPPLIER');
+        // console.log('average--> 3', averageSupplierCost);
 
         const newProfileIngredient = {};
         newProfileIngredient.ingredient = ingredient._id;
@@ -367,54 +297,63 @@ const addOrEditProfileIngredient = (req, res) => {
         newProfileIngredient.suppliers.preferred = req.body.preferred
           ? req.body.preferred
           : false;
-
         profile.ingredients.push(newProfileIngredient);
 
-        updatedIngredientSupplier.profileSaveCount = 1;
+        if (
+          req.body.packageCost.toString() !== '0' &&
+          req.body.packageGrams.toString() !== '0'
+        ) {
+          // console.log('average--> Last', averageSupplierCost);
 
-        let newPackageCostFor1Gram =
-          req.body.packageCost / req.body.packageGrams;
+          if (confirmedIngredientSupplier.profileSaveCount === 0) {
+            console.log('COUNT IS 0');
 
-        averageSupplierCost = newPackageCostFor1Gram * 100;
+            newPackageCostFor1Gram =
+              req.body.packageCost / req.body.packageGrams;
+            averageSupplierCost = newPackageCostFor1Gram * 100;
+            updatedIngredientSupplier.profileSaveCount = 1;
+          } else {
+            console.log('COUNT IS 1');
+            updatedIngredientSupplier.profileSaveCount =
+              confirmedIngredientSupplier[0].profileSaveCount + 1;
 
-        console.log('averageSupplierCost: ', averageSupplierCost);
-        console.log(
-          'confirmedIngredientSupplier: ',
-          confirmedIngredientSupplier
-        );
-        console.log(
-          'confirmedIngredientSupplier: ',
-          confirmedIngredientSupplier
-        );
+            newPackageCostFor1Gram =
+              req.body.packageCost / req.body.packageGrams;
+            averageSupplierCost = newPackageCostFor1Gram * 100;
 
-        updatedIngredientSupplier._id =
-          confirmedIngredientSupplier[0]._id;
-        updatedIngredientSupplier.supplier =
-          confirmedIngredientSupplier[0].supplier;
+            let databasePackageCostFor100GramsTimesCount =
+              confirmedIngredientSupplier[0].packageCost *
+              confirmedIngredientSupplier[0].profileSaveCount;
 
-        updatedIngredientSupplier.packageCost = averageSupplierCost;
-        updatedIngredientSupplier.packageGrams = '100';
+            let combinesPackageCosts =
+              databasePackageCostFor100GramsTimesCount +
+              averageSupplierCost;
 
-        console.log(
-          '+++++updatedIngredientSupplier: ',
-          updatedIngredientSupplier
-        );
-        console.log(
-          '+++++ingredient.suppliers[0]: ',
-          ingredient.suppliers[0]
-        );
-        // console.log(
-        //   '+++++ingredientSupplierIndex: ',
-        //   ingredientSupplierIndex
-        // );
+            averageSupplierCost =
+              combinesPackageCosts /
+              updatedIngredientSupplier.profileSaveCount;
+          }
 
-        if (Object.keys(updatedIngredientSupplier).length > 0) {
-          ingredient.suppliers[0].set(updatedIngredientSupplier);
-          console.log('ingredient ---> : ', ingredient);
+          updatedIngredientSupplier._id =
+            confirmedIngredientSupplier[0]._id;
+          updatedIngredientSupplier.supplier =
+            confirmedIngredientSupplier[0].supplier;
+          updatedIngredientSupplier.packageCost = averageSupplierCost;
+          updatedIngredientSupplier.packageGrams = '100';
+          if (Object.keys(updatedIngredientSupplier).length > 0) {
+            ingredient.suppliers[0].set(updatedIngredientSupplier);
+            console.log('ingredient ---> : ', ingredient);
+          }
         }
       }
 
       console.log('>>----->>-----Ingredient: ', ingredient);
+
+      const avgIngredientPackageCost = getAverageIngredientPackageCost(
+        ingredient
+      );
+      ingredient.packageCost = avgIngredientPackageCost;
+      ingredient.packageGrams = 100;
 
       ingredient
         .save()
@@ -449,3 +388,20 @@ const addOrEditProfileIngredient = (req, res) => {
   });
 };
 module.exports.addOrEditProfileIngredient = addOrEditProfileIngredient;
+
+const getAverageIngredientPackageCost = ingredient => {
+  let avgPackageCost = 0;
+  let count = 0;
+  for (let index = 0; index < ingredient.suppliers.length; index++) {
+    const supplier = ingredient.suppliers[index];
+    console.log('supplier: ', supplier);
+    avgPackageCost = avgPackageCost + supplier.packageCost;
+    count = count + 1;
+  }
+
+  avgPackageCost = avgPackageCost / count;
+
+  console.log('avgPackageCost: ', avgPackageCost);
+
+  return avgPackageCost;
+};

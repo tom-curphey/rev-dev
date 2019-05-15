@@ -13,7 +13,10 @@ class Navbar extends Component {
   };
 
   render() {
-    const { isAuthenticated, user } = this.props.auth;
+    const { isAuthenticated } = this.props.auth;
+    const { profile } = this.props.profile;
+
+    // console.log('PROFILE: ', profile);
 
     const authLinks = (
       <section className="navbar">
@@ -21,7 +24,7 @@ class Navbar extends Component {
         <Link to="/crud">Crud</Link>
         <Link to="/passwords">Passwords</Link>
         <a href="!#" onClick={this.handleLogout}>
-          Logout {user.name}
+          Logout {profile.firstName}
         </a>
       </section>
     );
@@ -44,13 +47,15 @@ const actions = {
 };
 
 const mapState = state => ({
-  auth: state.auth
+  auth: state.auth,
+  profile: state.profile
 });
 
 Navbar.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   clearCurrentVenue: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
 export default connect(

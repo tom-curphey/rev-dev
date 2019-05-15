@@ -27,6 +27,16 @@ class SupplierPanel extends Component {
         return clickedOnSupplier.supplier._id === e.target.id;
       }
     );
+
+    console.log(
+      'this.props.ingredient.selectedIngredient: ',
+      this.props.ingredient.selectedIngredient
+    );
+    console.log(
+      'clickedOnIngredientSupplier: ',
+      clickedOnIngredientSupplier
+    );
+
     this.props.setSelectedIngredientSupplier(
       clickedOnIngredientSupplier[0]
     );
