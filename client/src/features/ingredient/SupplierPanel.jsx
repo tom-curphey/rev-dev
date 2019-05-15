@@ -93,6 +93,10 @@ class SupplierPanel extends Component {
           selectedIngredient.suppliers.length > 0
         ) {
           /// Check to see if this updates when the redux state changes..
+          console.log(
+            'selectedIngredient.suppliers',
+            selectedIngredient.suppliers
+          );
 
           supplierContent = selectedIngredient.suppliers.map(
             supplier => (
@@ -103,7 +107,17 @@ class SupplierPanel extends Component {
                 onClick={this.handleSelectIngredientSupplier}
               >
                 {supplier.supplier.displayName}
-                {supplier.preferred && '**'}
+                {supplier.preferred && '**'}{' '}
+                {supplier.packageCost > 0 ? (
+                  <span style={{ color: '#888888' }}>
+                    - {`$${supplier.packageCost}`} per{' '}
+                    {supplier.profileSupplier
+                      ? `${supplier.packageGrams}g`
+                      : '100g'}
+                  </span>
+                ) : (
+                  ''
+                )}
               </li>
             )
           );

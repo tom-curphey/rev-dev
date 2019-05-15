@@ -335,12 +335,8 @@ const addOrEditIngredientSupplier = (req, res) => {
           });
       } else {
         console.log('UPDATE SUPPLIER ON INGREDIENT');
-        console.log(
-          'confirmIngredientSupplier[0]',
-          confirmIngredientSupplier
-        );
         console.log('ingredientSupplierData', ingredientSupplierData);
-        confirmIngredientSupplier[0].set(ingredientSupplierData);
+        ingredient.suppliers.push(ingredientSupplierData);
         ingredient.save().then(ingredient => {
           if (!ingredient) {
             errors.ingredient =

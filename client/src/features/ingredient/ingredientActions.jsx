@@ -65,9 +65,7 @@ export const sortIngredientSuppliersIntoAbcOrder = selectedIngredientSuppliers =
   if (selectedIngredientSuppliers.length > 0) {
     selectedIngredientSuppliers = selectedIngredientSuppliers.sort(
       (a, b) =>
-        a.ingredientSupplier.displayName.localeCompare(
-          b.ingredientSupplier.displayName
-        )
+        a.supplier.displayName.localeCompare(b.supplier.displayName)
     );
     return selectedIngredientSuppliers;
   }
@@ -187,6 +185,12 @@ export const setSelectedIngredient = (
             return supplier.preferred === true;
           }
         );
+
+        console.log(
+          'IN SET SELCTED INGREDIENT:',
+          selectedIngredientSupplier
+        );
+
         if (selectedIngredientSupplier.length > 0) {
           dispatch(
             setSelectedIngredientSupplier(
@@ -240,14 +244,14 @@ export const addOrEditProfileIngredientSupplier = (
     profileIngredientSupplierData.preferred = true;
   }
 
-  // console.log(
-  //   '---> Update: selectedIngredient: ',
-  //   selectedIngredient
-  // );
-  // console.log(
-  //   '---> Update: profileIngredientSupplierData: ',
-  //   profileIngredientSupplierData
-  // );
+  console.log(
+    '---> Update: selectedIngredient: ',
+    selectedIngredient
+  );
+  console.log(
+    '---> Update: profileIngredientSupplierData: ',
+    profileIngredientSupplierData
+  );
 
   dispatch(setIngredientsLoading());
   axios
@@ -259,6 +263,8 @@ export const addOrEditProfileIngredientSupplier = (
     )
     .then(res => {
       const profile = res.data;
+      console.log('PROFILE: ', profile);
+
       dispatch(
         setSelectedIngredient(selectedIngredient, profile, false)
       );
@@ -279,14 +285,14 @@ export const addOrEditProfileIngredientSupplier = (
 
 // Set selected ingredient supplier
 export const setSelectedIngredientSupplier = selectedIngredientSupplier => dispatch => {
-  let updatedSelectedIngredientSupplier = {
-    ...selectedIngredientSupplier
-  };
-
   console.log(
     'selectedIngredientSupplier: ',
     selectedIngredientSupplier
   );
+
+  let updatedSelectedIngredientSupplier = {
+    ...selectedIngredientSupplier
+  };
 
   updatedSelectedIngredientSupplier.packageCost = selectedIngredientSupplier.packageCost.toString();
   updatedSelectedIngredientSupplier.packageGrams = selectedIngredientSupplier.packageGrams.toString();
