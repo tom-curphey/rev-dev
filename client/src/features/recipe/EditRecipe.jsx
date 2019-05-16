@@ -53,8 +53,6 @@ class EditRecipe extends Component {
       prevProps.recipe.selectedRecipe !==
         this.props.recipe.selectedRecipe
     ) {
-      console.log('try');
-
       this.addSuppliersToRecipeIngredients(
         this.props.recipe.selectedRecipe,
         this.props.ingredient.ingredients,

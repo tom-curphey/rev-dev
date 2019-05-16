@@ -7,15 +7,19 @@ const validateRecipeIngredientInput = require('../../config/validation/recipeIng
 
 const getAllUserRecipes = (req, res) => {
   let errors = {};
-  console.log('Here');
-  Recipe.find({ user: req.user.id }).then(recipes => {
-    if (recipes.length < 1) {
-      console.log(recipes);
-      errors.recipe = 'There are no recipes for this user';
-      return res.status(404).json(errors);
-    }
-    return res.json(recipes);
-  });
+  Recipe.find({ user: req.user.id })
+    .then(recipes => {
+      if (recipes.length < 1) {
+        console.log(recipes);
+        errors.recipe = 'There are no recipes for this user';
+        console.log(errors);
+        return res.status(404).json(errors);
+      }
+      return res.json(recipes);
+    })
+    .catch(err => {
+      return res.status(404).json(err);
+    });
 };
 module.exports.getAllUserRecipes = getAllUserRecipes;
 

@@ -5,6 +5,7 @@ import { editRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
+import { withRouter } from 'react-router';
 
 class RecipeDetails extends Component {
   state = {
@@ -33,8 +34,8 @@ class RecipeDetails extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log('prevProps: ', prevProps.recipe);
-    console.log('this.props: ', this.props.recipe);
+    // console.log('prevProps: ', prevProps.recipe);
+    // console.log('this.props: ', this.props.recipe);
 
     if (
       prevProps.recipe.selectedRecipe !==
@@ -56,9 +57,8 @@ class RecipeDetails extends Component {
     }));
   };
 
-  handleOnSubmit = e => {
+  handleOnSubmit = exit => e => {
     e.preventDefault();
-    // console.log('handleOnSubmit: ', this.props.venue);
 
     const updatedRecipe = {};
     updatedRecipe._id = this.state.selectedRecipe._id;
@@ -73,6 +73,9 @@ class RecipeDetails extends Component {
 
     console.log('updatedRecipe: ', updatedRecipe);
     this.props.editRecipe(updatedRecipe);
+    if (exit) {
+      this.props.history.push('/recipes');
+    }
   };
   render() {
     const { loading, selectedRecipe } = this.props.recipe;
@@ -164,7 +167,10 @@ class RecipeDetails extends Component {
               error={errors.internalRecipe}
             />
           </form>
-          <button onClick={this.handleOnSubmit} type="button">
+          <button onClick={this.handleOnSubmit(true)} type="button">
+            Save & Close Recipe
+          </button>
+          <button onClick={this.handleOnSubmit(false)} type="button">
             Save Recipe
           </button>
         </section>
@@ -194,4 +200,4 @@ RecipeDetails.propTypes = {
 export default connect(
   mapState,
   actions
-)(RecipeDetails);
+)(withRouter(RecipeDetails));

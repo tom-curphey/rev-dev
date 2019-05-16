@@ -8,10 +8,15 @@ const SelectInput = ({
   checkFocus,
   onChange,
   value,
-  name
+  name,
+  id
 }) => {
   const selectOptions = options.map(option => (
-    <option key={option.label} value={option.value}>
+    <option
+      key={option.label}
+      value={option.value}
+      disabled={option.disabled}
+    >
       {option.label}
     </option>
   ));
@@ -19,7 +24,7 @@ const SelectInput = ({
     <div>
       <label htmlFor={name}>
         {label}{' '}
-        <select name={name} value={value} onChange={onChange}>
+        <select name={name} value={value} onChange={onChange} id={id}>
           {selectOptions}
         </select>
       </label>

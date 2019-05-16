@@ -11,7 +11,8 @@ const TextInput = ({
   type,
   onChange,
   disabled,
-  id
+  id,
+  style
 }) => {
   return (
     <label htmlFor={name}>
@@ -24,6 +25,7 @@ const TextInput = ({
         placeholder={placeholder}
         disabled={disabled}
         id={id}
+        style={style}
       />
       {info && <small>{info}</small>}
       {error && <span>{error}</span>}
@@ -37,7 +39,8 @@ TextInput.propTypes = {
   value: PropTypes.string.isRequired,
   info: PropTypes.string,
   error: PropTypes.string,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  style: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.string
 };

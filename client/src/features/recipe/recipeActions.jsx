@@ -19,9 +19,11 @@ export const getRecipes = () => dispatch => {
         payload: res.data
       });
     })
-    .catch({
-      GET_RECIPES,
-      payload: {}
+    .catch(err => {
+      dispatch({
+        type: GET_RECIPES,
+        payload: {}
+      });
     });
 };
 
@@ -32,7 +34,9 @@ export const setRecipeLoading = () => {
   };
 };
 
-export const addRecipe = recipeData => dispatch => {
+export const addRecipe = (recipeData, history) => dispatch => {
+  console.log(recipeData);
+
   dispatch(setRecipeLoading());
   axios
     .post('/api/recipe', recipeData)
@@ -41,6 +45,9 @@ export const addRecipe = recipeData => dispatch => {
         type: ADD_RECIPE,
         payload: res.data
       });
+      history.push(
+        `/edit-recipe/${res.data._id}/${res.data.urlName}`
+      );
     })
     .catch(err => {
       dispatch({
@@ -50,10 +57,7 @@ export const addRecipe = recipeData => dispatch => {
     });
 };
 
-export const getSelectedRecipeByID = (
-  recipeID,
-  profileIngredients
-) => dispatch => {
+export const getSelectedRecipeByID = recipeID => dispatch => {
   axios
     .get(`/api/recipe/${recipeID}`)
     .then(res => {
@@ -73,31 +77,41 @@ export const setSelectedRecipe = recipeData => dispatch => {
   axios
     .get(`/api/ingredient/all`)
     .then(res => {
-      console.log('res.data: ', res.data);
-      const ingredients = res.data;
+      console.log('Ingredients res.data: ', res.data);
+      // const ingredients = res.data;
 
-      const updatedRecipengredients = recipeData.ingredients.map(
-        rIngredient => {
-          if (!rIngredient.supplier) {
-            // If ingredient doesn't have a supplier.. Add ingredient price from the base ingredient
-            console.log('rIngredient: ', rIngredient);
-          }
-          return rIngredient;
-        }
-      );
+      // const updatedRecipengredients = recipeData.ingredients.map(
+      //   rIngredient => {
+      //     if (!rIngredient.supplier) {
+      //       // If ingredient doesn't have a supplier.. Add ingredient price from the base ingredient
+      //       console.log('rIngredient: ', rIngredient);
+      //     }
+      //     return rIngredient;
+      //   }
+      // );
 
       const newRecipe = {};
+
       newRecipe._id = recipeData._id;
       newRecipe.displayName = recipeData.displayName;
       newRecipe.urlName = recipeData.urlName;
       newRecipe.serves = recipeData.serves.toString();
-      newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay.toString();
-      newRecipe.salePricePerServe = recipeData.salePricePerServe.toString();
-      newRecipe.staffTime = recipeData.staffTime.toString();
-      newRecipe.totalCookingTime = recipeData.totalCookingTime.toString();
+      newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay
+        ? recipeData.expectedSalesPerDay.toString()
+        : '';
+      newRecipe.salePricePerServe = recipeData.salePricePerServe
+        ? recipeData.salePricePerServe.toString()
+        : '';
+      newRecipe.staffTime = recipeData.staffTime
+        ? recipeData.staffTime.toString()
+        : '';
+      newRecipe.totalCookingTime = recipeData.totalCookingTime
+        ? recipeData.staffTime.toString()
+        : '';
       newRecipe.internalRecipe = recipeData.internalRecipe;
       newRecipe.ingredients = recipeData.ingredients;
-      // console.log('new Selected Recipe: ', newRecipe);
+
+      console.log('new Selected Recipe: ', newRecipe);
       dispatch({
         type: SET_SELECTED_RECIPE,
         payload: newRecipe
@@ -112,7 +126,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
     });
 };
 
-export const editRecipe = (recipeData, venueID) => dispatch => {
+export const editRecipe = recipeData => dispatch => {
   // console.log(recipeData);
   dispatch(setRecipeLoading());
   axios

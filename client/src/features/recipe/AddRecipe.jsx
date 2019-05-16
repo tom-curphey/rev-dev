@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
 import { addRecipe } from './recipeActions';
+import { withRouter } from 'react-router';
 
 class AddRecipe extends Component {
   state = {
@@ -45,7 +46,7 @@ class AddRecipe extends Component {
       internalRecipe: this.state.internalRecipe
     };
 
-    this.props.addRecipe(recipeData);
+    this.props.addRecipe(recipeData, this.props.history);
   };
 
   render() {
@@ -158,4 +159,4 @@ AddRecipe.propTypes = {
 export default connect(
   mapState,
   actions
-)(AddRecipe);
+)(withRouter(AddRecipe));
