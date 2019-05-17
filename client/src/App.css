@@ -561,3 +561,14 @@ section.recipeIngredientForm ul li {
   width: 580px;
   margin: auto;
 }
+
+section.recipeResults.comparison {
+  display: flex;
+}
+
+section.recipeResults.comparison ul {
+  margin-left: 20px;
+  /* margin-right: 20px; */
+  border-right: 1px solid #e0e0e0;
+  padding-right: 20px;
+}

@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../../utils/spinner/Spinner';
+import RecipeComparison from './RecipeComparison';
 
 class RecipeResults extends Component {
-  componentDidMount() {
-    this.setState({
-      selectedRecipe: this.props.recipe.selectedRecipe
-    });
-  }
+  state = {};
+
+  componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.errors !== this.props.errors) {
@@ -36,11 +35,15 @@ class RecipeResults extends Component {
       recipeContent = <Spinner />;
     } else {
       recipeContent = (
-        <h1>Edit Recipe {selectedRecipe.displayName} Results</h1>
+        <React.Fragment>
+          <RecipeComparison selectedRecipe={selectedRecipe} />
+        </React.Fragment>
       );
     }
 
-    return <section>{recipeContent}</section>;
+    return (
+      <section className="recipeResults">{recipeContent}</section>
+    );
   }
 }
 

@@ -35,6 +35,8 @@ const getRecipeByID = (req, res) => {
         return res.status(404).json(errors);
       }
 
+      console.log('RECIPE: ', recipe);
+
       Profile.findOne({ user: req.user._id }).then(profile => {
         if (!profile) {
           errors.profile = 'This profile does not exist';
@@ -47,9 +49,9 @@ const getRecipeByID = (req, res) => {
           // console.log('RRRI: ', recipe.ingredients[r].ingredient._id);
           let check = 0;
           for (let p = 0; p < profile.ingredients.length; p++) {
-            // console.log('PI: ', profile.ingredients[p].ingredient);
+            // console.log('PI: ', recipe.ingredients[r]._id);
             if (
-              recipe.ingredients[r].ingredient._id.toString() ==
+              recipe.ingredients[r]._id.toString() ==
               profile.ingredients[p].ingredient.toString()
             ) {
               const preferredSupplier = profile.ingredients[
@@ -58,9 +60,9 @@ const getRecipeByID = (req, res) => {
                 return supplier.preferred === true;
               });
               console.log('----------: ', r);
+              console.log('RI::: ', recipe.ingredients[r]);
               if (preferredSupplier[0]) {
-                // console.log('PIS:: ', preferredSupplier[0]);
-                // console.log('RI::: ', recipe.ingredients[r]);
+                console.log('PIS:: ', preferredSupplier[0]);
 
                 check = 1;
                 recipeIngredientSupplierData;
@@ -81,9 +83,7 @@ const getRecipeByID = (req, res) => {
             }
           }
           if (check === 0) {
-            updatedRecipeIngredients.push(
-              recipe.ingredients[r].ingredient
-            );
+            updatedRecipeIngredients.push(recipe.ingredients[r]);
           } else {
             updatedRecipeIngredients.push(
               recipeIngredientSupplierData
@@ -227,11 +227,18 @@ const editRecipeByID = (req, res) => {
         if (req.body.internalRecipe)
           recipeFields.internalRecipe = req.body.internalRecipe;
 
+        if (req.body.ingredients && req.body.ingredients.length > 0)
+          recipeFields.ingredients = req.body.ingredients;
+
         Recipe.findOneAndUpdate(
           { _id: req.params.recipe_id },
           { $set: recipeFields },
           { new: true }
         )
+          .populate('ingredients.ingredient', [
+            'displayName',
+            'metrics'
+          ])
           .then(recipe => {
             if (!recipe) {
               errors.recipe = 'Unable to update recipe..';
@@ -296,6 +303,8 @@ const addOrEditRecipeIngredient = (req, res) => {
             errors.recipe = 'Selected ingredient could not be found';
             res.status(404).json(errors);
           }
+
+          console.log('INGREDIENT: ', ingredient);
 
           const RecipeIngredientData = {};
           RecipeIngredientData.ingredient = req.body.ingredient_id;

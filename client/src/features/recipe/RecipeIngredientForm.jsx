@@ -1,28 +1,33 @@
 import React, { Component } from 'react';
 import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
+import roundNumber from '../../utils/functions/roundNumber';
+import PropTypes from 'prop-types';
 
 class RecipeIngredientForm extends Component {
   componentDidMount() {}
 
   render() {
-    const { recipeIngredients, errors, handleOnChange } = this.props;
+    const {
+      recipeIngredients,
+      errors,
+      handleOnChange,
+      handleDeleteRecipeIngredient
+    } = this.props;
 
-    // const options = [
-    //   { label: 'Cup', value: 'cup' },
-    //   { label: 'Grams', value: 'grams' },
-    //   { label: 'Tablespoon', value: 'tablespoon' },
-    //   { label: 'Teaspoon', value: 'teaspoon', disabled: 'disabled' }
-    // ];
+    console.log('recipeIngredients', recipeIngredients);
 
-    let formTableRows = recipeIngredients.map(ingredient => {
+    let formTableRows = recipeIngredients.map((ingredient, i) => {
+      console.log('INGREDIENT', ingredient);
+
       const options = [];
-      options.push({
-        label: 'Select..',
-        value: 'no-metric'
-        // disabled: 'disabled'
-      });
-      ingredient.metrics.cup
+      // options.push({
+      //   label: 'Select..',
+      //   value: 'no-metric'
+      //   // disabled: 'disabled'
+      // });
+
+      ingredient.ingredient.metrics.cup
         ? options.push({ label: 'Cup', value: 'cup' })
         : options.push({
             label: 'Cup',
@@ -30,7 +35,7 @@ class RecipeIngredientForm extends Component {
             disabled: 'disabled'
           });
       options.push({ label: 'Grams', value: 'grams' });
-      ingredient.metrics.tablespoon
+      ingredient.ingredient.metrics.tablespoon
         ? options.push({
             label: 'Tablespoon',
             value: 'tablespoon'
@@ -40,14 +45,14 @@ class RecipeIngredientForm extends Component {
             value: 'tablespoon',
             disabled: 'disabled'
           });
-      ingredient.metrics.teaspoon
+      ingredient.ingredient.metrics.teaspoon
         ? options.push({ label: 'Teaspoon', value: 'teaspoon' })
         : options.push({
             label: 'Teaspoon',
             value: 'teaspoon',
             disabled: 'disabled'
           });
-      ingredient.metrics.whole
+      ingredient.ingredient.metrics.whole
         ? options.push({ label: 'Whole', value: 'whole' })
         : options.push({
             label: 'Whole',
@@ -56,16 +61,30 @@ class RecipeIngredientForm extends Component {
           });
 
       return (
-        <li key={ingredient._id}>
-          <div>Edit</div>
-          <div>{ingredient.displayName}</div>
+        <li key={i}>
+          <div>i </div>
+          <div>
+            {ingredient.ingredient.displayName}
+            <span style={{ color: 'red' }}>
+              {' '}
+              {ingredient.quantity
+                ? ''
+                : ingredient.new
+                ? ''
+                : 'Error ->'}
+            </span>
+          </div>
           <div>
             <TextInput
-              value={ingredient.quantity.toString()}
+              value={
+                ingredient.quantity
+                  ? ingredient.quantity.toString()
+                  : ''
+              }
               name="quantity"
               onChange={handleOnChange}
               error={errors.quantity}
-              id={ingredient._id}
+              id={i}
               style={{ width: '50px' }}
             />
           </div>
@@ -77,11 +96,18 @@ class RecipeIngredientForm extends Component {
               value={ingredient.metric}
               onChange={handleOnChange}
               error={errors.metric}
-              id={ingredient._id}
+              id={ingredient.ingredient._id}
             />
           </div>
-          <div>{ingredient.grams}</div>
-          <div>del</div>
+          <div>
+            {ingredient.grams && roundNumber(ingredient.grams, 2)}
+          </div>
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={handleDeleteRecipeIngredient(i)}
+          >
+            x
+          </div>
         </li>
       );
     });
@@ -93,5 +119,12 @@ class RecipeIngredientForm extends Component {
     );
   }
 }
+
+RecipeIngredientForm.propTypes = {
+  recipeIngredients: PropTypes.array,
+  errors: PropTypes.object,
+  handleOnChange: PropTypes.func.isRequired,
+  handleDeleteRecipeIngredient: PropTypes.func.isRequired
+};
 
 export default RecipeIngredientForm;

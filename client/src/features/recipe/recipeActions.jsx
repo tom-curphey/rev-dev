@@ -77,7 +77,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
   axios
     .get(`/api/ingredient/all`)
     .then(res => {
-      console.log('Ingredients res.data: ', res.data);
+      // console.log('Ingredients res.data: ', res.data);
       // const ingredients = res.data;
 
       // const updatedRecipengredients = recipeData.ingredients.map(
@@ -93,6 +93,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
       const newRecipe = {};
 
       newRecipe._id = recipeData._id;
+      newRecipe.venue = recipeData.venue;
       newRecipe.displayName = recipeData.displayName;
       newRecipe.urlName = recipeData.urlName;
       newRecipe.serves = recipeData.serves.toString();
@@ -111,7 +112,7 @@ export const setSelectedRecipe = recipeData => dispatch => {
       newRecipe.internalRecipe = recipeData.internalRecipe;
       newRecipe.ingredients = recipeData.ingredients;
 
-      console.log('new Selected Recipe: ', newRecipe);
+      // console.log('new Selected Recipe: ', newRecipe);
       dispatch({
         type: SET_SELECTED_RECIPE,
         payload: newRecipe
@@ -126,12 +127,17 @@ export const setSelectedRecipe = recipeData => dispatch => {
     });
 };
 
-export const editRecipe = recipeData => dispatch => {
-  // console.log(recipeData);
+export const editRecipe = (recipeData, history, exit) => dispatch => {
+  console.log('recipeData ACTIONS');
+  console.log('recipeData ACTIONS', history);
   dispatch(setRecipeLoading());
   axios
     .put(`/api/recipe/${recipeData._id}`, recipeData)
     .then(res => {
+      console.log('res recipeData ACTIONS', res.data);
+      if (exit) {
+        history.push('/recipes');
+      }
       dispatch(setSelectedRecipe(res.data));
     })
     .catch(err => {

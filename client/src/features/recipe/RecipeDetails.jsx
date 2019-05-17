@@ -72,10 +72,7 @@ class RecipeDetails extends Component {
     updatedRecipe.internalRecipe = this.state.selectedRecipe.internalRecipe;
 
     console.log('updatedRecipe: ', updatedRecipe);
-    this.props.editRecipe(updatedRecipe);
-    if (exit) {
-      this.props.history.push('/recipes');
-    }
+    this.props.editRecipe(updatedRecipe, this.props.history, exit);
   };
   render() {
     const { loading, selectedRecipe } = this.props.recipe;
