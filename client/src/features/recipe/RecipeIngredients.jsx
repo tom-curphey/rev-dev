@@ -76,8 +76,8 @@ class RecipeIngredients extends Component {
     let index = id;
     let value = e.target.value;
     // console.log('dataindex', dataindex);
-    console.log('value', value);
-    console.log('target', e.target.id);
+    // console.log('value', value);
+    // console.log('target', e.target.id);
 
     let valueCheck = true;
     if (name === 'quantity') {
@@ -90,7 +90,7 @@ class RecipeIngredients extends Component {
       }
     }
 
-    console.log('state..', this.state.recipeIngredients);
+    // console.log('state..', this.state.recipeIngredients);
 
     let key = id;
     // this.state.recipeIngredients
@@ -110,9 +110,9 @@ class RecipeIngredients extends Component {
       stateCopy.recipeIngredients[key]
     );
 
-    console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
+    // console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
     stateCopy.recipeIngredients[key][`${name}`] = value;
-    console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
+    // console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
 
     if (
       valueCheck &&
@@ -121,7 +121,7 @@ class RecipeIngredients extends Component {
     ) {
       // console.log('Q: ', stateCopy.recipeIngredients[key].quantity);
       // console.log(
-      //   'M: ',
+      //   'Metrix: ',
       //   `${stateCopy.recipeIngredients[key].metric}`
       // );
       // console.log('metricName: ', stateCopy.recipeIngredients[key]);
@@ -152,14 +152,16 @@ class RecipeIngredients extends Component {
           metricGrams = 1;
       }
 
+      // console.log('metricGrams', metricGrams);
+
       stateCopy.recipeIngredients[key].grams =
         stateCopy.recipeIngredients[key].quantity * metricGrams;
     } else {
       stateCopy.recipeIngredients[key].grams = '';
     }
 
-    console.log('value', value);
-    console.log('key', key);
+    // console.log('value', value);
+    // console.log('key', key);
 
     if (name === 'quantity') {
       if (isNaN(value)) {
@@ -179,7 +181,7 @@ class RecipeIngredients extends Component {
   };
 
   handleDeleteRecipeIngredient = rowID => e => {
-    console.log('ROWID: ', rowID);
+    // console.log('ROWID: ', rowID);
     this.setState({
       recipeIngredients: this.state.recipeIngredients.filter(
         (_, i) => i !== rowID
@@ -193,7 +195,7 @@ class RecipeIngredients extends Component {
     if (this.state.recipeIngredients.length > 0) {
       const recipeIngredientDataCorrectFormat = this.state.recipeIngredients.map(
         ingredient => {
-          console.log('Submitted: ', ingredient);
+          // console.log('Submitted: ', ingredient);
 
           let updatedRecipeIngredient = {};
           updatedRecipeIngredient.ingredient =
@@ -209,9 +211,14 @@ class RecipeIngredients extends Component {
       recipeData.ingredients = recipeIngredientDataCorrectFormat;
     }
 
-    console.log('recipeData: ', recipeData);
+    // console.log('recipeData: ', recipeData);
 
-    this.props.editRecipe(recipeData, this.props.history, exit);
+    this.props.editRecipe(
+      recipeData,
+      this.props.profile,
+      this.props.history,
+      exit
+    );
   };
 
   render() {
@@ -220,7 +227,7 @@ class RecipeIngredients extends Component {
     const { recipeIngredients } = this.state;
     const { errors } = this.props;
 
-    console.log('RENDER STATE', this.state.recipeIngredients);
+    // console.log('RENDER STATE', this.state.recipeIngredients);
 
     let recipeIngredientContent;
     if (loading === true || selectedRecipe === null) {
@@ -276,11 +283,13 @@ const actions = {
 const mapState = state => ({
   recipe: state.recipe,
   ingredient: state.ingredient,
+  profile: state.profile.profile,
   errors: state.errors
 });
 
 RecipeIngredients.propTypes = {
   recipe: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
   ingredient: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   editRecipe: PropTypes.func.isRequired

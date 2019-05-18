@@ -14,8 +14,8 @@ class RecipeResults extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    console.log('prevProps: ', prevProps.recipe);
-    console.log('this.props: ', this.props.recipe);
+    // console.log('prevProps: ', prevProps.recipe);
+    // console.log('this.props: ', this.props.recipe);
 
     if (
       prevProps.recipe.selectedRecipe !==

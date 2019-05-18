@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { getRecipes, setSelectedRecipe } from './recipeActions';
+import {
+  getRecipes,
+  setSelectedRecipe,
+  removeSelectedRecipe
+} from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 
 class RecipeList extends Component {
@@ -12,11 +16,16 @@ class RecipeList extends Component {
 
   handleOnClick = selectedRecipe => {
     console.log('selectedRecipe: ', selectedRecipe);
-    this.props.setSelectedRecipe(selectedRecipe, this.props.history);
+    this.props.setSelectedRecipe(
+      selectedRecipe,
+      this.props.profile,
+      this.props.history
+    );
   };
 
   render() {
     const { recipes, loading } = this.props.recipe;
+    console.log('PROFILE: ', this.props.profile);
 
     let recipeList;
 
@@ -55,11 +64,13 @@ const actions = {
 
 const mapState = state => ({
   auth: state.auth,
-  recipe: state.recipe
+  recipe: state.recipe,
+  profile: state.profile.profile
 });
 
 RecipeList.propTypes = {
-  recipe: PropTypes.object.isRequired
+  recipe: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
 export default connect(

@@ -15,10 +15,10 @@ class RecipeIngredientForm extends Component {
       handleDeleteRecipeIngredient
     } = this.props;
 
-    console.log('recipeIngredients', recipeIngredients);
+    // console.log('recipeIngredients', recipeIngredients);
 
     let formTableRows = recipeIngredients.map((ingredient, i) => {
-      console.log('INGREDIENT', ingredient);
+      // console.log('INGREDIENT', ingredient);
 
       const options = [];
       // options.push({
@@ -96,7 +96,7 @@ class RecipeIngredientForm extends Component {
               value={ingredient.metric}
               onChange={handleOnChange}
               error={errors.metric}
-              id={ingredient.ingredient._id}
+              id={i}
             />
           </div>
           <div>

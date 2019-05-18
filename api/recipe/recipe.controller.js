@@ -28,7 +28,12 @@ const getRecipeByID = (req, res) => {
     user: req.user.id,
     _id: req.params.recipe_id
   })
-    .populate('ingredients.ingredient', ['displayName', 'metrics'])
+    .populate('ingredients.ingredient', [
+      'displayName',
+      'metrics',
+      'packageCost',
+      'packageGrams'
+    ])
     .then(recipe => {
       if (!recipe) {
         errors.recipe = 'This recipe does not exist';

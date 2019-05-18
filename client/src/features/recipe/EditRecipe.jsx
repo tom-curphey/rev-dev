@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 import { getCurrentVenue } from '../venue/venueActions';
 import {
   getSelectedRecipeByID,
-  addSuppliersToRecipeIngredients
+  addSuppliersToRecipeIngredients,
+  removeSelectedRecipe
 } from './recipeActions';
 import { getIngredients } from '../ingredient/ingredientActions';
 import capitalizeFirstLetter from '../../utils/functions/capitalizeFirstLetter';
@@ -22,9 +23,12 @@ class EditRecipe extends Component {
   async componentDidMount() {
     this.props.getCurrentVenue();
     this.props.getIngredients();
-    this.props.getSelectedRecipeByID(
-      this.props.match.params.recipe_id
-    );
+
+    if (this.props.recipe.selectedRecipe === null) {
+      this.props.getSelectedRecipeByID(
+        this.props.match.params.recipe_id
+      );
+    }
     if (this.props.match.params.recipe_toggle) {
       this.setState({
         toggle: this.props.match.params.recipe_toggle
@@ -45,36 +49,7 @@ class EditRecipe extends Component {
         toggle: this.props.match.params.recipe_toggle
       });
     }
-
-    if (
-      this.props.recipe.selectedRecipe !== null &&
-      this.props.ingredient.ingredients !== null &&
-      this.props.profile !== null &&
-      prevProps.recipe.selectedRecipe !==
-        this.props.recipe.selectedRecipe
-    ) {
-      this.addSuppliersToRecipeIngredients(
-        this.props.recipe.selectedRecipe,
-        this.props.ingredient.ingredients,
-        this.props.profile
-      );
-    }
-    // console.log(this.props.match.params.recipe_toggle);
-    // console.log('prevProps: ', prevProps.recipe);
-    // console.log('this.props: ', this.props.recipe);
   }
-
-  addSuppliersToRecipeIngredients = (
-    selectedRecipe,
-    ingredients,
-    profile
-  ) => {
-    const updatedRecipe = {
-      yo: 'you',
-      ...selectedRecipe
-    };
-    this.setState({ selectedRecipe: updatedRecipe });
-  };
 
   handleChangeToggle = selectedToggle => {
     this.setState({ toggle: selectedToggle });
@@ -151,23 +126,23 @@ const actions = {
   getSelectedRecipeByID,
   getCurrentVenue,
   getIngredients,
-  addSuppliersToRecipeIngredients
+  addSuppliersToRecipeIngredients,
+  removeSelectedRecipe
 };
 
 const mapState = state => ({
   recipe: state.recipe,
-  profile: state.profile,
   ingredient: state.ingredient,
   errors: state.errors
 });
 
 EditRecipe.propTypes = {
   recipe: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   getCurrentVenue: PropTypes.func.isRequired,
   getSelectedRecipeByID: PropTypes.func.isRequired,
-  getIngredients: PropTypes.func.isRequired
+  getIngredients: PropTypes.func.isRequired,
+  removeSelectedRecipe: PropTypes.func.isRequired
 };
 
 export default connect(

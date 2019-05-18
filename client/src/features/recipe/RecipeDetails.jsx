@@ -72,7 +72,12 @@ class RecipeDetails extends Component {
     updatedRecipe.internalRecipe = this.state.selectedRecipe.internalRecipe;
 
     console.log('updatedRecipe: ', updatedRecipe);
-    this.props.editRecipe(updatedRecipe, this.props.history, exit);
+    this.props.editRecipe(
+      updatedRecipe,
+      this.props.profile,
+      this.props.history,
+      exit
+    );
   };
   render() {
     const { loading, selectedRecipe } = this.props.recipe;
@@ -160,7 +165,7 @@ class RecipeDetails extends Component {
               options={options}
               value={internalRecipe}
               onChange={this.handleOnChange}
-              label="Internal Recipe"
+              label="In House Recipe"
               error={errors.internalRecipe}
             />
           </form>
@@ -185,11 +190,13 @@ const actions = {
 const mapState = state => ({
   recipe: state.recipe,
   venue: state.venue,
+  profile: state.profile.profile,
   errors: state.errors
 });
 
 RecipeDetails.propTypes = {
   recipe: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
   editRecipe: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired
 };

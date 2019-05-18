@@ -1,7 +1,13 @@
 import React from 'react';
+import calcTotalIngredientCost from '../../utils/functions/calcTotalIngredientCost';
+import roundNumber from '../../utils/functions/roundNumber';
+import { isNumber } from 'util';
 
 const RecipeComparison = ({ selectedRecipe }) => {
-  console.log('selectedRecipe: ', selectedRecipe);
+  const totalIngredientCost = calcTotalIngredientCost(selectedRecipe);
+  // if (isNumber(totalIngredientCost)) {
+  //   console.log('totalIngredientCost: ', totalIngredientCost);
+  // }
 
   return (
     <section className="comparison">
@@ -16,7 +22,15 @@ const RecipeComparison = ({ selectedRecipe }) => {
       </ul>
       <ul>
         <li>{selectedRecipe.displayName}</li>
-        <li>-</li>
+        <li>
+          {isNumber(totalIngredientCost) ? (
+            roundNumber(totalIngredientCost, 2)
+          ) : (
+            <span style={{ color: 'red' }}>
+              {totalIngredientCost}
+            </span>
+          )}
+        </li>
         <li>-</li>
         <li>-</li>
         <li>-</li>
