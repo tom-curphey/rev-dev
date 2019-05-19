@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import {
-  getRecipes,
-  setSelectedRecipe,
-  removeSelectedRecipe
-} from './recipeActions';
+import { getRecipes, setSelectedRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 
 class RecipeList extends Component {
@@ -15,7 +11,7 @@ class RecipeList extends Component {
   }
 
   handleOnClick = selectedRecipe => {
-    console.log('selectedRecipe: ', selectedRecipe);
+    // console.log('selectedRecipe: ', selectedRecipe);
     this.props.setSelectedRecipe(
       selectedRecipe,
       this.props.profile,
@@ -25,11 +21,11 @@ class RecipeList extends Component {
 
   render() {
     const { recipes, loading } = this.props.recipe;
-    console.log('PROFILE: ', this.props.profile);
+    // console.log('PROFILE: ', this.props.profile);
 
     let recipeList;
 
-    console.log('Recipes: ', recipes);
+    // console.log('Recipes: ', recipes);
     if (recipes === null || loading === true) {
       recipeList = <Spinner />;
     } else {

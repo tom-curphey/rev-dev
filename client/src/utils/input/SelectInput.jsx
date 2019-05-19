@@ -1,11 +1,8 @@
 import React from 'react';
-import CreatableSelect from 'react-select/lib/Creatable';
 
 const SelectInput = ({
   options,
   label,
-  getSelectedValue,
-  checkFocus,
   onChange,
   value,
   name,

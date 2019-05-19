@@ -31,8 +31,14 @@ const RecipeSchema = new Schema(
     staffTime: {
       type: Number
     },
+    staffTimeUnit: {
+      type: String
+    },
     totalCookingTime: {
       type: Number
+    },
+    cookingTimeUnit: {
+      type: String
     },
     expectedSalesPerDay: {
       type: Number

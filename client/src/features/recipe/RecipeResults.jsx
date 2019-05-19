@@ -28,15 +28,28 @@ class RecipeResults extends Component {
   }
 
   render() {
-    const { selectedRecipe, loading } = this.props.recipe;
+    const { selectedRecipe } = this.props.recipe;
+    const recipeLoading = this.props.recipe.loading;
+    const { venue } = this.props.venue;
+    const venueLoading = this.props.venue.loading;
+    const { profile } = this.props;
 
     let recipeContent;
-    if (loading === true || selectedRecipe === null) {
+    if (
+      recipeLoading === true ||
+      selectedRecipe === null ||
+      venueLoading === true ||
+      venue === null
+    ) {
       recipeContent = <Spinner />;
     } else {
       recipeContent = (
         <React.Fragment>
-          <RecipeComparison selectedRecipe={selectedRecipe} />
+          <RecipeComparison
+            selectedRecipe={selectedRecipe}
+            profile={profile}
+            venue={venue}
+          />
         </React.Fragment>
       );
     }
@@ -51,11 +64,15 @@ const actions = {};
 
 const mapState = state => ({
   recipe: state.recipe,
+  profile: state.profile.profile,
+  venue: state.venue,
   errors: state.errors
 });
 
 RecipeResults.propTypes = {
   recipe: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+  venue: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
 

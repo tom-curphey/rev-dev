@@ -40,8 +40,6 @@ const getRecipeByID = (req, res) => {
         return res.status(404).json(errors);
       }
 
-      console.log('RECIPE: ', recipe);
-
       Profile.findOne({ user: req.user._id }).then(profile => {
         if (!profile) {
           errors.profile = 'This profile does not exist';
@@ -100,7 +98,7 @@ const getRecipeByID = (req, res) => {
           ...recipe._doc,
           ingredients: updatedRecipeIngredients
         };
-        console.log(newRecipe);
+        console.log('RECIPE: ', newRecipe);
 
         return res.json(newRecipe);
       });
@@ -146,8 +144,12 @@ const addRecipe = (req, res) => {
         recipeFields.salePricePerServe = req.body.salePricePerServe;
       if (req.body.staffTime)
         recipeFields.staffTime = req.body.staffTime;
+      if (req.body.staffTimeUnit)
+        recipeFields.staffTimeUnit = req.body.staffTimeUnit;
       if (req.body.totalCookingTime)
         recipeFields.totalCookingTime = req.body.totalCookingTime;
+      if (req.body.cookingTimeUnit)
+        recipeFields.cookingTimeUnit = req.body.cookingTimeUnit;
       if (req.body.expectedSalesPerDay)
         recipeFields.expectedSalesPerDay =
           req.body.expectedSalesPerDay;
@@ -202,6 +204,8 @@ const editRecipeByID = (req, res) => {
       return res.status(404).json(errors);
     }
 
+    console.log('FOUND', recipe);
+
     if (req.body.venue) {
       Venue.findById(req.body.venue).then(venue => {
         if (!venue) {
@@ -224,8 +228,12 @@ const editRecipeByID = (req, res) => {
           recipeFields.salePricePerServe = req.body.salePricePerServe;
         if (req.body.staffTime)
           recipeFields.staffTime = req.body.staffTime;
+        if (req.body.staffTimeUnit)
+          recipeFields.staffTimeUnit = req.body.staffTimeUnit;
         if (req.body.totalCookingTime)
           recipeFields.totalCookingTime = req.body.totalCookingTime;
+        if (req.body.cookingTimeUnit)
+          recipeFields.cookingTimeUnit = req.body.cookingTimeUnit;
         if (req.body.expectedSalesPerDay)
           recipeFields.expectedSalesPerDay =
             req.body.expectedSalesPerDay;
@@ -242,7 +250,9 @@ const editRecipeByID = (req, res) => {
         )
           .populate('ingredients.ingredient', [
             'displayName',
-            'metrics'
+            'metrics',
+            'packageCost',
+            'packageGrams'
           ])
           .then(recipe => {
             if (!recipe) {

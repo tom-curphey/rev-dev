@@ -7,8 +7,7 @@ import {
   SET_SELECTED_RECIPE,
   REMOVE_SELECTED_RECIPE
 } from '../../redux/types';
-import { getIngredients } from '../ingredient/ingredientActions';
-import { pipeline } from 'stream';
+import { calcSecondsIntoTime } from '../../utils/utilityFunctions';
 
 export const getRecipes = () => dispatch => {
   // console.log('Called');
@@ -36,17 +35,22 @@ export const setRecipeLoading = () => {
   };
 };
 
-export const addRecipe = (recipeData, history) => dispatch => {
+export const addRecipe = (
+  recipeData,
+  profileData,
+  history
+) => dispatch => {
   // console.log(recipeData);
 
   dispatch(setRecipeLoading());
   axios
     .post('/api/recipe', recipeData)
     .then(res => {
-      dispatch({
-        type: ADD_RECIPE,
-        payload: res.data
-      });
+      dispatch(setSelectedRecipe(res.data, profileData));
+      // dispatch({
+      //   type: ADD_RECIPE,
+      //   payload: res.data
+      // });
       history.push(
         `/edit-recipe/${res.data._id}/${res.data.urlName}`
       );
@@ -89,6 +93,8 @@ export const setSelectedRecipe = (
   recipeData,
   profileData
 ) => dispatch => {
+  // console.log('recipeData ACTIONS', recipeData);
+
   const newRecipe = {};
 
   newRecipe._id = recipeData._id;
@@ -102,16 +108,16 @@ export const setSelectedRecipe = (
   newRecipe.salePricePerServe = recipeData.salePricePerServe
     ? recipeData.salePricePerServe.toString()
     : '';
-  newRecipe.staffTime = recipeData.staffTime
-    ? recipeData.staffTime.toString()
-    : '';
-  newRecipe.totalCookingTime = recipeData.totalCookingTime
-    ? recipeData.staffTime.toString()
-    : '';
+  newRecipe.staffTime = recipeData.staffTime;
+  newRecipe.staffTimeUnit = recipeData.staffTimeUnit;
+  newRecipe.totalCookingTime = recipeData.totalCookingTime;
+  newRecipe.cookingTimeUnit = recipeData.cookingTimeUnit;
   newRecipe.internalRecipe = recipeData.internalRecipe;
 
+  console.log('new Selected Recipe: ', newRecipe);
+
   const updatedRecipeIngredients = recipeData.ingredients.map(
-    recipeIngredient => {
+    (recipeIngredient, index) => {
       // console.log('recipeIngredient', recipeIngredient);
       let pI = profileData.ingredients.filter(profileIngredient => {
         return (
@@ -120,6 +126,10 @@ export const setSelectedRecipe = (
         );
       });
       if (pI.length > 0) {
+        if (index === 1) {
+          console.log('INDEX 1');
+        }
+
         // console.log('PI: ', pI);
         let preferredSupplier = pI[0].suppliers.filter(p => {
           // console.log('p', p);
@@ -139,16 +149,22 @@ export const setSelectedRecipe = (
           // console.log(
           //   'NO PREFERRED SUPPLIER -> Use default ingredient cost'
           // );
+          if (index === 1) {
+            console.log('INDEX 3');
+          }
           recipeIngredient.packageGrams =
             recipeIngredient.ingredient.packageGrams;
           recipeIngredient.packageCost =
             recipeIngredient.ingredient.packageCost;
         }
       } else {
-        // console.log(
-        //   'NO PROFILE INGREDIENTS: -> Use default ingredient cost ',
-        //   recipeIngredient
-        // );
+        if (index === 1) {
+          console.log('INDEX 2');
+        }
+        console.log(
+          'NO PROFILE INGREDIENTS: -> Use default ingredient cost ',
+          recipeIngredient
+        );
         recipeIngredient.packageGrams =
           recipeIngredient.ingredient.packageGrams;
         recipeIngredient.packageCost =
@@ -158,13 +174,13 @@ export const setSelectedRecipe = (
     }
   );
 
-  // console.log('TEST', updatedRecipeIngredientsTEST);
+  // console.log('updatedRecipeIngredients', updatedRecipeIngredients);
 
   // const updatedRecipeIngredients = {};
 
   newRecipe.ingredients = updatedRecipeIngredients;
 
-  // console.log('new Selected Recipe: ', newRecipe);
+  console.log('new Selected Recipe: ', newRecipe);
   dispatch({
     type: SET_SELECTED_RECIPE,
     payload: newRecipe
@@ -177,8 +193,8 @@ export const editRecipe = (
   history,
   exit
 ) => dispatch => {
-  // console.log('recipeData ACTIONS');
-  // console.log('recipeData ACTIONS', history);
+  console.log('recipeData ACTIONS', recipeData);
+  // console.log('recipeData ACTIONS', profileData);
   dispatch(setRecipeLoading());
   axios
     .put(`/api/recipe/${recipeData._id}`, recipeData)
@@ -188,6 +204,7 @@ export const editRecipe = (
         history.push('/recipes');
         dispatch(removeSelectedRecipe());
       } else {
+        console.log('recipeData ACTIONS', res.data);
         dispatch(setSelectedRecipe(res.data, profileData));
       }
     })

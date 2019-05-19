@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
 import { editRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
-import { withRouter } from 'react-router';
+// import calcTimeToSeconds from '../../utils/functions/calcTimeToSeconds';
+import {
+  calcTimeToSeconds,
+  calcSecondsIntoTime
+} from '../../utils/utilityFunctions';
 
 class RecipeDetails extends Component {
   state = {
@@ -14,7 +19,9 @@ class RecipeDetails extends Component {
       serves: '',
       salePricePerServe: '',
       staffTime: '',
+      staffTimeUnit: '',
       totalCookingTime: '',
+      cookingTimeUnit: '',
       expectedSalesPerDay: '',
       internalRecipe: false
     },
@@ -22,7 +29,28 @@ class RecipeDetails extends Component {
   };
 
   componentDidMount() {
-    if (this.props.recipe.selectedRecipe) {
+    console.log(
+      'MOUNTED this.props: ',
+      this.props.recipe.selectedRecipe
+    );
+    if (this.props.recipe.selectedRecipe !== null) {
+      if (this.props.recipe.selectedRecipe.staffTime !== '') {
+        this.props.recipe.selectedRecipe.staffTime = calcSecondsIntoTime(
+          this.props.recipe.selectedRecipe.staffTime,
+          this.props.recipe.selectedRecipe.staffTimeUnit
+        );
+      } else {
+        this.props.recipe.selectedRecipe.staffTime = this.props.recipe.selectedRecipe.staffTime;
+      }
+      if (this.props.recipe.selectedRecipe.totalCookingTime !== '') {
+        this.props.recipe.selectedRecipe.totalCookingTime = calcSecondsIntoTime(
+          this.props.recipe.selectedRecipe.totalCookingTime,
+          this.props.recipe.selectedRecipe.cookingTimeUnit
+        );
+      } else {
+        this.props.recipe.selectedRecipe.totalCookingTime = this.props.recipe.selectedRecipe.totalCookingTime;
+      }
+
       this.setState({
         selectedRecipe: this.props.recipe.selectedRecipe
       });
@@ -34,13 +62,30 @@ class RecipeDetails extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    // console.log('prevProps: ', prevProps.recipe);
-    // console.log('this.props: ', this.props.recipe);
+    console.log('prevProps: ', prevProps.recipe.selectedRecipe);
+    console.log('this.props: ', this.props.recipe.selectedRecipe);
 
     if (
       prevProps.recipe.selectedRecipe !==
       this.props.recipe.selectedRecipe
     ) {
+      if (this.props.recipe.selectedRecipe.staffTime !== '') {
+        this.props.recipe.selectedRecipe.staffTime = calcSecondsIntoTime(
+          this.props.recipe.selectedRecipe.staffTime,
+          this.props.recipe.selectedRecipe.staffTimeUnit
+        );
+      } else {
+        this.props.recipe.selectedRecipe.staffTime = this.props.recipe.selectedRecipe.staffTime;
+      }
+      if (this.props.recipe.selectedRecipe.totalCookingTime !== '') {
+        this.props.recipe.selectedRecipe.totalCookingTime = calcSecondsIntoTime(
+          this.props.recipe.selectedRecipe.totalCookingTime,
+          this.props.recipe.selectedRecipe.cookingTimeUnit
+        );
+      } else {
+        this.props.recipe.selectedRecipe.totalCookingTime = this.props.recipe.selectedRecipe.totalCookingTime;
+      }
+
       this.setState({
         selectedRecipe: this.props.recipe.selectedRecipe
       });
@@ -60,16 +105,51 @@ class RecipeDetails extends Component {
   handleOnSubmit = exit => e => {
     e.preventDefault();
 
-    const updatedRecipe = {};
-    updatedRecipe._id = this.state.selectedRecipe._id;
-    updatedRecipe.venue = this.props.venue.venue._id;
-    updatedRecipe.displayName = this.state.selectedRecipe.displayName;
-    updatedRecipe.serves = this.state.selectedRecipe.serves;
-    updatedRecipe.salePricePerServe = this.state.selectedRecipe.salePricePerServe;
-    updatedRecipe.staffTime = this.state.selectedRecipe.staffTime;
-    updatedRecipe.totalCookingTime = this.state.selectedRecipe.totalCookingTime;
-    updatedRecipe.expectedSalesPerDay = this.state.selectedRecipe.expectedSalesPerDay;
-    updatedRecipe.internalRecipe = this.state.selectedRecipe.internalRecipe;
+    // const updatedRecipe = {};
+    // updatedRecipe._id = this.state.selectedRecipe._id;
+    // updatedRecipe.venue = this.props.venue.venue._id;
+    // updatedRecipe.displayName = this.state.selectedRecipe.displayName;
+    // updatedRecipe.serves = this.state.selectedRecipe.serves;
+    // updatedRecipe.salePricePerServe = this.state.selectedRecipe.salePricePerServe;
+    // updatedRecipe.staffTimeUnit = this.state.selectedRecipe.staffTimeUnit;
+    // updatedRecipe.cookingTimeUnit = this.state.selectedRecipe.cookingTimeUnit;
+    // updatedRecipe.expectedSalesPerDay = this.state.selectedRecipe.expectedSalesPerDay;
+    // updatedRecipe.internalRecipe = this.state.selectedRecipe.internalRecipe;
+    const updatedRecipe = {
+      _id: this.state.selectedRecipe._id,
+      venue: this.state.selectedRecipe.venue,
+      displayName: this.state.selectedRecipe.displayName,
+      serves: this.state.selectedRecipe.serves,
+      salePricePerServe: this.state.selectedRecipe.salePricePerServe,
+      staffTimeUnit: this.state.selectedRecipe.staffTimeUnit,
+      cookingTimeUnit: this.state.selectedRecipe.cookingTimeUnit,
+      expectedSalesPerDay: this.state.selectedRecipe
+        .expectedSalesPerDay,
+      internalRecipe: this.state.selectedRecipe.internalRecipe
+    };
+
+    console.log(
+      'this.state.staffTime',
+      this.state.selectedRecipe.staffTime
+    );
+    console.log('this.state.staffTime', this.state);
+
+    if (this.state.selectedRecipe.staffTime !== '') {
+      updatedRecipe.staffTime = calcTimeToSeconds(
+        this.state.selectedRecipe.staffTime,
+        this.state.selectedRecipe.staffTimeUnit
+      );
+    } else {
+      updatedRecipe.staffTime = this.state.selectedRecipe.staffTime;
+    }
+    if (this.state.selectedRecipe.totalCookingTime !== '') {
+      updatedRecipe.totalCookingTime = calcTimeToSeconds(
+        this.state.selectedRecipe.totalCookingTime,
+        this.state.selectedRecipe.cookingTimeUnit
+      );
+    } else {
+      updatedRecipe.totalCookingTime = this.state.selectedRecipe.totalCookingTime;
+    }
 
     console.log('updatedRecipe: ', updatedRecipe);
     this.props.editRecipe(
@@ -87,7 +167,9 @@ class RecipeDetails extends Component {
       serves,
       salePricePerServe,
       staffTime,
+      staffTimeUnit,
       totalCookingTime,
+      cookingTimeUnit,
       expectedSalesPerDay,
       internalRecipe
     } = this.state.selectedRecipe;
@@ -96,6 +178,12 @@ class RecipeDetails extends Component {
     const options = [
       { label: 'No', value: false },
       { label: 'Yes', value: true }
+    ];
+
+    const timeOptions = [
+      { label: 'Sec', value: 'sec' },
+      { label: 'Min', value: 'min' },
+      { label: 'Hour', value: 'hour' }
     ];
 
     let recipeContent;
@@ -136,19 +224,33 @@ class RecipeDetails extends Component {
               placeholder="How much time do staff spend creating the recipe"
               name="staffTime"
               type="text"
-              value={staffTime}
+              value={staffTime.toString()}
               onChange={this.handleOnChange}
               label="Staff Input Time"
               error={errors.staffTime}
+            />
+            <SelectInput
+              label="Staff Time Unit"
+              name="staffTimeUnit"
+              options={timeOptions}
+              value={staffTimeUnit}
+              onChange={this.handleOnChange}
             />
             <TextInput
               placeholder="How long does the total recipe take to make?"
               name="totalCookingTime"
               type="text"
-              value={totalCookingTime}
+              value={totalCookingTime.toString()}
               onChange={this.handleOnChange}
               label="Total Recipe Production Time"
               error={errors.totalCookingTime}
+            />
+            <SelectInput
+              label="Cooking Time Unit"
+              name="cookingTimeUnit"
+              options={timeOptions}
+              value={cookingTimeUnit}
+              onChange={this.handleOnChange}
             />
             <TextInput
               placeholder="How many recipe serves will you sell per day?"

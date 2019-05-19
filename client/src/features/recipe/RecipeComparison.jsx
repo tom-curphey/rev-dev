@@ -1,10 +1,31 @@
 import React from 'react';
-import calcTotalIngredientCost from '../../utils/functions/calcTotalIngredientCost';
+import {
+  calcSecondsIntoTime,
+  calcTotalIngredientCost,
+  calcVenueCost,
+  calcStaffCost
+} from '../../utils/utilityFunctions';
+// import calcStaffCost from '../../utils/functions/calcStaffCost';
 import roundNumber from '../../utils/functions/roundNumber';
 import { isNumber } from 'util';
 
-const RecipeComparison = ({ selectedRecipe }) => {
+const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
+  selectedRecipe.staffTime = selectedRecipe.staffTime
+    ? calcSecondsIntoTime(
+        selectedRecipe.staffTime,
+        selectedRecipe.staffTimeUnit
+      ).toString()
+    : '';
+  selectedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
+    ? calcSecondsIntoTime(
+        selectedRecipe.totalCookingTime,
+        selectedRecipe.cookingTimeUnit
+      ).toString()
+    : '';
+
   const totalIngredientCost = calcTotalIngredientCost(selectedRecipe);
+  const staffCost = calcStaffCost(selectedRecipe, venue);
+  const venueCost = calcVenueCost(selectedRecipe, venue);
   // if (isNumber(totalIngredientCost)) {
   //   console.log('totalIngredientCost: ', totalIngredientCost);
   // }
@@ -15,7 +36,7 @@ const RecipeComparison = ({ selectedRecipe }) => {
         <li>Recipe Name</li>
         <li>Ingredient Cost</li>
         <li>Staff Cost</li>
-        <li>Rental Cost</li>
+        <li>Venue Cost</li>
         <li>Profit Per Year</li>
         <li>Profit Per Serve</li>
         <li>Profit Comparison</li>
@@ -31,7 +52,13 @@ const RecipeComparison = ({ selectedRecipe }) => {
             </span>
           )}
         </li>
-        <li>-</li>
+        <li>
+          {isNumber(totalIngredientCost) ? (
+            roundNumber(staffCost, 2)
+          ) : (
+            <span style={{ color: 'red' }}>{staffCost}</span>
+          )}
+        </li>
         <li>-</li>
         <li>-</li>
         <li>-</li>

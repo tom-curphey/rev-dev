@@ -73,7 +73,7 @@ class RecipeIngredients extends Component {
   handleOnChange = e => {
     const { name, id } = e.target;
 
-    let index = id;
+    // let index = id;
     let value = e.target.value;
     // console.log('dataindex', dataindex);
     // console.log('value', value);
@@ -223,7 +223,7 @@ class RecipeIngredients extends Component {
 
   render() {
     const { selectedRecipe, loading } = this.props.recipe;
-    const { ingredients } = this.props.ingredient;
+    // const { ingredients } = this.props.ingredient;
     const { recipeIngredients } = this.state;
     const { errors } = this.props;
 

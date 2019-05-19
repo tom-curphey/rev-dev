@@ -5,6 +5,7 @@ import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
 import { addRecipe } from './recipeActions';
 import { withRouter } from 'react-router';
+import calcTimeToSeconds from '../../utils/functions/calcTimeToSeconds';
 
 class AddRecipe extends Component {
   state = {
@@ -12,7 +13,9 @@ class AddRecipe extends Component {
     serves: '',
     salePricePerServe: '',
     staffTime: '',
+    staffTimeUnit: 'min',
     totalCookingTime: '',
+    cookingTimeUnit: 'min',
     expectedSalesPerDay: '',
     internalRecipe: false,
     errors: {}
@@ -40,13 +43,36 @@ class AddRecipe extends Component {
       displayName: this.state.displayName,
       serves: this.state.serves,
       salePricePerServe: this.state.salePricePerServe,
-      staffTime: this.state.staffTime,
-      totalCookingTime: this.state.totalCookingTime,
+      staffTimeUnit: this.state.staffTimeUnit,
+      cookingTimeUnit: this.state.cookingTimeUnit,
       expectedSalesPerDay: this.state.expectedSalesPerDay,
       internalRecipe: this.state.internalRecipe
     };
 
-    this.props.addRecipe(recipeData, this.props.history);
+    if (this.state.staffTime !== '') {
+      recipeData.staffTime = calcTimeToSeconds(
+        this.state.staffTime,
+        this.state.staffTimeUnit
+      );
+    } else {
+      recipeData.staffTime = this.state.staffTime;
+    }
+    if (this.state.totalCookingTime !== '') {
+      recipeData.totalCookingTime = calcTimeToSeconds(
+        this.state.totalCookingTime,
+        this.state.cookingTimeUnit
+      );
+    } else {
+      recipeData.totalCookingTime = this.state.totalCookingTime;
+    }
+
+    console.log('recipeData', recipeData);
+
+    this.props.addRecipe(
+      recipeData,
+      this.props.profile,
+      this.props.history
+    );
   };
 
   render() {
@@ -55,7 +81,9 @@ class AddRecipe extends Component {
       serves,
       salePricePerServe,
       staffTime,
+      staffTimeUnit,
       totalCookingTime,
+      cookingTimeUnit,
       expectedSalesPerDay,
       internalRecipe,
       errors
@@ -65,6 +93,12 @@ class AddRecipe extends Component {
     const options = [
       { label: 'No', value: false },
       { label: 'Yes', value: true }
+    ];
+
+    const timeOptions = [
+      { label: 'Sec', value: 'sec' },
+      { label: 'Min', value: 'min' },
+      { label: 'Hour', value: 'hour' }
     ];
 
     return (
@@ -104,8 +138,15 @@ class AddRecipe extends Component {
             type="text"
             value={staffTime}
             onChange={this.handleOnChange}
-            label="Staff Input In Minutes"
+            label="Staff Input Time"
             error={errors.staffTime}
+          />
+          <SelectInput
+            label="Staff Time Unit"
+            name="staffTimeUnit"
+            options={timeOptions}
+            value={staffTimeUnit}
+            onChange={this.handleOnChange}
           />
           <TextInput
             placeholder="How long does the total recipe take to make?"
@@ -115,6 +156,13 @@ class AddRecipe extends Component {
             onChange={this.handleOnChange}
             label="Total Recipe Production Time"
             error={errors.totalCookingTime}
+          />
+          <SelectInput
+            label="Cooking Time Unit"
+            name="cookingTimeUnit"
+            options={timeOptions}
+            value={cookingTimeUnit}
+            onChange={this.handleOnChange}
           />
           <TextInput
             placeholder="How many recipe serves will you sell per day?"
@@ -148,10 +196,12 @@ const actions = {
 };
 
 const mapState = state => ({
+  profile: state.profile.profile,
   errors: state.errors
 });
 
 AddRecipe.propTypes = {
+  profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
   addRecipe: PropTypes.func.isRequired
 };
