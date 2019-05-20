@@ -31,25 +31,53 @@ const VenueSchema = new Schema(
       required: true
     },
     costs: {
-      chefPayPerHour: {
+      chefCost: {
         type: Number,
         default: 0
       },
-      rentPerMonth: {
+      chefUnitCost: {
+        type: String,
+        default: 'hour'
+      },
+      rentCost: {
         type: Number,
         default: 0
       },
-      waterPerMonth: {
+      rentUnitCost: {
+        type: String,
+        default: 'month'
+      },
+      waterCost: {
         type: Number,
         default: 0
       },
-      powerPerMonth: {
+      waterUnitCost: {
+        type: String,
+        default: 'month'
+      },
+      powerCost: {
         type: Number,
         default: 0
       },
-      insurancePerYear: {
+      powerUnitCost: {
+        type: String,
+        default: 'month'
+      },
+      insuranceCost: {
         type: Number,
         default: 0
+      },
+      insuranceUnitCost: {
+        type: String,
+        default: 'year'
+      },
+      councilCost: {
+        type: Number,
+        default: 0
+      },
+      councilCost: {
+        type: String,
+        default: 'year'
       }
     }
   },

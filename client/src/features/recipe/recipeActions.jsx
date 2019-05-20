@@ -89,32 +89,43 @@ export const getSelectedRecipeByID = recipeID => dispatch => {
     });
 };
 
+// export const setSelectedRecipe = (
+//   recipeData,
+//   profileData
+// ) => dispatch => {
+//   const empty = new Object();
+//   console.log('empty', empty);
+
+//   dispatch({
+//     type: SET_SELECTED_RECIPE,
+//     payload: empty
+//   });
+// };
+
 export const setSelectedRecipe = (
   recipeData,
   profileData
 ) => dispatch => {
-  // console.log('recipeData ACTIONS', recipeData);
+  console.log('recipeData ACTIONS', recipeData);
 
-  const newRecipe = {};
-
-  newRecipe._id = recipeData._id;
-  newRecipe.venue = recipeData.venue;
-  newRecipe.displayName = recipeData.displayName;
-  newRecipe.urlName = recipeData.urlName;
-  newRecipe.serves = recipeData.serves.toString();
-  newRecipe.expectedSalesPerDay = recipeData.expectedSalesPerDay
-    ? recipeData.expectedSalesPerDay.toString()
-    : '';
-  newRecipe.salePricePerServe = recipeData.salePricePerServe
-    ? recipeData.salePricePerServe.toString()
-    : '';
-  newRecipe.staffTime = recipeData.staffTime;
-  newRecipe.staffTimeUnit = recipeData.staffTimeUnit;
-  newRecipe.totalCookingTime = recipeData.totalCookingTime;
-  newRecipe.cookingTimeUnit = recipeData.cookingTimeUnit;
-  newRecipe.internalRecipe = recipeData.internalRecipe;
-
-  console.log('new Selected Recipe: ', newRecipe);
+  const updateRecipe = {
+    _id: recipeData._id,
+    venue: recipeData.venue,
+    displayName: recipeData.displayName,
+    urlName: recipeData.urlName,
+    serves: recipeData.serves.toString(),
+    expectedSalesPerDay: recipeData.expectedSalesPerDay
+      ? recipeData.expectedSalesPerDay.toString()
+      : '',
+    salePricePerServe: recipeData.salePricePerServe
+      ? recipeData.salePricePerServe.toString()
+      : '',
+    staffTime: recipeData.staffTime,
+    staffTimeUnit: recipeData.staffTimeUnit,
+    totalCookingTime: recipeData.totalCookingTime,
+    cookingTimeUnit: recipeData.cookingTimeUnit,
+    internalRecipe: recipeData.internalRecipe
+  };
 
   const updatedRecipeIngredients = recipeData.ingredients.map(
     (recipeIngredient, index) => {
@@ -126,10 +137,6 @@ export const setSelectedRecipe = (
         );
       });
       if (pI.length > 0) {
-        if (index === 1) {
-          console.log('INDEX 1');
-        }
-
         // console.log('PI: ', pI);
         let preferredSupplier = pI[0].suppliers.filter(p => {
           // console.log('p', p);
@@ -137,34 +144,17 @@ export const setSelectedRecipe = (
         });
 
         if (preferredSupplier.length > 0) {
-          // console.log(
-          //   'PREFERED SUPPLIER TRUE -> Reset ingredient costs'
-          // );
-
           recipeIngredient.packageGrams =
             preferredSupplier[0].packageGrams;
           recipeIngredient.packageCost =
             preferredSupplier[0].packageCost;
         } else {
-          // console.log(
-          //   'NO PREFERRED SUPPLIER -> Use default ingredient cost'
-          // );
-          if (index === 1) {
-            console.log('INDEX 3');
-          }
           recipeIngredient.packageGrams =
             recipeIngredient.ingredient.packageGrams;
           recipeIngredient.packageCost =
             recipeIngredient.ingredient.packageCost;
         }
       } else {
-        if (index === 1) {
-          console.log('INDEX 2');
-        }
-        console.log(
-          'NO PROFILE INGREDIENTS: -> Use default ingredient cost ',
-          recipeIngredient
-        );
         recipeIngredient.packageGrams =
           recipeIngredient.ingredient.packageGrams;
         recipeIngredient.packageCost =
@@ -173,17 +163,11 @@ export const setSelectedRecipe = (
       return recipeIngredient;
     }
   );
+  updateRecipe.ingredients = updatedRecipeIngredients;
 
-  // console.log('updatedRecipeIngredients', updatedRecipeIngredients);
-
-  // const updatedRecipeIngredients = {};
-
-  newRecipe.ingredients = updatedRecipeIngredients;
-
-  console.log('new Selected Recipe: ', newRecipe);
   dispatch({
     type: SET_SELECTED_RECIPE,
-    payload: newRecipe
+    payload: updateRecipe
   });
 };
 

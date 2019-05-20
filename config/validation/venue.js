@@ -31,29 +31,29 @@ module.exports = function validateVenueInput(data) {
       errors.website = 'Not a valid URL';
     }
   }
-  if (!isEmpty(data.chefPayPerHour)) {
-    if (!Validator.isNumeric(data.chefPayPerHour)) {
-      errors.chefPayPerHour = 'Chef pay per hour must be a number';
+  if (!isEmpty(data.chefCost)) {
+    if (!Validator.isNumeric(data.chefCost)) {
+      errors.chefCost = 'Chef pay per hour must be a number';
     }
   }
-  if (!isEmpty(data.rentPerMonth)) {
-    if (!Validator.isNumeric(data.rentPerMonth)) {
-      errors.rentPerMonth = 'Rent cost per month must be a number';
+  if (!isEmpty(data.rentCost)) {
+    if (!Validator.isNumeric(data.rentCost)) {
+      errors.rentCost = 'Rent cost per month must be a number';
     }
   }
-  if (!isEmpty(data.waterPerMonth)) {
-    if (!Validator.isNumeric(data.waterPerMonth)) {
-      errors.waterPerMonth = 'Water cost per month must be a number';
+  if (!isEmpty(data.waterCost)) {
+    if (!Validator.isNumeric(data.waterCost)) {
+      errors.waterCost = 'Water cost per month must be a number';
     }
   }
-  if (!isEmpty(data.powerPerMonth)) {
-    if (!Validator.isNumeric(data.powerPerMonth)) {
-      errors.powerPerMonth = 'Power cost per month must be a number';
+  if (!isEmpty(data.powerCost)) {
+    if (!Validator.isNumeric(data.powerCost)) {
+      errors.powerCost = 'Power cost per month must be a number';
     }
   }
-  if (!isEmpty(data.insurancePerYear)) {
-    if (!Validator.isNumeric(data.insurancePerYear)) {
-      errors.insurancePerYear =
+  if (!isEmpty(data.insuranceCost)) {
+    if (!Validator.isNumeric(data.insuranceCost)) {
+      errors.insuranceCost =
         'Insurance cost per year must be a number';
     }
   }

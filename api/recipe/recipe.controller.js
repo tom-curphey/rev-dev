@@ -240,8 +240,9 @@ const editRecipeByID = (req, res) => {
         if (req.body.internalRecipe)
           recipeFields.internalRecipe = req.body.internalRecipe;
 
-        if (req.body.ingredients && req.body.ingredients.length > 0)
-          recipeFields.ingredients = req.body.ingredients;
+        req.body.ingredients && req.body.ingredients.length > 0
+          ? (recipeFields.ingredients = req.body.ingredients)
+          : (recipeFields.ingredients = []);
 
         Recipe.findOneAndUpdate(
           { _id: req.params.recipe_id },

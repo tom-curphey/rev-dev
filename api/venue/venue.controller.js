@@ -49,16 +49,26 @@ const addOrEditVenue = (req, res) => {
 
   // Costs
   venueFields.costs = {};
-  if (req.body.chefPayPerHour)
-    venueFields.costs.chefPayPerHour = req.body.chefPayPerHour;
-  if (req.body.rentPerMonth)
-    venueFields.costs.rentPerMonth = req.body.rentPerMonth;
-  if (req.body.waterPerMonth)
-    venueFields.costs.waterPerMonth = req.body.waterPerMonth;
-  if (req.body.powerPerMonth)
-    venueFields.costs.powerPerMonth = req.body.powerPerMonth;
-  if (req.body.insurancePerYear)
-    venueFields.costs.insurancePerYear = req.body.insurancePerYear;
+  if (req.body.chefCost)
+    venueFields.costs.chefCost = req.body.chefCost;
+  if (req.body.chefUnitCost)
+    venueFields.costs.chefUnitCost = req.body.chefUnitCost;
+  if (req.body.rentCost)
+    venueFields.costs.rentCost = req.body.rentCost;
+  if (req.body.rentUnitCost)
+    venueFields.costs.rentUnitCost = req.body.rentUnitCost;
+  if (req.body.waterCost)
+    venueFields.costs.waterCost = req.body.waterCost;
+  if (req.body.waterUnitCost)
+    venueFields.costs.waterUnitCost = req.body.waterUnitCost;
+  if (req.body.powerCost)
+    venueFields.costs.powerCost = req.body.powerCost;
+  if (req.body.powerUnitCost)
+    venueFields.costs.powerUnitCost = req.body.powerUnitCost;
+  if (req.body.insuranceCost)
+    venueFields.costs.insuranceCost = req.body.insuranceCost;
+  if (req.body.insuranceUnitCost)
+    venueFields.costs.insuranceUnitCost = req.body.insuranceUnitCost;
 
   console.log(venueFields);
 
@@ -82,10 +92,12 @@ const addOrEditVenue = (req, res) => {
         urlName: venueFields.urlName
       })
         .then(venue => {
-          // if (venue) {
-          //   errors.venue = 'This Venue has already been registered';
-          //   res.status(400).json(errors);
-          // }
+          if (venue) {
+            errors.venue = 'This Venue has already been registered';
+            res.status(400).json(errors);
+          }
+
+          console.log('VENUE');
 
           // Save Venue
           new Venue(venueFields)

@@ -10,18 +10,36 @@ import roundNumber from '../../utils/functions/roundNumber';
 import { isNumber } from 'util';
 
 const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
-  selectedRecipe.staffTime = selectedRecipe.staffTime
-    ? calcSecondsIntoTime(
-        selectedRecipe.staffTime,
-        selectedRecipe.staffTimeUnit
-      ).toString()
-    : '';
-  selectedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
-    ? calcSecondsIntoTime(
-        selectedRecipe.totalCookingTime,
-        selectedRecipe.cookingTimeUnit
-      ).toString()
-    : '';
+  console.log('selectedRecipe', selectedRecipe);
+  console.log('venue', venue);
+
+  // const convertedRecipe = { ...selectedRecipe };
+
+  // convertedRecipe.staffTime = selectedRecipe.staffTime
+  //   ? calcSecondsIntoTime(
+  //       selectedRecipe.staffTime,
+  //       selectedRecipe.staffTimeUnit
+  //     ).toString()
+  //   : '';
+  // convertedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
+  //   ? calcSecondsIntoTime(
+  //       selectedRecipe.totalCookingTime,
+  //       selectedRecipe.cookingTimeUnit
+  //     ).toString()
+  //   : '';
+
+  // selectedRecipe.staffTime = selectedRecipe.staffTime
+  //   ? calcSecondsIntoTime(
+  //       selectedRecipe.staffTime,
+  //       selectedRecipe.staffTimeUnit
+  //     ).toString()
+  //   : '';
+  // selectedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
+  //   ? calcSecondsIntoTime(
+  //       selectedRecipe.totalCookingTime,
+  //       selectedRecipe.cookingTimeUnit
+  //     ).toString()
+  //   : '';
 
   const totalIngredientCost = calcTotalIngredientCost(selectedRecipe);
   const staffCost = calcStaffCost(selectedRecipe, venue);

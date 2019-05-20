@@ -14,9 +14,6 @@ class RecipeResults extends Component {
       this.setState({ errors: this.props.errors });
     }
 
-    // console.log('prevProps: ', prevProps.recipe);
-    // console.log('this.props: ', this.props.recipe);
-
     if (
       prevProps.recipe.selectedRecipe !==
       this.props.recipe.selectedRecipe
@@ -33,6 +30,8 @@ class RecipeResults extends Component {
     const { venue } = this.props.venue;
     const venueLoading = this.props.venue.loading;
     const { profile } = this.props;
+
+    console.log('selectedRecipe - RESULT', selectedRecipe);
 
     let recipeContent;
     if (

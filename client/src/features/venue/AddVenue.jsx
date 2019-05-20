@@ -12,11 +12,18 @@ class AddVenue extends Component {
     phone: '',
     address: '',
     website: '',
-    chefPayPerHour: '',
-    rentPerMonth: '',
-    waterPerMonth: '',
-    powerPerMonth: '',
-    insurancePerYear: '',
+    chefCost: '',
+    chefUnitCost: '',
+    rentCost: '',
+    rentUnitCost: '',
+    waterCost: '',
+    waterUnitCost: '',
+    powerCost: '',
+    powerUnitCost: '',
+    insuranceCost: '',
+    insuranceUnitCost: '',
+    councilCost: '',
+    councilUnitCost: '',
     errors: {},
     displayAdvanced: false
   };
@@ -40,11 +47,18 @@ class AddVenue extends Component {
       phone: this.state.phone,
       address: this.state.address,
       website: this.state.website,
-      chefPayPerHour: this.state.chefPayPerHour,
-      rentPerMonth: this.state.rentPerMonth,
-      waterPerMonth: this.state.waterPerMonth,
-      powerPerMonth: this.state.powerPerMonth,
-      insurancePerYear: this.state.insurancePerYear
+      chefCost: this.state.chefCost,
+      chefUnitCost: this.state.chefUnitCost,
+      rentCost: this.state.rentCost,
+      rentUnitCost: this.state.rentUnitCost,
+      waterCost: this.state.waterCost,
+      waterUnitCost: this.state.waterUnitCost,
+      powerCost: this.state.powerCost,
+      powerUnitCost: this.state.powerUnitCost,
+      insuranceCost: this.state.insuranceCost,
+      insuranceUnitCost: this.state.insuranceUnitCost,
+      councilCost: this.state.councilCost,
+      councilUnitCost: this.state.councilUnitCost
     };
 
     console.log('venueData: ', venueData);
@@ -60,11 +74,18 @@ class AddVenue extends Component {
       phone,
       address,
       website,
-      chefPayPerHour,
-      rentPerMonth,
-      waterPerMonth,
-      powerPerMonth,
-      insurancePerYear,
+      chefCost,
+      chefUnitCost,
+      rentCost,
+      rentUnitCost,
+      waterCost,
+      waterUnitCost,
+      powerCost,
+      powerUnitCost,
+      insuranceCost,
+      insuranceUnitCost,
+      councilCost,
+      councilUnitCost,
       errors,
       displayAdvanced
     } = this.state;
@@ -75,44 +96,52 @@ class AddVenue extends Component {
       advancedInputs = (
         <React.Fragment>
           <TextInput
-            name="chefPayPerHour"
-            type="chefPayPerHour"
-            value={chefPayPerHour}
+            name="chefCost"
+            type="chefCost"
+            value={chefCost}
             onChange={this.handleOnChange}
-            label="Cost of chef per hour"
-            error={errors.chefPayPerHour}
+            label="Chef Cost"
+            error={errors.chefCost}
           />
           <TextInput
-            name="rentPerMonth"
-            type="rentPerMonth"
-            value={rentPerMonth}
+            name="rentCost"
+            type="rentCost"
+            value={rentCost}
             onChange={this.handleOnChange}
-            label="Cost of rent per month"
-            error={errors.rentPerMonth}
+            label="Rent Cost"
+            error={errors.rentCost}
           />
           <TextInput
-            name="waterPerMonth"
-            type="waterPerMonth"
-            value={waterPerMonth}
+            name="waterCost"
+            type="waterCost"
+            value={waterCost}
             onChange={this.handleOnChange}
-            label="Cost of water per month"
-            error={errors.waterPerMonth}
+            label="Water Cost"
+            error={errors.waterCost}
           />
           <TextInput
-            name="powerPerMonth"
-            type="powerPerMonth"
-            value={powerPerMonth}
+            name="powerCost"
+            type="powerCost"
+            value={powerCost}
             onChange={this.handleOnChange}
-            label="Cost of electricity per month"
-            error={errors.powerPerMonth}
+            label="Electricity Cost"
+            error={errors.powerCost}
           />
           <TextInput
-            name="insurancePerYear"
-            type="insurancePerYear"
-            value={insurancePerYear}
+            name="insuranceCost"
+            type="insuranceCost"
+            value={insuranceCost}
             onChange={this.handleOnChange}
-            label="Cost of insurance per year"
-            error={errors.insurancePerYear}
+            label="Insurance Cost"
+            error={errors.insuranceCost}
+          />
+          <TextInput
+            name="councilCost"
+            type="councilCost"
+            value={councilCost}
+            onChange={this.handleOnChange}
+            label="Council Cost"
+            error={errors.councilCost}
           />
         </React.Fragment>
       );

@@ -191,7 +191,7 @@ class RecipeIngredients extends Component {
 
   handleOnSubmit = exit => e => {
     e.preventDefault();
-    const recipeData = this.props.recipe.selectedRecipe;
+    const recipeData = { ...this.props.recipe.selectedRecipe };
     if (this.state.recipeIngredients.length > 0) {
       const recipeIngredientDataCorrectFormat = this.state.recipeIngredients.map(
         ingredient => {
@@ -209,9 +209,11 @@ class RecipeIngredients extends Component {
       );
 
       recipeData.ingredients = recipeIngredientDataCorrectFormat;
+    } else {
+      recipeData.ingredients = [];
     }
 
-    // console.log('recipeData: ', recipeData);
+    console.log('recipeData: ', recipeData);
 
     this.props.editRecipe(
       recipeData,

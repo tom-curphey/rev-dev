@@ -30,6 +30,10 @@ class RecipeDetails extends Component {
   };
 
   componentDidMount() {
+    console.log(
+      'MOUNTED this.props: ',
+      this.props.recipe.selectedRecipe
+    );
     if (this.props.recipe.selectedRecipe !== null) {
       const convertedRecipe = { ...this.props.recipe.selectedRecipe };
 
@@ -61,26 +65,32 @@ class RecipeDetails extends Component {
       this.setState({ errors: this.props.errors });
     }
 
+    console.log('prevProps: ', prevProps.recipe.selectedRecipe);
+    console.log('this.props: ', this.props.recipe.selectedRecipe);
+
     if (
       prevProps.recipe.selectedRecipe !==
       this.props.recipe.selectedRecipe
     ) {
-      const convertedRecipe = { ...this.props.recipe.selectedRecipe };
       if (this.props.recipe.selectedRecipe.staffTime !== '') {
-        convertedRecipe.staffTime = calcSecondsIntoTime(
+        this.props.recipe.selectedRecipe.staffTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.staffTime,
           this.props.recipe.selectedRecipe.staffTimeUnit
         );
+      } else {
+        this.props.recipe.selectedRecipe.staffTime = this.props.recipe.selectedRecipe.staffTime;
       }
       if (this.props.recipe.selectedRecipe.totalCookingTime !== '') {
-        convertedRecipe.totalCookingTime = calcSecondsIntoTime(
+        this.props.recipe.selectedRecipe.totalCookingTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.totalCookingTime,
           this.props.recipe.selectedRecipe.cookingTimeUnit
         );
+      } else {
+        this.props.recipe.selectedRecipe.totalCookingTime = this.props.recipe.selectedRecipe.totalCookingTime;
       }
 
       this.setState({
-        selectedRecipe: convertedRecipe
+        selectedRecipe: this.props.recipe.selectedRecipe
       });
     }
   }
@@ -98,6 +108,16 @@ class RecipeDetails extends Component {
   handleOnSubmit = exit => e => {
     e.preventDefault();
 
+    // const updatedRecipe = {};
+    // updatedRecipe._id = this.state.selectedRecipe._id;
+    // updatedRecipe.venue = this.props.venue.venue._id;
+    // updatedRecipe.displayName = this.state.selectedRecipe.displayName;
+    // updatedRecipe.serves = this.state.selectedRecipe.serves;
+    // updatedRecipe.salePricePerServe = this.state.selectedRecipe.salePricePerServe;
+    // updatedRecipe.staffTimeUnit = this.state.selectedRecipe.staffTimeUnit;
+    // updatedRecipe.cookingTimeUnit = this.state.selectedRecipe.cookingTimeUnit;
+    // updatedRecipe.expectedSalesPerDay = this.state.selectedRecipe.expectedSalesPerDay;
+    // updatedRecipe.internalRecipe = this.state.selectedRecipe.internalRecipe;
     const updatedRecipe = {
       _id: this.state.selectedRecipe._id,
       venue: this.state.selectedRecipe.venue,
@@ -110,6 +130,12 @@ class RecipeDetails extends Component {
         .expectedSalesPerDay,
       internalRecipe: this.state.selectedRecipe.internalRecipe
     };
+
+    console.log(
+      'this.state.staffTime',
+      this.state.selectedRecipe.staffTime
+    );
+    console.log('this.state.staffTime', this.state);
 
     if (this.state.selectedRecipe.staffTime !== '') {
       updatedRecipe.staffTime = calcTimeToSeconds(
@@ -128,6 +154,7 @@ class RecipeDetails extends Component {
       updatedRecipe.totalCookingTime = this.state.selectedRecipe.totalCookingTime;
     }
 
+    console.log('updatedRecipe: ', updatedRecipe);
     this.props.editRecipe(
       updatedRecipe,
       this.props.profile,
@@ -135,7 +162,6 @@ class RecipeDetails extends Component {
       exit
     );
   };
-
   render() {
     const { loading, selectedRecipe } = this.props.recipe;
     const { errors } = this.state;

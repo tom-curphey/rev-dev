@@ -14,11 +14,18 @@ class EditVenue extends Component {
     phone: '',
     address: '',
     website: '',
-    chefPayPerHour: '',
-    rentPerMonth: '',
-    waterPerMonth: '',
-    powerPerMonth: '',
-    insurancePerYear: '',
+    chefCost: '',
+    chefUnitCost: '',
+    rentCost: '',
+    rentUnitCost: '',
+    waterCost: '',
+    waterUnitCost: '',
+    powerCost: '',
+    powerUnitCost: '',
+    insuranceCost: '',
+    insuranceUnitCost: '',
+    councilCost: '',
+    councilUnitCost: '',
     errors: {},
     displayAdvanced: false
   };
@@ -37,7 +44,7 @@ class EditVenue extends Component {
     // console.log('errorOutsideCheck: ', errorCheck);
 
     if (nextProps.venue.venue && errorCheck) {
-      const venue = nextProps.venue.venue;
+      const venue = { ...nextProps.venue.venue };
       // Check if any fields are empty
       // If so make them an empty string
       venue.displayName = !isEmpty(venue.displayName)
@@ -48,29 +55,57 @@ class EditVenue extends Component {
       venue.address = !isEmpty(venue.address) ? venue.address : '';
       venue.website = !isEmpty(venue.website) ? venue.website : '';
       if (venue.costs) {
-        venue.chefPayPerHour = !isEmpty(venue.costs.chefPayPerHour)
-          ? venue.costs.chefPayPerHour
+        venue.chefCost = !isEmpty(venue.costs.chefCost)
+          ? venue.costs.chefCost.toString()
           : '';
-        venue.rentPerMonth = !isEmpty(venue.costs.rentPerMonth)
-          ? venue.costs.rentPerMonth
+        venue.chefUnitCost = !isEmpty(venue.costs.chefUnitCost)
+          ? venue.costs.chefUnitCost.toString()
           : '';
-        venue.waterPerMonth = !isEmpty(venue.costs.waterPerMonth)
-          ? venue.costs.waterPerMonth
+        venue.rentCost = !isEmpty(venue.costs.rentCost)
+          ? venue.costs.rentCost.toString()
           : '';
-        venue.powerPerMonth = !isEmpty(venue.costs.powerPerMonth)
-          ? venue.costs.powerPerMonth
+        venue.rentUnitCost = !isEmpty(venue.costs.rentUnitCost)
+          ? venue.costs.rentUnitCost.toString()
           : '';
-        venue.insurancePerYear = !isEmpty(
-          venue.costs.insurancePerYear
+        venue.waterCost = !isEmpty(venue.costs.waterCost)
+          ? venue.costs.waterCost.toString()
+          : '';
+        venue.waterUnitCost = !isEmpty(venue.costs.waterUnitCost)
+          ? venue.costs.waterUnitCost.toString()
+          : '';
+        venue.powerCost = !isEmpty(venue.costs.powerCost)
+          ? venue.costs.powerCost.toString()
+          : '';
+        venue.powerUnitCost = !isEmpty(venue.costs.powerUnitCost)
+          ? venue.costs.powerUnitCost.toString()
+          : '';
+        venue.insuranceCost = !isEmpty(venue.costs.insuranceCost)
+          ? venue.costs.insuranceCost.toString()
+          : '';
+        venue.insuranceUnitCost = !isEmpty(
+          venue.costs.insuranceUnitCost
         )
-          ? venue.costs.insurancePerYear
+          ? venue.costs.insuranceUnitCost.toString()
+          : '';
+        venue.councilCost = !isEmpty(venue.costs.councilCost)
+          ? venue.costs.councilCost.toString()
+          : '';
+        venue.councilUnitCost = !isEmpty(venue.costs.councilUnitCost)
+          ? venue.costs.councilUnitCost.toString()
           : '';
       } else {
-        venue.chefPayPerHour = '';
-        venue.rentPerMonth = '';
-        venue.waterPerMonth = '';
-        venue.powerPerMonth = '';
-        venue.insurancePerYear = '';
+        venue.chefCost = '';
+        venue.chefUnitCost = '';
+        venue.rentCost = '';
+        venue.rentUnitCost = '';
+        venue.waterCost = '';
+        venue.waterUnitCost = '';
+        venue.powerCost = '';
+        venue.powerUnitCost = '';
+        venue.insuranceCost = '';
+        venue.insuranceUnitCost = '';
+        venue.councilCost = '';
+        venue.councilUnitCost = '';
       }
 
       this.setState({
@@ -79,11 +114,18 @@ class EditVenue extends Component {
         phone: venue.phone,
         address: venue.address,
         website: venue.website,
-        chefPayPerHour: venue.chefPayPerHour.toString(),
-        rentPerMonth: venue.rentPerMonth.toString(),
-        waterPerMonth: venue.waterPerMonth.toString(),
-        powerPerMonth: venue.powerPerMonth.toString(),
-        insurancePerYear: venue.insurancePerYear.toString()
+        chefCost: venue.chefCost,
+        chefUnitCost: venue.chefUnitCost,
+        rentCost: venue.rentCost,
+        rentUnitCost: venue.rentUnitCost,
+        waterCost: venue.waterCost,
+        waterUnitCost: venue.waterUnitCost,
+        powerCost: venue.powerCost,
+        powerUnitCost: venue.powerUnitCost,
+        insuranceCost: venue.insuranceCost,
+        insuranceUnitCost: venue.insuranceUnitCost,
+        councilCost: venue.councilCost,
+        councilUnitCost: venue.councilUnitCost
       });
     }
   }
@@ -101,11 +143,18 @@ class EditVenue extends Component {
       phone: this.state.phone,
       address: this.state.address,
       website: this.state.website,
-      chefPayPerHour: this.state.chefPayPerHour,
-      rentPerMonth: this.state.rentPerMonth,
-      waterPerMonth: this.state.waterPerMonth,
-      powerPerMonth: this.state.powerPerMonth,
-      insurancePerYear: this.state.insurancePerYear
+      chefCost: this.state.chefCost,
+      chefUnitCost: this.state.chefUnitCost,
+      rentCost: this.state.rentCost,
+      rentUnitCost: this.state.rentUnitCost,
+      waterCost: this.state.waterCost,
+      waterUnitCost: this.state.waterUnitCost,
+      powerCost: this.state.powerCost,
+      powerUnitCost: this.state.powerUnitCost,
+      insuranceCost: this.state.insuranceCost,
+      insuranceUnitCost: this.state.insuranceUnitCost,
+      councilCost: this.state.councilCost,
+      councilUnitCost: this.state.councilUnitCost
     };
 
     console.log(venueData);
@@ -121,11 +170,18 @@ class EditVenue extends Component {
       phone,
       address,
       website,
-      chefPayPerHour,
-      rentPerMonth,
-      waterPerMonth,
-      powerPerMonth,
-      insurancePerYear,
+      chefCost,
+      chefUnitCost,
+      rentCost,
+      rentUnitCost,
+      waterCost,
+      waterUnitCost,
+      powerCost,
+      powerUnitCost,
+      insuranceCost,
+      insuranceUnitCost,
+      councilCost,
+      councilUnitCost,
       errors,
       displayAdvanced
     } = this.state;
@@ -136,44 +192,52 @@ class EditVenue extends Component {
       advancedInputs = (
         <React.Fragment>
           <TextInput
-            name="chefPayPerHour"
-            type="number"
-            value={`${chefPayPerHour}`}
+            name="chefCost"
+            type="chefCost"
+            value={chefCost}
             onChange={this.handleOnChange}
-            label="Cost of chef per hour"
-            error={errors.chefPayPerHour}
+            label="Chef Cost"
+            error={errors.chefCost}
           />
           <TextInput
-            name="rentPerMonth"
-            type="number"
-            value={`${rentPerMonth}`}
+            name="rentCost"
+            type="rentCost"
+            value={rentCost}
             onChange={this.handleOnChange}
-            label="Cost of rent per month"
-            error={errors.rentPerMonth}
+            label="Rent Cost"
+            error={errors.rentCost}
           />
           <TextInput
-            name="waterPerMonth"
-            type="number"
-            value={`${waterPerMonth}`}
+            name="waterCost"
+            type="waterCost"
+            value={waterCost}
             onChange={this.handleOnChange}
-            label="Cost of water per month"
-            error={errors.waterPerMonth}
+            label="Water Cost"
+            error={errors.waterCost}
           />
           <TextInput
-            name="powerPerMonth"
-            type="number"
-            value={`${powerPerMonth}`}
+            name="powerCost"
+            type="powerCost"
+            value={powerCost}
             onChange={this.handleOnChange}
-            label="Cost of electricity per month"
-            error={errors.powerPerMonth}
+            label="Electricity Cost"
+            error={errors.powerCost}
           />
           <TextInput
-            name="insurancePerYear"
-            type="number"
-            value={`${insurancePerYear}`}
+            name="insuranceCost"
+            type="insuranceCost"
+            value={insuranceCost}
             onChange={this.handleOnChange}
-            label="Cost of insurance per year"
-            error={errors.insurancePerYear}
+            label="Insurance Cost"
+            error={errors.insuranceCost}
+          />
+          <TextInput
+            name="councilCost"
+            type="councilCost"
+            value={councilCost}
+            onChange={this.handleOnChange}
+            label="Council Cost"
+            error={errors.councilCost}
           />
         </React.Fragment>
       );
