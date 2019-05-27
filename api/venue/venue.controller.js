@@ -69,6 +69,10 @@ const addOrEditVenue = (req, res) => {
     venueFields.costs.insuranceCost = req.body.insuranceCost;
   if (req.body.insuranceUnitCost)
     venueFields.costs.insuranceUnitCost = req.body.insuranceUnitCost;
+  if (req.body.councilCost)
+    venueFields.costs.councilCost = req.body.councilCost;
+  if (req.body.councilUnitCost)
+    venueFields.costs.councilUnitCost = req.body.councilUnitCost;
 
   console.log(venueFields);
 

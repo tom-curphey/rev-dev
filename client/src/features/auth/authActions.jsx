@@ -20,6 +20,8 @@ export const registerUser = (userData, history) => dispatch => {
 
 // Login - Get User Token
 export const loginUser = (loginDetails, history) => dispatch => {
+  console.log('Login User', loginDetails);
+
   axios
     .post('/api/user/login', loginDetails)
     .then(res => {
@@ -38,7 +40,7 @@ export const loginUser = (loginDetails, history) => dispatch => {
     .catch(err =>
       dispatch({
         type: GET_ERRORS,
-        payload: err.response.data
+        payload: err
       })
     );
 };

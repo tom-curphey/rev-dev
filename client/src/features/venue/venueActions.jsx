@@ -15,7 +15,7 @@ export const getCurrentVenue = () => dispatch => {
   axios
     .get('/api/venue')
     .then(res => {
-      // console.log('res.data: ', res.data);
+      console.log('res.data: ', res.data);
       dispatch({
         type: GET_VENUE,
         payload: res.data
@@ -40,13 +40,13 @@ export const addOrEditVenue = (venueData, history) => dispatch => {
   axios
     .post('/api/venue', venueData)
     .then(res => {
-      history.push('/dashboard');
+      // history.push('/dashboard');
       dispatch({
         type: SAVE_VENUE,
         payload: res.data
       });
     })
-    .then(res => history.push('/dashboard'))
+    // .then(res => history.push('/dashboard'))
     .catch(err => {
       dispatch({
         type: GET_ERRORS,

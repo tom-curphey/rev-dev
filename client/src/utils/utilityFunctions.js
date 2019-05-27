@@ -1,6 +1,16 @@
+export const roundNumber = (value, decimals) => {
+  if (value === 0 || value === '0' || value === '') {
+    return '';
+  }
+
+  return Number(
+    Math.round(+value + 'e' + decimals) + 'e-' + decimals
+  );
+};
+
 export const calcTimeToSeconds = (time, unit) => {
-  console.log('time', time);
-  console.log('unit', unit);
+  // console.log('time', time);
+  // console.log('unit', unit);
 
   let seconds = null;
   switch (unit) {
@@ -16,9 +26,6 @@ export const calcTimeToSeconds = (time, unit) => {
     default:
       seconds = null;
   }
-
-  console.log('seconds', seconds);
-
   return seconds;
 };
 
@@ -38,6 +45,74 @@ export const calcSecondsIntoTime = (seconds, unit) => {
       convertedTime = null;
   }
   return convertedTime;
+};
+
+export const calcCostToSeconds = (cost, unit) => {
+  let costPerSecond = null;
+  switch (unit) {
+    case 'sec':
+      costPerSecond = cost;
+      break;
+    case 'min':
+      costPerSecond = cost / 60;
+      break;
+    case 'hour':
+      costPerSecond = cost / 60 / 60;
+      break;
+    case 'day':
+      costPerSecond = cost / 24 / 60 / 60;
+      break;
+    case 'week':
+      costPerSecond = 7 / 24 / 60 / 60;
+      break;
+    case 'month':
+      // console.log('Made it');
+      // 31556925.9747 -> Hewlett-Packard seconds per year
+      costPerSecond = (cost / 31556925.9747) * 12;
+      break;
+    case 'year':
+      costPerSecond = cost / 31556925.9747;
+      break;
+    default:
+      costPerSecond = null;
+  }
+  return costPerSecond;
+};
+
+export const calcCostPerSecondToCostPerUnit = (
+  costPerSecond,
+  unit
+) => {
+  let costPerUnit = null;
+  switch (unit) {
+    case 'sec':
+      costPerUnit = costPerSecond;
+      break;
+    case 'min':
+      costPerUnit = costPerSecond * 60;
+      break;
+    case 'hour':
+      costPerUnit = costPerSecond * 60 * 60;
+      break;
+    case 'day':
+      costPerUnit = costPerSecond * 24 * 60 * 60;
+      break;
+    case 'week':
+      costPerUnit = costPerSecond * 7 * 24 * 60 * 60;
+      break;
+    case 'month':
+      // console.log('Made it');
+      // 31556925.9747 -> Hewlett-Packard seconds per year
+      costPerUnit = (costPerSecond * 31556925.9747) / 12;
+      // costPerUnit = 1;
+      break;
+    case 'year':
+      costPerUnit = costPerSecond * 31556925.9747;
+      break;
+    default:
+      costPerUnit = null;
+  }
+  return roundNumber(costPerUnit, 3);
 };
 
 export const calcTotalIngredientCost = selectedRecipe => {
@@ -80,14 +155,23 @@ export const calcStaffCost = (selectedRecipe, venue) => {
   if (selectedRecipe.staffTime === 0) {
     return `Recipe staff time not set..`;
   }
-  if (venue.costs.chefPayPerHour === 0) {
+  if (venue.costs.chefCost === 0) {
     return `Chef pay in not set..`;
   }
-  const staffTimeInHourFormat =
-    ((100 / 60 / 60) * selectedRecipe.staffTime) / 100;
-  const staffCost =
-    venue.costs.chefPayPerHour * staffTimeInHourFormat;
-  return staffCost;
+  const staffCostPerSecond =
+    venue.costs.chefCost * selectedRecipe.staffTime;
+
+  const staffCostPerHour =
+    ((100 / 60 / 60) * staffCostPerSecond) / 100;
+
+  console.log('selectedRecipe.staffTime', selectedRecipe.staffTime);
+  console.log('chefPayPerHour', venue.costs.chefCost);
+  console.log('staffCostPerHour', staffCostPerHour);
+  console.log('staffCostPerSecond', staffCostPerSecond);
+
+  // console.log('staffCost', staffCost);
+
+  return staffCostPerHour;
 };
 
 export const calcVenueCost = (recipe, venue) => {

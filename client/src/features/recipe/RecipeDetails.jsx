@@ -87,12 +87,45 @@ class RecipeDetails extends Component {
 
   handleOnChange = e => {
     e.persist();
-    this.setState(prevState => ({
-      selectedRecipe: {
-        ...prevState.selectedRecipe,
-        [e.target.name]: e.target.value
+
+    if (
+      e.target.name === 'staffTime' ||
+      e.target.name === 'totalCookingTime'
+    ) {
+      let value = e.target.value;
+      console.log('YES');
+      if (value !== '') {
+        if (!isNaN(value)) {
+          let checkDecimal = value.search(/\./);
+          // let checkDecimal = value.search(/^\d*\.?\d*$/);
+          // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
+          console.log('checkDecimal: ', checkDecimal);
+          if (checkDecimal !== -1) {
+            value = e.target.value;
+          }
+          this.setState(prevState => ({
+            selectedRecipe: {
+              ...prevState.selectedRecipe,
+              [e.target.name]: e.target.value
+            }
+          }));
+        }
+      } else {
+        this.setState(prevState => ({
+          selectedRecipe: {
+            ...prevState.selectedRecipe,
+            [e.target.name]: e.target.value
+          }
+        }));
       }
-    }));
+    } else {
+      this.setState(prevState => ({
+        selectedRecipe: {
+          ...prevState.selectedRecipe,
+          [e.target.name]: e.target.value
+        }
+      }));
+    }
   };
 
   handleOnSubmit = exit => e => {
@@ -197,38 +230,42 @@ class RecipeDetails extends Component {
               label="Sales Price Per Serve"
               error={errors.salePricePerServe}
             />
-            <TextInput
-              placeholder="How much time do staff spend creating the recipe"
-              name="staffTime"
-              type="text"
-              value={staffTime.toString()}
-              onChange={this.handleOnChange}
-              label="Staff Input Time"
-              error={errors.staffTime}
-            />
-            <SelectInput
-              label="Staff Time Unit"
-              name="staffTimeUnit"
-              options={timeOptions}
-              value={staffTimeUnit}
-              onChange={this.handleOnChange}
-            />
-            <TextInput
-              placeholder="How long does the total recipe take to make?"
-              name="totalCookingTime"
-              type="text"
-              value={totalCookingTime.toString()}
-              onChange={this.handleOnChange}
-              label="Total Recipe Production Time"
-              error={errors.totalCookingTime}
-            />
-            <SelectInput
-              label="Cooking Time Unit"
-              name="cookingTimeUnit"
-              options={timeOptions}
-              value={cookingTimeUnit}
-              onChange={this.handleOnChange}
-            />
+            <div className="textSelectWrapper">
+              <TextInput
+                name="staffTime"
+                type="staffTime"
+                value={staffTime.toString()}
+                onChange={this.handleOnChange}
+                label="Staff Time"
+                error={errors.staffTime}
+                labelClass="textSelect"
+              />
+              <SelectInput
+                name="staffTimeUnit"
+                value={staffTimeUnit}
+                options={timeOptions}
+                onChange={this.handleOnChange}
+                labelClass="textSelectSelect"
+              />
+            </div>
+            <div className="textSelectWrapper">
+              <TextInput
+                name="totalCookingTime"
+                type="totalCookingTime"
+                value={totalCookingTime.toString()}
+                onChange={this.handleOnChange}
+                label="Total Cooking Time"
+                error={errors.totalCookingTime}
+                labelClass="textSelect"
+              />
+              <SelectInput
+                name="cookingTimeUnit"
+                value={cookingTimeUnit}
+                options={timeOptions}
+                onChange={this.handleOnChange}
+                labelClass="textSelectSelect"
+              />
+            </div>
             <TextInput
               placeholder="How many recipe serves will you sell per day?"
               name="expectedSalesPerDay"

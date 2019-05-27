@@ -75,7 +75,7 @@ const VenueSchema = new Schema(
         type: Number,
         default: 0
       },
-      councilCost: {
+      councilUnitCost: {
         type: String,
         default: 'year'
       }

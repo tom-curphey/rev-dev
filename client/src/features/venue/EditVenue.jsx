@@ -3,9 +3,15 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import TextInput from '../../utils/input/TextInput';
+import SelectInput from '../../utils/input/SelectInput';
 import { addOrEditVenue, getCurrentVenue } from './venueActions';
 import isEmpty from '../../utils/validation/is.empty';
 import Spinner from '../../utils/spinner/Spinner';
+import {
+  calcCostToSeconds,
+  calcCostPerSecondToCostPerUnit
+} from '../../utils/utilityFunctions';
+import roundNumber from '../../utils/functions/roundNumber';
 
 class EditVenue extends Component {
   state = {
@@ -15,19 +21,19 @@ class EditVenue extends Component {
     address: '',
     website: '',
     chefCost: '',
-    chefUnitCost: '',
+    chefUnitCost: 'Hour',
     rentCost: '',
-    rentUnitCost: '',
+    rentUnitCost: 'Month',
     waterCost: '',
-    waterUnitCost: '',
+    waterUnitCost: 'Year',
     powerCost: '',
-    powerUnitCost: '',
+    powerUnitCost: 'Year',
     insuranceCost: '',
-    insuranceUnitCost: '',
+    insuranceUnitCost: 'Year',
     councilCost: '',
-    councilUnitCost: '',
+    councilUnitCost: 'Year',
     errors: {},
-    displayAdvanced: false
+    displayAdvanced: true
   };
 
   componentDidMount() {
@@ -55,32 +61,48 @@ class EditVenue extends Component {
       venue.address = !isEmpty(venue.address) ? venue.address : '';
       venue.website = !isEmpty(venue.website) ? venue.website : '';
       if (venue.costs) {
-        venue.chefCost = !isEmpty(venue.costs.chefCost)
-          ? venue.costs.chefCost.toString()
-          : '';
+        venue.chefCost =
+          !isEmpty(venue.costs.chefCost) || venue.costs.chefCost === 0
+            ? calcCostPerSecondToCostPerUnit(
+                venue.costs.chefCost,
+                venue.costs.chefUnitCost
+              ).toString()
+            : '';
         venue.chefUnitCost = !isEmpty(venue.costs.chefUnitCost)
           ? venue.costs.chefUnitCost.toString()
           : '';
         venue.rentCost = !isEmpty(venue.costs.rentCost)
-          ? venue.costs.rentCost.toString()
+          ? calcCostPerSecondToCostPerUnit(
+              venue.costs.rentCost,
+              venue.costs.rentUnitCost
+            ).toString()
           : '';
         venue.rentUnitCost = !isEmpty(venue.costs.rentUnitCost)
           ? venue.costs.rentUnitCost.toString()
           : '';
         venue.waterCost = !isEmpty(venue.costs.waterCost)
-          ? venue.costs.waterCost.toString()
+          ? calcCostPerSecondToCostPerUnit(
+              venue.costs.waterCost,
+              venue.costs.waterUnitCost
+            ).toString()
           : '';
         venue.waterUnitCost = !isEmpty(venue.costs.waterUnitCost)
           ? venue.costs.waterUnitCost.toString()
           : '';
         venue.powerCost = !isEmpty(venue.costs.powerCost)
-          ? venue.costs.powerCost.toString()
+          ? calcCostPerSecondToCostPerUnit(
+              venue.costs.powerCost,
+              venue.costs.powerUnitCost
+            ).toString()
           : '';
         venue.powerUnitCost = !isEmpty(venue.costs.powerUnitCost)
           ? venue.costs.powerUnitCost.toString()
           : '';
         venue.insuranceCost = !isEmpty(venue.costs.insuranceCost)
-          ? venue.costs.insuranceCost.toString()
+          ? calcCostPerSecondToCostPerUnit(
+              venue.costs.insuranceCost,
+              venue.costs.insuranceUnitCost
+            ).toString()
           : '';
         venue.insuranceUnitCost = !isEmpty(
           venue.costs.insuranceUnitCost
@@ -88,7 +110,10 @@ class EditVenue extends Component {
           ? venue.costs.insuranceUnitCost.toString()
           : '';
         venue.councilCost = !isEmpty(venue.costs.councilCost)
-          ? venue.costs.councilCost.toString()
+          ? calcCostPerSecondToCostPerUnit(
+              venue.costs.councilCost,
+              venue.costs.councilUnitCost
+            ).toString()
           : '';
         venue.councilUnitCost = !isEmpty(venue.costs.councilUnitCost)
           ? venue.costs.councilUnitCost.toString()
@@ -125,7 +150,8 @@ class EditVenue extends Component {
         insuranceCost: venue.insuranceCost,
         insuranceUnitCost: venue.insuranceUnitCost,
         councilCost: venue.councilCost,
-        councilUnitCost: venue.councilUnitCost
+        councilUnitCost: venue.councilUnitCost,
+        displayAdvanced: true
       });
     }
   }
@@ -134,8 +160,28 @@ class EditVenue extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  handleCostChange = e => {
+    let value = e.target.value;
+    if (value !== '') {
+      if (!isNaN(value)) {
+        let checkDecimal = value.search(/\./);
+        console.log('checkDecimal: ', checkDecimal);
+        if (checkDecimal !== -1) {
+          value = e.target.value;
+        }
+        this.setState({ [e.target.name]: value });
+      }
+    } else {
+      this.setState({ [e.target.name]: value });
+    }
+
+    console.log('Vlaue', value);
+  };
+
   handleOnSubmit = e => {
     e.preventDefault();
+
+    console.log('STATE: ', this.state);
 
     const venueData = {
       displayName: this.state.displayName,
@@ -143,19 +189,46 @@ class EditVenue extends Component {
       phone: this.state.phone,
       address: this.state.address,
       website: this.state.website,
-      chefCost: this.state.chefCost,
+      chefCost: calcCostToSeconds(
+        this.state.chefCost,
+        this.state.chefUnitCost
+      ),
       chefUnitCost: this.state.chefUnitCost,
-      rentCost: this.state.rentCost,
+      rentCost: calcCostToSeconds(
+        this.state.rentCost,
+        this.state.rentUnitCost
+      ),
       rentUnitCost: this.state.rentUnitCost,
-      waterCost: this.state.waterCost,
+      waterCost: calcCostToSeconds(
+        this.state.waterCost,
+        this.state.waterUnitCost
+      ),
       waterUnitCost: this.state.waterUnitCost,
-      powerCost: this.state.powerCost,
+      powerCost: calcCostToSeconds(
+        this.state.powerCost,
+        this.state.powerUnitCost
+      ),
       powerUnitCost: this.state.powerUnitCost,
-      insuranceCost: this.state.insuranceCost,
+      insuranceCost: calcCostToSeconds(
+        this.state.insuranceCost,
+        this.state.insuranceUnitCost
+      ),
       insuranceUnitCost: this.state.insuranceUnitCost,
-      councilCost: this.state.councilCost,
+      councilCost: calcCostToSeconds(
+        this.state.councilCost,
+        this.state.councilUnitCost
+      ),
       councilUnitCost: this.state.councilUnitCost
     };
+
+    // if (this.state.rentCost !== '' || this.state.rentCost !== 0) {
+    //   venueData.rentCost = calcCostToSeconds(
+    //     this.state.rentCost,
+    //     this.state.rentUnitCost
+    //   ).toString();
+    // } else {
+    //   venueData.rentCost = this.state.rentCost;
+    // }
 
     console.log(venueData);
 
@@ -187,6 +260,14 @@ class EditVenue extends Component {
     } = this.state;
     const { venue, loading } = this.props.venue;
 
+    const timeOptions = [
+      { label: 'Hour', value: 'hour' },
+      { label: 'Day', value: 'day' },
+      { label: 'Week', value: 'week' },
+      { label: 'Month', value: 'month' },
+      { label: 'Year', value: 'year' }
+    ];
+
     let advancedInputs;
     if (displayAdvanced) {
       advancedInputs = (
@@ -195,50 +276,100 @@ class EditVenue extends Component {
             name="chefCost"
             type="chefCost"
             value={chefCost}
-            onChange={this.handleOnChange}
-            label="Chef Cost"
+            onChange={this.handleCostChange}
+            label="Chef Cost per hour"
             error={errors.chefCost}
           />
-          <TextInput
-            name="rentCost"
-            type="rentCost"
-            value={rentCost}
-            onChange={this.handleOnChange}
-            label="Rent Cost"
-            error={errors.rentCost}
-          />
-          <TextInput
-            name="waterCost"
-            type="waterCost"
-            value={waterCost}
-            onChange={this.handleOnChange}
-            label="Water Cost"
-            error={errors.waterCost}
-          />
-          <TextInput
-            name="powerCost"
-            type="powerCost"
-            value={powerCost}
-            onChange={this.handleOnChange}
-            label="Electricity Cost"
-            error={errors.powerCost}
-          />
-          <TextInput
-            name="insuranceCost"
-            type="insuranceCost"
-            value={insuranceCost}
-            onChange={this.handleOnChange}
-            label="Insurance Cost"
-            error={errors.insuranceCost}
-          />
-          <TextInput
-            name="councilCost"
-            type="councilCost"
-            value={councilCost}
-            onChange={this.handleOnChange}
-            label="Council Cost"
-            error={errors.councilCost}
-          />
+          <div className="textSelectWrapper">
+            <TextInput
+              name="rentCost"
+              type="rentCost"
+              value={rentCost.toString()}
+              onChange={this.handleCostChange}
+              label="Rent Cost"
+              error={errors.rentCost}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="rentUnitCost"
+              value={rentUnitCost}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
+          <div className="textSelectWrapper">
+            <TextInput
+              name="waterCost"
+              type="waterCost"
+              value={roundNumber(waterCost, 2).toString()}
+              onChange={this.handleOnChange}
+              label="Water Cost"
+              error={errors.waterCost}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="waterUnitCost"
+              value={waterUnitCost}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
+          <div className="textSelectWrapper">
+            <TextInput
+              name="powerCost"
+              type="powerCost"
+              value={roundNumber(powerCost, 2).toString()}
+              onChange={this.handleOnChange}
+              label="Electricity Cost"
+              error={errors.powerCost}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="powerUnitCost"
+              value={powerUnitCost}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
+          <div className="textSelectWrapper">
+            <TextInput
+              name="insuranceCost"
+              type="insuranceCost"
+              value={roundNumber(insuranceCost, 2).toString()}
+              onChange={this.handleOnChange}
+              label="Insurance Cost"
+              error={errors.insuranceCost}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="insuranceUnitCost"
+              value={insuranceUnitCost}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
+          <div className="textSelectWrapper">
+            <TextInput
+              name="councilCost"
+              type="councilCost"
+              value={roundNumber(councilCost, 2).toString()}
+              onChange={this.handleOnChange}
+              label="Council Cost"
+              error={errors.councilCost}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="councilUnitCost"
+              value={councilUnitCost}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
         </React.Fragment>
       );
     }

@@ -6,7 +6,8 @@ const SelectInput = ({
   onChange,
   value,
   name,
-  id
+  id,
+  labelClass
 }) => {
   const selectOptions = options.map(option => (
     <option
@@ -19,7 +20,7 @@ const SelectInput = ({
   ));
   return (
     <div>
-      <label htmlFor={name}>
+      <label htmlFor={name} className={labelClass}>
         {label}{' '}
         <select name={name} value={value} onChange={onChange} id={id}>
           {selectOptions}

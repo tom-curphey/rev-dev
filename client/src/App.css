@@ -334,6 +334,34 @@ section.venue label {
   grid-template-columns: 200px 200px;
 }
 
+section.venue div.textSelectWrapper {
+  display: grid;
+  grid-template-columns: 340px 55px;
+}
+
+section.venue label.textSelect {
+  display: grid;
+  grid-template-columns: 200px 140px;
+}
+
+section.venue label.textSelectSelect {
+  display: block;
+  width: 55px;
+}
+
+section.venue label.textSelectSelect select {
+  width: 100%;
+  height: 27px;
+  outline: 0px;
+  border: none;
+  background-color: #fff;
+}
+
+section.venue label.textSelectSelect select:hover,
+section.venue label.textSelectSelect select:focus {
+  background-color: #f1f1f1;
+}
+
 section.venue input {
   padding: 5px 10px;
   outline: 0;
@@ -380,6 +408,34 @@ section.recipe form {
 section.recipe label {
   display: grid;
   grid-template-columns: 300px 300px;
+}
+
+section.recipeDetails div.textSelectWrapper {
+  display: grid;
+  grid-template-columns: 350px 55px;
+}
+
+section.recipeDetails label.textSelect {
+  display: grid;
+  grid-template-columns: 270px 60px;
+}
+
+section.recipeDetails label.textSelectSelect {
+  display: block;
+  width: 55px;
+}
+
+section.recipeDetails label.textSelectSelect select {
+  width: 100%;
+  height: 27px;
+  outline: 0px;
+  border: none;
+  background-color: #fff;
+}
+
+section.recipeDetails label.textSelectSelect select:hover,
+section.recipeDetails label.textSelectSelect select:focus {
+  background-color: #f1f1f1;
 }
 
 section.recipe input {
