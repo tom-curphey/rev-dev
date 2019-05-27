@@ -40,8 +40,12 @@ const RecipeSchema = new Schema(
     cookingTimeUnit: {
       type: String
     },
-    expectedSalesPerDay: {
+    expectedSales: {
       type: Number
+    },
+    expectedSalesUnit: {
+      type: String,
+      default: 'week'
     },
     internalRecipe: {
       type: Boolean,

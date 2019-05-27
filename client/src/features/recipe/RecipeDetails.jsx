@@ -22,7 +22,7 @@ class RecipeDetails extends Component {
       staffTimeUnit: '',
       totalCookingTime: '',
       cookingTimeUnit: '',
-      expectedSalesPerDay: '',
+      expectedSales: '',
       internalRecipe: false,
       ingredients: []
     },
@@ -93,13 +93,13 @@ class RecipeDetails extends Component {
       e.target.name === 'totalCookingTime'
     ) {
       let value = e.target.value;
-      console.log('YES');
+      // console.log('YES');
       if (value !== '') {
         if (!isNaN(value)) {
           let checkDecimal = value.search(/\./);
           // let checkDecimal = value.search(/^\d*\.?\d*$/);
           // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
-          console.log('checkDecimal: ', checkDecimal);
+          // console.log('checkDecimal: ', checkDecimal);
           if (checkDecimal !== -1) {
             value = e.target.value;
           }
@@ -139,9 +139,9 @@ class RecipeDetails extends Component {
       salePricePerServe: this.state.selectedRecipe.salePricePerServe,
       staffTimeUnit: this.state.selectedRecipe.staffTimeUnit,
       cookingTimeUnit: this.state.selectedRecipe.cookingTimeUnit,
-      expectedSalesPerDay: this.state.selectedRecipe
-        .expectedSalesPerDay,
-      internalRecipe: this.state.selectedRecipe.internalRecipe
+      expectedSales: this.state.selectedRecipe.expectedSales,
+      internalRecipe: this.state.selectedRecipe.internalRecipe,
+      ingredients: this.state.selectedRecipe.ingredients
     };
 
     if (this.state.selectedRecipe.staffTime !== '') {
@@ -180,7 +180,7 @@ class RecipeDetails extends Component {
       staffTimeUnit,
       totalCookingTime,
       cookingTimeUnit,
-      expectedSalesPerDay,
+      expectedSales,
       internalRecipe
     } = this.state.selectedRecipe;
 
@@ -268,12 +268,12 @@ class RecipeDetails extends Component {
             </div>
             <TextInput
               placeholder="How many recipe serves will you sell per day?"
-              name="expectedSalesPerDay"
+              name="expectedSales"
               type="text"
-              value={expectedSalesPerDay}
+              value={expectedSales}
               onChange={this.handleOnChange}
-              label="Expected Sales Per Day"
-              error={errors.expectedSalesPerDay}
+              label="Expected Sales Per Week"
+              error={errors.expectedSales}
             />
             <SelectInput
               // info="Is this recipe made internally to be added to other recipes?"

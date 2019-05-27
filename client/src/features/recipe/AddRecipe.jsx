@@ -9,15 +9,18 @@ import calcTimeToSeconds from '../../utils/functions/calcTimeToSeconds';
 
 class AddRecipe extends Component {
   state = {
-    displayName: '',
-    serves: '',
-    salePricePerServe: '',
-    staffTime: '',
-    staffTimeUnit: 'min',
-    totalCookingTime: '',
-    cookingTimeUnit: 'min',
-    expectedSalesPerDay: '',
-    internalRecipe: false,
+    selectedRecipe: {
+      displayName: '',
+      serves: '',
+      salePricePerServe: '',
+      staffTime: '',
+      staffTimeUnit: 'min',
+      totalCookingTime: '',
+      cookingTimeUnit: 'min',
+      expectedSales: '',
+      internalRecipe: false,
+      ingredients: []
+    },
     errors: {}
   };
 
@@ -34,39 +37,82 @@ class AddRecipe extends Component {
   }
 
   handleOnChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+    e.persist();
+
+    if (
+      e.target.name === 'staffTime' ||
+      e.target.name === 'totalCookingTime'
+    ) {
+      let value = e.target.value;
+      // console.log('YES');
+      if (value !== '') {
+        if (!isNaN(value)) {
+          let checkDecimal = value.search(/\./);
+          // let checkDecimal = value.search(/^\d*\.?\d*$/);
+          // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
+          // console.log('checkDecimal: ', checkDecimal);
+          if (checkDecimal !== -1) {
+            value = e.target.value;
+          }
+          this.setState(prevState => ({
+            selectedRecipe: {
+              ...prevState.selectedRecipe,
+              [e.target.name]: e.target.value
+            }
+          }));
+        }
+      } else {
+        this.setState(prevState => ({
+          selectedRecipe: {
+            ...prevState.selectedRecipe,
+            [e.target.name]: e.target.value
+          }
+        }));
+      }
+    } else {
+      this.setState(prevState => ({
+        selectedRecipe: {
+          ...prevState.selectedRecipe,
+          [e.target.name]: e.target.value
+        }
+      }));
+    }
   };
 
   handleOnSubmit = e => {
     e.preventDefault();
+
+    // console.log('venue', this.state);
+
     const recipeData = {
-      displayName: this.state.displayName,
-      serves: this.state.serves,
-      salePricePerServe: this.state.salePricePerServe,
-      staffTimeUnit: this.state.staffTimeUnit,
-      cookingTimeUnit: this.state.cookingTimeUnit,
-      expectedSalesPerDay: this.state.expectedSalesPerDay,
-      internalRecipe: this.state.internalRecipe
+      displayName: this.state.selectedRecipe.displayName,
+      serves: this.state.selectedRecipe.serves,
+      salePricePerServe: this.state.selectedRecipe.salePricePerServe,
+      staffTimeUnit: this.state.selectedRecipe.staffTimeUnit,
+      cookingTimeUnit: this.state.selectedRecipe.cookingTimeUnit,
+      expectedSales: this.state.selectedRecipe.expectedSales,
+      internalRecipe: this.state.selectedRecipe.internalRecipe,
+      ingredients: this.state.selectedRecipe.ingredients
     };
 
-    if (this.state.staffTime !== '') {
+    if (this.state.selectedRecipe.staffTime !== '') {
       recipeData.staffTime = calcTimeToSeconds(
-        this.state.staffTime,
-        this.state.staffTimeUnit
+        this.state.selectedRecipe.staffTime,
+        this.state.selectedRecipe.staffTimeUnit
       );
     } else {
-      recipeData.staffTime = this.state.staffTime;
+      recipeData.staffTime = this.state.selectedRecipe.staffTime;
     }
-    if (this.state.totalCookingTime !== '') {
+    if (this.state.selectedRecipe.totalCookingTime !== '') {
       recipeData.totalCookingTime = calcTimeToSeconds(
-        this.state.totalCookingTime,
-        this.state.cookingTimeUnit
+        this.state.selectedRecipe.totalCookingTime,
+        this.state.selectedRecipe.cookingTimeUnit
       );
     } else {
-      recipeData.totalCookingTime = this.state.totalCookingTime;
+      recipeData.totalCookingTime = this.state.selectedRecipe.totalCookingTime;
     }
 
-    console.log('recipeData', recipeData);
+    console.log('recipeData - AddRecipe', recipeData);
 
     this.props.addRecipe(
       recipeData,
@@ -76,6 +122,7 @@ class AddRecipe extends Component {
   };
 
   render() {
+    const { errors } = this.state;
     const {
       displayName,
       serves,
@@ -84,10 +131,9 @@ class AddRecipe extends Component {
       staffTimeUnit,
       totalCookingTime,
       cookingTimeUnit,
-      expectedSalesPerDay,
-      internalRecipe,
-      errors
-    } = this.state;
+      expectedSales,
+      internalRecipe
+    } = this.state.selectedRecipe;
 
     // Select options for status
     const options = [
@@ -132,46 +178,50 @@ class AddRecipe extends Component {
             label="Sales Price Per Serve"
             error={errors.salePricePerServe}
           />
-          <TextInput
-            placeholder="How much time do staff spend creating the recipe"
-            name="staffTime"
-            type="text"
-            value={staffTime}
-            onChange={this.handleOnChange}
-            label="Staff Input Time"
-            error={errors.staffTime}
-          />
-          <SelectInput
-            label="Staff Time Unit"
-            name="staffTimeUnit"
-            options={timeOptions}
-            value={staffTimeUnit}
-            onChange={this.handleOnChange}
-          />
-          <TextInput
-            placeholder="How long does the total recipe take to make?"
-            name="totalCookingTime"
-            type="text"
-            value={totalCookingTime}
-            onChange={this.handleOnChange}
-            label="Total Recipe Production Time"
-            error={errors.totalCookingTime}
-          />
-          <SelectInput
-            label="Cooking Time Unit"
-            name="cookingTimeUnit"
-            options={timeOptions}
-            value={cookingTimeUnit}
-            onChange={this.handleOnChange}
-          />
+          <div className="textSelectWrapper">
+            <TextInput
+              name="staffTime"
+              type="staffTime"
+              value={staffTime.toString()}
+              onChange={this.handleOnChange}
+              label="Staff Time"
+              error={errors.staffTime}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="staffTimeUnit"
+              value={staffTimeUnit}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
+          <div className="textSelectWrapper">
+            <TextInput
+              name="totalCookingTime"
+              type="totalCookingTime"
+              value={totalCookingTime.toString()}
+              onChange={this.handleOnChange}
+              label="Total Cooking Time"
+              error={errors.totalCookingTime}
+              labelClass="textSelect"
+            />
+            <SelectInput
+              name="cookingTimeUnit"
+              value={cookingTimeUnit}
+              options={timeOptions}
+              onChange={this.handleOnChange}
+              labelClass="textSelectSelect"
+            />
+          </div>
           <TextInput
             placeholder="How many recipe serves will you sell per day?"
-            name="expectedSalesPerDay"
+            name="expectedSales"
             type="text"
-            value={expectedSalesPerDay}
+            value={expectedSales}
             onChange={this.handleOnChange}
-            label="Expected Sales Per Day"
-            error={errors.expectedSalesPerDay}
+            label="Expected Sales Per Week"
+            error={errors.expectedSales}
           />
           <SelectInput
             // info="Is this recipe made internally to be added to other recipes?"
@@ -179,7 +229,7 @@ class AddRecipe extends Component {
             options={options}
             value={internalRecipe}
             onChange={this.handleOnChange}
-            label="Internal Recipe"
+            label="In House Recipe"
             error={errors.internalRecipe}
           />
         </form>

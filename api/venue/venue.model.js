@@ -30,6 +30,10 @@ const VenueSchema = new Schema(
       type: String,
       required: true
     },
+    weeksOpenPerYear: {
+      type: Number,
+      default: 52
+    },
     costs: {
       chefCost: {
         type: Number,

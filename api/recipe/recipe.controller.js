@@ -150,9 +150,8 @@ const addRecipe = (req, res) => {
         recipeFields.totalCookingTime = req.body.totalCookingTime;
       if (req.body.cookingTimeUnit)
         recipeFields.cookingTimeUnit = req.body.cookingTimeUnit;
-      if (req.body.expectedSalesPerDay)
-        recipeFields.expectedSalesPerDay =
-          req.body.expectedSalesPerDay;
+      if (req.body.expectedSales)
+        recipeFields.expectedSales = req.body.expectedSales;
       if (req.body.internalRecipe)
         recipeFields.internalRecipe = req.body.internalRecipe;
 
@@ -160,7 +159,7 @@ const addRecipe = (req, res) => {
         urlName: recipeFields.urlName
       }).then(recipe => {
         if (recipe) {
-          console.log('Recipe Exists: ', recipe);
+          // console.log('Recipe Exists: ', recipe);
           errors.recipe =
             'This recipe already exists for this venue, no need to create a new one.. To compare recipes use the compare recipe feature on the recipe results page. [link to page]';
           return res.status(400).json(errors);
@@ -235,8 +234,7 @@ const editRecipeByID = (req, res) => {
         if (req.body.cookingTimeUnit)
           recipeFields.cookingTimeUnit = req.body.cookingTimeUnit;
         if (req.body.expectedSalesPerDay)
-          recipeFields.expectedSalesPerDay =
-            req.body.expectedSalesPerDay;
+          recipeFields.expectedSales = req.body.expectedSales;
         if (req.body.internalRecipe)
           recipeFields.internalRecipe = req.body.internalRecipe;
 

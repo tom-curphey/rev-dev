@@ -31,7 +31,7 @@ class RecipeResults extends Component {
     const venueLoading = this.props.venue.loading;
     const { profile } = this.props;
 
-    console.log('selectedRecipe - RESULT', selectedRecipe);
+    // console.log('selectedRecipe - RESULT', selectedRecipe);
 
     let recipeContent;
     if (

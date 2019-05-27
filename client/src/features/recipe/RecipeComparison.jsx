@@ -3,7 +3,9 @@ import {
   calcSecondsIntoTime,
   calcTotalIngredientCost,
   calcVenueCost,
-  calcStaffCost
+  calcStaffCost,
+  calcProfitPerServe,
+  calcProfitPerYear
 } from '../../utils/utilityFunctions';
 // import calcStaffCost from '../../utils/functions/calcStaffCost';
 import roundNumber from '../../utils/functions/roundNumber';
@@ -13,40 +15,22 @@ const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
   console.log('selectedRecipe', selectedRecipe);
   console.log('venue', venue);
 
-  // const convertedRecipe = { ...selectedRecipe };
-
-  // convertedRecipe.staffTime = selectedRecipe.staffTime
-  //   ? calcSecondsIntoTime(
-  //       selectedRecipe.staffTime,
-  //       selectedRecipe.staffTimeUnit
-  //     ).toString()
-  //   : '';
-  // convertedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
-  //   ? calcSecondsIntoTime(
-  //       selectedRecipe.totalCookingTime,
-  //       selectedRecipe.cookingTimeUnit
-  //     ).toString()
-  //   : '';
-
-  // selectedRecipe.staffTime = selectedRecipe.staffTime
-  //   ? calcSecondsIntoTime(
-  //       selectedRecipe.staffTime,
-  //       selectedRecipe.staffTimeUnit
-  //     ).toString()
-  //   : '';
-  // selectedRecipe.totalCookingTime = selectedRecipe.totalCookingTime
-  //   ? calcSecondsIntoTime(
-  //       selectedRecipe.totalCookingTime,
-  //       selectedRecipe.cookingTimeUnit
-  //     ).toString()
-  //   : '';
-
   const totalIngredientCost = calcTotalIngredientCost(selectedRecipe);
   const staffCost = calcStaffCost(selectedRecipe, venue);
   const venueCost = calcVenueCost(selectedRecipe, venue);
-  // if (isNumber(totalIngredientCost)) {
-  //   console.log('totalIngredientCost: ', totalIngredientCost);
-  // }
+
+  const totalCost = totalIngredientCost + staffCost + venueCost;
+
+  const profitPerServe = calcProfitPerServe(
+    selectedRecipe,
+    totalCost
+  );
+
+  const profitPerYear = calcProfitPerYear(
+    selectedRecipe,
+    profitPerServe,
+    venue
+  );
 
   return (
     <section className="comparison">
@@ -71,15 +55,27 @@ const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
           )}
         </li>
         <li>
-          {isNumber(totalIngredientCost) ? (
+          {isNumber(staffCost) ? (
             roundNumber(staffCost, 2)
           ) : (
             <span style={{ color: 'red' }}>{staffCost}</span>
           )}
         </li>
+        <li>
+          {isNumber(venueCost) ? (
+            roundNumber(venueCost, 2)
+          ) : (
+            <span style={{ color: 'red' }}>{venueCost}</span>
+          )}
+        </li>
         <li>-</li>
-        <li>-</li>
-        <li>-</li>
+        <li>
+          {isNumber(profitPerServe) ? (
+            roundNumber(profitPerServe, 2)
+          ) : (
+            <span style={{ color: 'red' }}>{profitPerServe}</span>
+          )}
+        </li>
         <li>-</li>
       </ul>
     </section>

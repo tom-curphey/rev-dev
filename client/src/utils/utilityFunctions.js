@@ -1,3 +1,5 @@
+import { isNumber } from 'util';
+
 export const roundNumber = (value, decimals) => {
   if (value === 0 || value === '0' || value === '') {
     return '';
@@ -158,30 +160,75 @@ export const calcStaffCost = (selectedRecipe, venue) => {
   if (venue.costs.chefCost === 0) {
     return `Chef pay in not set..`;
   }
-  const staffCostPerSecond =
-    venue.costs.chefCost * selectedRecipe.staffTime;
-
-  const staffCostPerHour =
-    ((100 / 60 / 60) * staffCostPerSecond) / 100;
-
-  console.log('selectedRecipe.staffTime', selectedRecipe.staffTime);
-  console.log('chefPayPerHour', venue.costs.chefCost);
-  console.log('staffCostPerHour', staffCostPerHour);
-  console.log('staffCostPerSecond', staffCostPerSecond);
-
-  // console.log('staffCost', staffCost);
-
-  return staffCostPerHour;
+  const staffCost = venue.costs.chefCost * selectedRecipe.staffTime;
+  return staffCost;
 };
 
-export const calcVenueCost = (recipe, venue) => {
-  console.log('recipe', recipe);
-  console.log('venue', venue);
-
-  if (recipe.totalCookingTime === 0) {
+export const calcVenueCost = (selectedRecipe, venue) => {
+  if (selectedRecipe.totalCookingTime === 0) {
     return `Recipe total cooking time not set..`;
   }
   if (venue.costs.chefPayPerHour === 0) {
     return `Venue rent is not set..`;
   }
+
+  let totalVenueCost = 0;
+  if (venue.costs.rentCost !== 0)
+    totalVenueCost = totalVenueCost + venue.costs.rentCost;
+  if (venue.costs.powerCost !== 0)
+    totalVenueCost = totalVenueCost + venue.costs.powerCost;
+  if (venue.costs.insuranceCost !== 0)
+    totalVenueCost = totalVenueCost + venue.costs.insuranceCost;
+  if (venue.costs.councilCost !== 0)
+    totalVenueCost = totalVenueCost + venue.costs.councilCost;
+  if (venue.costs.waterCost !== 0)
+    totalVenueCost = totalVenueCost + venue.costs.waterCost;
+
+  const venueCost = selectedRecipe.totalCookingTime * totalVenueCost;
+
+  return venueCost;
+};
+
+export const calcProfitPerServe = (selectedRecipe, totalCost) => {
+  if (selectedRecipe.serves === 0) {
+    return `Recipes serves equals 0..`;
+  }
+  if (
+    !selectedRecipe.salePricePerServe ||
+    selectedRecipe.salePricePerServe === 0
+  ) {
+    return `Recipes sales price is not set..`;
+  }
+  const costPerServe = totalCost / selectedRecipe.serves;
+  const profitPerServe =
+    selectedRecipe.salePricePerServe - costPerServe;
+
+  return profitPerServe;
+};
+
+export const calcProfitPerYear = (
+  selectedRecipe,
+  profitPerServe,
+  venue
+) => {
+  if (
+    !selectedRecipe.expectedSales ||
+    selectedRecipe.expectedSales === 0
+  ) {
+    return `Recipe weekly sales is not set..`;
+  }
+
+  if (!isNumber(profitPerServe)) {
+    return `-`;
+  }
+
+  if (venue.weeksOpenPerYear === 0) {
+    return `Venue open time is not set..`;
+  }
+
+  const profitPerYear =
+    profitPerServe *
+    selectedRecipe.expectedSales *
+    venue.weeksOpenPerYear;
+  console.log('profitPerYear', profitPerYear);
 };

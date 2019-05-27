@@ -89,24 +89,11 @@ export const getSelectedRecipeByID = recipeID => dispatch => {
     });
 };
 
-// export const setSelectedRecipe = (
-//   recipeData,
-//   profileData
-// ) => dispatch => {
-//   const empty = new Object();
-//   console.log('empty', empty);
-
-//   dispatch({
-//     type: SET_SELECTED_RECIPE,
-//     payload: empty
-//   });
-// };
-
 export const setSelectedRecipe = (
   recipeData,
   profileData
 ) => dispatch => {
-  console.log('recipeData ACTIONS', recipeData);
+  // console.log('recipeData ACTIONS', recipeData);
 
   const updateRecipe = {
     _id: recipeData._id,
@@ -114,8 +101,8 @@ export const setSelectedRecipe = (
     displayName: recipeData.displayName,
     urlName: recipeData.urlName,
     serves: recipeData.serves.toString(),
-    expectedSalesPerDay: recipeData.expectedSalesPerDay
-      ? recipeData.expectedSalesPerDay.toString()
+    expectedSales: recipeData.expectedSales
+      ? recipeData.expectedSales.toString()
       : '',
     salePricePerServe: recipeData.salePricePerServe
       ? recipeData.salePricePerServe.toString()
@@ -177,18 +164,15 @@ export const editRecipe = (
   history,
   exit
 ) => dispatch => {
-  console.log('recipeData ACTIONS', recipeData);
   // console.log('recipeData ACTIONS', profileData);
   dispatch(setRecipeLoading());
   axios
     .put(`/api/recipe/${recipeData._id}`, recipeData)
     .then(res => {
-      // console.log('res recipeData ACTIONS', res.data);
       if (exit) {
         history.push('/recipes');
         dispatch(removeSelectedRecipe());
       } else {
-        console.log('recipeData ACTIONS', res.data);
         dispatch(setSelectedRecipe(res.data, profileData));
       }
     })

@@ -407,24 +407,28 @@ section.recipe form {
 
 section.recipe label {
   display: grid;
-  grid-template-columns: 300px 300px;
+  grid-template-columns: 270px 270px;
 }
 
+section.recipe div.textSelectWrapper,
 section.recipeDetails div.textSelectWrapper {
   display: grid;
   grid-template-columns: 350px 55px;
 }
 
+section.recipe label.textSelect,
 section.recipeDetails label.textSelect {
   display: grid;
   grid-template-columns: 270px 60px;
 }
 
+section.recipe label.textSelectSelect,
 section.recipeDetails label.textSelectSelect {
   display: block;
   width: 55px;
 }
 
+section.recipe label.textSelectSelect select,
 section.recipeDetails label.textSelectSelect select {
   width: 100%;
   height: 27px;
@@ -433,6 +437,8 @@ section.recipeDetails label.textSelectSelect select {
   background-color: #fff;
 }
 
+section.recipe label.textSelectSelect select:hover,
+section.recipe label.textSelectSelect select:focus,
 section.recipeDetails label.textSelectSelect select:hover,
 section.recipeDetails label.textSelectSelect select:focus {
   background-color: #f1f1f1;

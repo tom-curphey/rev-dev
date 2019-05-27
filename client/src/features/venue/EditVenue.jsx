@@ -9,9 +9,9 @@ import isEmpty from '../../utils/validation/is.empty';
 import Spinner from '../../utils/spinner/Spinner';
 import {
   calcCostToSeconds,
-  calcCostPerSecondToCostPerUnit
+  calcCostPerSecondToCostPerUnit,
+  roundNumber
 } from '../../utils/utilityFunctions';
-import roundNumber from '../../utils/functions/roundNumber';
 
 class EditVenue extends Component {
   state = {
@@ -21,17 +21,18 @@ class EditVenue extends Component {
     address: '',
     website: '',
     chefCost: '',
-    chefUnitCost: 'Hour',
+    chefUnitCost: 'hour',
     rentCost: '',
-    rentUnitCost: 'Month',
+    rentUnitCost: 'month',
     waterCost: '',
-    waterUnitCost: 'Year',
+    waterUnitCost: 'year',
     powerCost: '',
-    powerUnitCost: 'Year',
+    powerUnitCost: 'year',
     insuranceCost: '',
-    insuranceUnitCost: 'Year',
+    insuranceUnitCost: 'year',
     councilCost: '',
-    councilUnitCost: 'Year',
+    councilUnitCost: 'year',
+    weeksOpenPerYear: '',
     errors: {},
     displayAdvanced: true
   };
@@ -118,6 +119,9 @@ class EditVenue extends Component {
         venue.councilUnitCost = !isEmpty(venue.costs.councilUnitCost)
           ? venue.costs.councilUnitCost.toString()
           : '';
+        venue.weeksOpenPerYear = !isEmpty(venue.weeksOpenPerYear)
+          ? venue.weeksOpenPerYear.toString()
+          : '';
       } else {
         venue.chefCost = '';
         venue.chefUnitCost = '';
@@ -131,6 +135,7 @@ class EditVenue extends Component {
         venue.insuranceUnitCost = '';
         venue.councilCost = '';
         venue.councilUnitCost = '';
+        venue.weeksOpenPerYear = '';
       }
 
       this.setState({
@@ -151,6 +156,7 @@ class EditVenue extends Component {
         insuranceUnitCost: venue.insuranceUnitCost,
         councilCost: venue.councilCost,
         councilUnitCost: venue.councilUnitCost,
+        weeksOpenPerYear: venue.weeksOpenPerYear,
         displayAdvanced: true
       });
     }
@@ -218,17 +224,9 @@ class EditVenue extends Component {
         this.state.councilCost,
         this.state.councilUnitCost
       ),
-      councilUnitCost: this.state.councilUnitCost
+      councilUnitCost: this.state.councilUnitCost,
+      weeksOpenPerYear: this.state.weeksOpenPerYear
     };
-
-    // if (this.state.rentCost !== '' || this.state.rentCost !== 0) {
-    //   venueData.rentCost = calcCostToSeconds(
-    //     this.state.rentCost,
-    //     this.state.rentUnitCost
-    //   ).toString();
-    // } else {
-    //   venueData.rentCost = this.state.rentCost;
-    // }
 
     console.log(venueData);
 
@@ -244,7 +242,6 @@ class EditVenue extends Component {
       address,
       website,
       chefCost,
-      chefUnitCost,
       rentCost,
       rentUnitCost,
       waterCost,
@@ -255,17 +252,18 @@ class EditVenue extends Component {
       insuranceUnitCost,
       councilCost,
       councilUnitCost,
+      weeksOpenPerYear,
       errors,
       displayAdvanced
     } = this.state;
     const { venue, loading } = this.props.venue;
 
     const timeOptions = [
-      { label: 'Hour', value: 'hour' },
-      { label: 'Day', value: 'day' },
-      { label: 'Week', value: 'week' },
+      { label: 'Year', value: 'year' },
       { label: 'Month', value: 'month' },
-      { label: 'Year', value: 'year' }
+      { label: 'Week', value: 'week' },
+      { label: 'Day', value: 'day' },
+      { label: 'Hour', value: 'hour' }
     ];
 
     let advancedInputs;
