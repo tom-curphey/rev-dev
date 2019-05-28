@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {
   GET_ERRORS,
+  REMOVE_ERRORS,
   GET_RECIPES,
   RECIPE_LOADING,
+  REMOVE_RECIPE_LOADING,
   ADD_RECIPE,
   SET_SELECTED_RECIPE,
   REMOVE_SELECTED_RECIPE
@@ -28,10 +30,17 @@ export const getRecipes = () => dispatch => {
     });
 };
 
-// Ingredients loading
+// Recipe loading
 export const setRecipeLoading = () => {
   return {
     type: RECIPE_LOADING
+  };
+};
+
+// Remove Recipe loading
+export const removeRecipeLoading = () => {
+  return {
+    type: REMOVE_RECIPE_LOADING
   };
 };
 
@@ -60,6 +69,7 @@ export const addRecipe = (
         type: GET_ERRORS,
         payload: err.response.data
       });
+      dispatch(removeRecipeLoading());
     });
 };
 
@@ -151,7 +161,10 @@ export const setSelectedRecipe = (
     }
   );
   updateRecipe.ingredients = updatedRecipeIngredients;
-
+  dispatch({
+    type: REMOVE_ERRORS,
+    payload: {}
+  });
   dispatch({
     type: SET_SELECTED_RECIPE,
     payload: updateRecipe
@@ -181,6 +194,7 @@ export const editRecipe = (
         type: GET_ERRORS,
         payload: err.response.data
       });
+      dispatch(removeRecipeLoading());
     });
 };
 

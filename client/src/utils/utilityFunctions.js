@@ -119,6 +119,7 @@ export const calcCostPerSecondToCostPerUnit = (
 
 export const calcTotalIngredientCost = selectedRecipe => {
   let totalIngredientCost = null;
+
   for (
     let index = 0;
     index < selectedRecipe.ingredients.length;
@@ -230,5 +231,86 @@ export const calcProfitPerYear = (
     profitPerServe *
     selectedRecipe.expectedSales *
     venue.weeksOpenPerYear;
-  console.log('profitPerYear', profitPerYear);
+
+  return profitPerYear;
+};
+
+export const recommendedSalesPrice = (recipeServes, totalCost) => {
+  if (!recipeServes || recipeServes === 0) {
+    return `Recipe serves is not set..`;
+  }
+  if (!totalCost || totalCost === 0) {
+    return `-`;
+  }
+
+  let recommendedSalesPrice = (totalCost / recipeServes) * 2;
+
+  console.log('recommendedSalesPrice', recommendedSalesPrice);
+
+  return recommendedSalesPrice;
+};
+
+export const calcRecipeProfit = (selectedRecipe, totalCost) => {
+  if (selectedRecipe.serves === 0) {
+    return `Recipes serves equals 0..`;
+  }
+  if (
+    !selectedRecipe.salePricePerServe ||
+    selectedRecipe.salePricePerServe === 0
+  ) {
+    return `Recipes sales price is not set..`;
+  }
+  const costPerServe = totalCost / selectedRecipe.serves;
+  const recipeProfit =
+    (selectedRecipe.salePricePerServe - costPerServe) *
+    selectedRecipe.serves;
+
+  return recipeProfit;
+};
+
+export const calcRecipeRevenue = selectedRecipe => {
+  if (selectedRecipe.serves === 0) {
+    return `Recipes serves equals 0..`;
+  }
+  if (
+    !selectedRecipe.salePricePerServe ||
+    selectedRecipe.salePricePerServe === 0
+  ) {
+    return `Recipes sales price is not set..`;
+  }
+  const recipeRevenue =
+    selectedRecipe.salePricePerServe * selectedRecipe.serves;
+  return recipeRevenue;
+};
+
+export const calcProfitMargin = (recipeProfit, recipeRevenue) => {
+  const profitMargin = (recipeProfit / recipeRevenue) * 100;
+  return profitMargin;
+};
+
+export const calcRecipeMarkup = (recipeProfit, totalCost) => {
+  const recipeMarkup = (recipeProfit / totalCost) * 100;
+  return recipeMarkup;
+};
+
+export const calcRecipeGrams = recipeIngredients => {
+  let totalGrams = 0;
+  for (let index = 0; index < recipeIngredients.length; index++) {
+    const ingredient = recipeIngredients[index];
+    totalGrams = totalGrams + ingredient.grams;
+  }
+  return totalGrams;
+};
+
+export const calcRecipeGramsPerServe = (
+  recipeIngredients,
+  recipeServes
+) => {
+  let totalGrams = 0;
+  for (let index = 0; index < recipeIngredients.length; index++) {
+    const ingredient = recipeIngredients[index];
+    totalGrams = totalGrams + ingredient.grams;
+  }
+  const recipeGramsPerServe = totalGrams / recipeServes;
+  return recipeGramsPerServe;
 };

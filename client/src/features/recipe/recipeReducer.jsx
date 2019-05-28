@@ -3,7 +3,8 @@ import {
   ADD_RECIPE,
   RECIPE_LOADING,
   SET_SELECTED_RECIPE,
-  REMOVE_SELECTED_RECIPE
+  REMOVE_SELECTED_RECIPE,
+  REMOVE_RECIPE_LOADING
 } from '../../redux/types';
 
 const initialState = {
@@ -42,6 +43,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         loading: true
+      };
+    case REMOVE_RECIPE_LOADING:
+      return {
+        ...state,
+        loading: false
       };
     default:
       return state;

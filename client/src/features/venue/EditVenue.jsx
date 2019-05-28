@@ -41,17 +41,15 @@ class EditVenue extends Component {
     this.props.getCurrentVenue();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({ errors: nextProps.errors });
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.errors !== this.props.errors) {
+      this.setState({ errors: this.props.errors });
     }
-    // console.log('nextProps.errors: ', nextProps.errors);
-    // console.log('State Check: ', this.state);
-    const errorCheck = isEmpty(nextProps.errors);
-    // console.log('errorOutsideCheck: ', errorCheck);
 
-    if (nextProps.venue.venue && errorCheck) {
-      const venue = { ...nextProps.venue.venue };
+    if (prevProps.venue.venue !== this.props.venue.venue) {
+      const venue = { ...this.props.venue.venue };
+      console.log('VENUE', venue);
+
       // Check if any fields are empty
       // If so make them an empty string
       venue.displayName = !isEmpty(venue.displayName)
@@ -381,7 +379,7 @@ class EditVenue extends Component {
           value={displayName}
           onChange={this.handleOnChange}
           label="Venue Name"
-          error={errors.name}
+          error={errors.displayName}
         />
         <TextInput
           name="email"

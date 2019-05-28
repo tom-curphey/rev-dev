@@ -1,37 +1,13 @@
 import React from 'react';
-import {
-  calcSecondsIntoTime,
-  calcTotalIngredientCost,
-  calcVenueCost,
-  calcStaffCost,
-  calcProfitPerServe,
-  calcProfitPerYear
-} from '../../utils/utilityFunctions';
-// import calcStaffCost from '../../utils/functions/calcStaffCost';
-import roundNumber from '../../utils/functions/roundNumber';
+import { roundNumber } from '../../utils/utilityFunctions';
 import { isNumber } from 'util';
 
-const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
-  console.log('selectedRecipe', selectedRecipe);
-  console.log('venue', venue);
-
-  const totalIngredientCost = calcTotalIngredientCost(selectedRecipe);
-  const staffCost = calcStaffCost(selectedRecipe, venue);
-  const venueCost = calcVenueCost(selectedRecipe, venue);
-
-  const totalCost = totalIngredientCost + staffCost + venueCost;
-
-  const profitPerServe = calcProfitPerServe(
-    selectedRecipe,
-    totalCost
-  );
-
-  const profitPerYear = calcProfitPerYear(
-    selectedRecipe,
-    profitPerServe,
-    venue
-  );
-
+const RecipeComparison = ({
+  selectedRecipe,
+  recipeResults,
+  profile,
+  venue
+}) => {
   return (
     <section className="comparison">
       <ul>
@@ -46,37 +22,59 @@ const RecipeComparison = ({ selectedRecipe, profile, venue }) => {
       <ul>
         <li>{selectedRecipe.displayName}</li>
         <li>
-          {isNumber(totalIngredientCost) ? (
-            roundNumber(totalIngredientCost, 2)
+          {isNumber(recipeResults.totalIngredientCost) ? (
+            roundNumber(recipeResults.totalIngredientCost, 2)
           ) : (
             <span style={{ color: 'red' }}>
-              {totalIngredientCost}
+              {recipeResults.totalIngredientCost}
             </span>
           )}
         </li>
         <li>
-          {isNumber(staffCost) ? (
-            roundNumber(staffCost, 2)
+          {isNumber(recipeResults.staffCost) ? (
+            roundNumber(recipeResults.staffCost, 2)
           ) : (
-            <span style={{ color: 'red' }}>{staffCost}</span>
+            <span style={{ color: 'red' }}>
+              {recipeResults.staffCost}
+            </span>
           )}
         </li>
         <li>
-          {isNumber(venueCost) ? (
-            roundNumber(venueCost, 2)
+          {isNumber(recipeResults.venueCost) ? (
+            roundNumber(recipeResults.venueCost, 2)
           ) : (
-            <span style={{ color: 'red' }}>{venueCost}</span>
+            <span style={{ color: 'red' }}>
+              {recipeResults.venueCost}
+            </span>
           )}
         </li>
-        <li>-</li>
         <li>
-          {isNumber(profitPerServe) ? (
-            roundNumber(profitPerServe, 2)
+          {isNumber(recipeResults.profitPerYear) ? (
+            roundNumber(recipeResults.profitPerYear, 2)
           ) : (
-            <span style={{ color: 'red' }}>{profitPerServe}</span>
+            <span style={{ color: 'red' }}>
+              {recipeResults.profitPerYear}
+            </span>
           )}
         </li>
-        <li>-</li>
+        <li>
+          {isNumber(recipeResults.profitPerServe) ? (
+            roundNumber(recipeResults.profitPerServe, 2)
+          ) : (
+            <span style={{ color: 'red' }}>
+              {recipeResults.profitPerServe}
+            </span>
+          )}
+        </li>
+        <li>
+          {isNumber(recipeResults.profitPerServe) ? (
+            roundNumber(recipeResults.profitPerServe, 2)
+          ) : (
+            <span style={{ color: 'red' }}>
+              {recipeResults.profitPerServe}
+            </span>
+          )}
+        </li>
       </ul>
     </section>
   );

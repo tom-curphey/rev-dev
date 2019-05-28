@@ -5,6 +5,7 @@ import {
   REMOVE_VENUE_LOADING,
   CLEAR_CURRENT_VENUE,
   GET_ERRORS,
+  REMOVE_ERRORS,
   SET_CURRENT_USER,
   SAVE_VENUE
 } from '../../redux/types';
@@ -40,7 +41,11 @@ export const addOrEditVenue = (venueData, history) => dispatch => {
   axios
     .post('/api/venue', venueData)
     .then(res => {
-      history.push('/dashboard');
+      // history.push('/dashboard');
+      dispatch({
+        type: REMOVE_ERRORS,
+        payload: {}
+      });
       dispatch({
         type: SAVE_VENUE,
         payload: res.data
