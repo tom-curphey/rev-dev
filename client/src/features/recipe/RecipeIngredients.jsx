@@ -71,37 +71,40 @@ class RecipeIngredients extends Component {
   };
 
   handleOnChange = e => {
-    const { name, id } = e.target;
-
-    // let index = id;
+    let name = e.target.name;
     let value = e.target.value;
-    // console.log('dataindex', dataindex);
-    // console.log('value', value);
-    // console.log('target', e.target.id);
-
-    let valueCheck = true;
     if (name === 'quantity') {
-      // console.log('value: ', value);
-      if (value === '') {
-        valueCheck = false;
+      if (value !== '') {
+        if (!isNaN(value)) {
+          let checkDecimal = value.search(/\./);
+          // let checkDecimal = value.search(/^\d*\.?\d*$/);
+          // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
+          // console.log('checkDecimal: ', checkDecimal);
+          if (checkDecimal !== -1) {
+            value = e.target.value;
+          }
+          this.setState(prevState => ({
+            selectedRecipe: {
+              ...prevState.selectedRecipe,
+              [name]: value
+            }
+          }));
+        }
       } else {
-        value = Number(value);
-        // console.log('value: ', value);
+        this.setState(prevState => ({
+          selectedRecipe: {
+            ...prevState.selectedRecipe,
+            [name]: value
+          }
+        }));
       }
     }
+  };
 
-    // console.log('state..', this.state.recipeIngredients);
-
+  handleOnChange = e => {
+    const { name, id, value } = e.target;
+    let valueCheck = true;
     let key = id;
-    // this.state.recipeIngredients
-    //   .map(rI => {
-    //     console.log('rI', rI.ingredient._id);
-
-    //     return rI.ingredient._id;
-    //   })
-    //   .indexOf(e.target.id);
-
-    // console.log('KEY', key);
 
     let stateCopy = Object.assign({}, this.state);
     stateCopy.recipeIngredients = stateCopy.recipeIngredients.slice();
@@ -110,21 +113,13 @@ class RecipeIngredients extends Component {
       stateCopy.recipeIngredients[key]
     );
 
-    // console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
     stateCopy.recipeIngredients[key][`${name}`] = value;
-    // console.log('STATE COPY: ', stateCopy.recipeIngredients[key]);
 
     if (
       valueCheck &&
       stateCopy.recipeIngredients[key].quantity > 0 &&
       stateCopy.recipeIngredients[key].metric !== ''
     ) {
-      // console.log('Q: ', stateCopy.recipeIngredients[key].quantity);
-      // console.log(
-      //   'Metrix: ',
-      //   `${stateCopy.recipeIngredients[key].metric}`
-      // );
-      // console.log('metricName: ', stateCopy.recipeIngredients[key]);
       let metricGrams = 0;
       switch (stateCopy.recipeIngredients[key].metric) {
         case 'cup':
@@ -160,24 +155,23 @@ class RecipeIngredients extends Component {
       stateCopy.recipeIngredients[key].grams = '';
     }
 
-    // console.log('value', value);
+    console.log('value', value);
     // console.log('key', key);
 
     if (name === 'quantity') {
-      if (isNaN(value)) {
-        stateCopy.recipeIngredients[key].quantity = '';
-      } else {
-        let checkDecimal = e.target.value.search(/\./);
-        // console.log('checkDecimal: ', checkDecimal);
-        if (checkDecimal === 1) {
-          stateCopy.recipeIngredients[key].quantity = e.target.value;
-        }
+      if (!isNaN(value)) {
+        stateCopy.recipeIngredients[key].quantity = e.target.value;
+        this.setState(stateCopy);
       }
+      if (value === '.') {
+        stateCopy.recipeIngredients[key].quantity = '0.';
+        this.setState(stateCopy);
+      }
+    } else {
+      this.setState(stateCopy);
     }
 
     // console.log('stateCopy: ', stateCopy.recipeIngredients[0]);
-
-    this.setState(stateCopy);
   };
 
   handleDeleteRecipeIngredient = rowID => e => {

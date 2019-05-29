@@ -445,12 +445,23 @@ export const calcCostPerServe = (recipeServes, totalCost) => {
   return costPerServe;
 };
 
-export const getIngredientResults = selectedRecipe => {
-  const ingredientResults = {};
+export const getIngredientResults = (selectedRecipe, recipeGrams) => {
+  const ingredientResultArray = selectedRecipe.ingredients.map(
+    ingredient => {
+      const ingredientResults = {};
+      ingredientResults.displayName =
+        ingredient.ingredient.displayName;
+      ingredientResults.recipeCost =
+        (ingredient.packageCost / ingredient.packageGrams) *
+        ingredient.grams;
+      ingredientResults.recipeGrams = ingredient.grams;
+      ingredientResults.contribution =
+        (ingredient.grams / recipeGrams) * 100;
+      ingredientResults.packageCost = ingredient.packageCost;
+      ingredientResults.packageGrams = ingredient.packageGrams;
+      return ingredientResults;
+    }
+  );
 
-  console.log('selectedRecipe', selectedRecipe);
-
-  // ingredientResults.recipeCost = (packetCost / packetGrams) * grams;
-
-  return ingredientResults;
+  return ingredientResultArray;
 };

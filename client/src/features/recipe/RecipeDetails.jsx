@@ -6,6 +6,7 @@ import { editRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import SelectInput from '../../utils/input/SelectInput';
+import isEmpty from '../../utils/validation/is.empty';
 // import calcTimeToSeconds from '../../utils/functions/calcTimeToSeconds';
 import {
   calcTimeToSeconds,
@@ -33,21 +34,28 @@ class RecipeDetails extends Component {
     if (this.props.recipe.selectedRecipe !== null) {
       const convertedRecipe = { ...this.props.recipe.selectedRecipe };
 
-      if (this.props.recipe.selectedRecipe.staffTime !== '') {
+      if (!isEmpty(this.props.recipe.selectedRecipe.staffTime)) {
+        console.log('Check', this.props.recipe.selectedRecipe);
+
         convertedRecipe.staffTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.staffTime,
           this.props.recipe.selectedRecipe.staffTimeUnit
         );
       } else {
-        this.props.recipe.selectedRecipe.staffTime = this.props.recipe.selectedRecipe.staffTime;
+        convertedRecipe.staffTime = '';
       }
-      if (this.props.recipe.selectedRecipe.totalCookingTime !== '') {
+
+      if (
+        !isEmpty(this.props.recipe.selectedRecipe.totalCookingTime)
+      ) {
+        console.log('Check', this.props.recipe.selectedRecipe);
+
         convertedRecipe.totalCookingTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.totalCookingTime,
           this.props.recipe.selectedRecipe.cookingTimeUnit
         );
       } else {
-        this.props.recipe.selectedRecipe.totalCookingTime = this.props.recipe.selectedRecipe.totalCookingTime;
+        convertedRecipe.totalCookingTime = '';
       }
 
       this.setState({
@@ -66,17 +74,29 @@ class RecipeDetails extends Component {
       this.props.recipe.selectedRecipe
     ) {
       const convertedRecipe = { ...this.props.recipe.selectedRecipe };
-      if (this.props.recipe.selectedRecipe.staffTime !== '') {
+
+      if (!isEmpty(this.props.recipe.selectedRecipe.staffTime)) {
+        console.log('Check', this.props.recipe.selectedRecipe);
+
         convertedRecipe.staffTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.staffTime,
           this.props.recipe.selectedRecipe.staffTimeUnit
         );
+      } else {
+        convertedRecipe.staffTime = '';
       }
-      if (this.props.recipe.selectedRecipe.totalCookingTime !== '') {
+
+      if (
+        !isEmpty(this.props.recipe.selectedRecipe.totalCookingTime)
+      ) {
+        console.log('Check', this.props.recipe.selectedRecipe);
+
         convertedRecipe.totalCookingTime = calcSecondsIntoTime(
           this.props.recipe.selectedRecipe.totalCookingTime,
           this.props.recipe.selectedRecipe.cookingTimeUnit
         );
+      } else {
+        convertedRecipe.totalCookingTime = '';
       }
 
       this.setState({
@@ -89,32 +109,27 @@ class RecipeDetails extends Component {
     e.persist();
 
     if (
+      e.target.name === 'serves' ||
+      e.target.name === 'salePricePerServe' ||
       e.target.name === 'staffTime' ||
-      e.target.name === 'totalCookingTime'
+      e.target.name === 'totalCookingTime' ||
+      e.target.name === 'expectedSales'
     ) {
       let value = e.target.value;
-      // console.log('YES');
-      if (value !== '') {
-        if (!isNaN(value)) {
-          let checkDecimal = value.search(/\./);
-          // let checkDecimal = value.search(/^\d*\.?\d*$/);
-          // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
-          // console.log('checkDecimal: ', checkDecimal);
-          if (checkDecimal !== -1) {
-            value = e.target.value;
-          }
-          this.setState(prevState => ({
-            selectedRecipe: {
-              ...prevState.selectedRecipe,
-              [e.target.name]: e.target.value
-            }
-          }));
-        }
-      } else {
+      if (!isNaN(value)) {
         this.setState(prevState => ({
           selectedRecipe: {
             ...prevState.selectedRecipe,
             [e.target.name]: e.target.value
+          }
+        }));
+      }
+      if (value === '.') {
+        console.log('YES', value);
+        this.setState(prevState => ({
+          selectedRecipe: {
+            ...prevState.selectedRecipe,
+            [e.target.name]: '0.'
           }
         }));
       }

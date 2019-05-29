@@ -19,7 +19,8 @@ class RecipeResults extends Component {
   state = {
     errors: {},
     selectedRecipe: {},
-    recipeResults: {}
+    recipeResults: {},
+    ingredientResults: []
   };
 
   componentDidMount() {
@@ -55,14 +56,14 @@ class RecipeResults extends Component {
         const recipeResults = getRecipeResults(selectedRecipe, venue);
         this.setState({ recipeResults: recipeResults });
 
+        console.log('Selected Re', selectedRecipe);
+
         if (selectedRecipe.ingredients.length > 0) {
           const ingredientResults = getIngredientResults(
-            selectedRecipe
+            selectedRecipe,
+            recipeResults.recipeGrams
           );
-
-          console.log('ingredientResults', ingredientResults);
-
-          // this.setState({ recipeResults: ingredientResults });
+          this.setState({ ingredientResults: ingredientResults });
         }
       }
     }
@@ -82,17 +83,18 @@ class RecipeResults extends Component {
     let value = e.target.value;
     if (value !== '') {
       if (!isNaN(value)) {
-        let checkDecimal = value.search(/\./);
-        // let checkDecimal = value.search(/^\d*\.?\d*$/);
-        // let checkDecimal = value.search(/^\d+(\.\d{1,2})?$/);
-        // console.log('checkDecimal: ', checkDecimal);
-        if (checkDecimal !== -1) {
-          value = e.target.value;
-        }
         this.setState(prevState => ({
           selectedRecipe: {
             ...prevState.selectedRecipe,
             [name]: value
+          }
+        }));
+      }
+      if (value === '.') {
+        this.setState(prevState => ({
+          selectedRecipe: {
+            ...prevState.selectedRecipe,
+            [name]: '0.'
           }
         }));
       }
@@ -127,11 +129,18 @@ class RecipeResults extends Component {
   };
 
   render() {
-    const { selectedRecipe, errors, recipeResults } = this.state;
+    const {
+      selectedRecipe,
+      errors,
+      recipeResults,
+      ingredientResults
+    } = this.state;
     const recipeLoading = this.props.recipe.loading;
     const { venue } = this.props.venue;
     const venueLoading = this.props.venue.loading;
     const { profile } = this.props;
+
+    // console.log('ingredientResults', ingredientResults);
 
     let salesPriceForm;
     if (!isEmpty(selectedRecipe)) {
@@ -288,6 +297,34 @@ class RecipeResults extends Component {
       </ul>
     );
 
+    let ingredientsOverview = (
+      <ul>
+        <li>
+          <div>Ingredient Name</div>
+          <div>Recipe Cost</div>
+          <div>Recipe Grams</div>
+          <div>Contribution</div>
+          <div>Packet Cost</div>
+          <div>Packet Grams</div>
+        </li>
+        {ingredientResults &&
+          ingredientResults.map((ingredient, i) => {
+            return (
+              <li key={i}>
+                <div>{ingredient.displayName}</div>
+                <div>{twoDecimalNumber(ingredient.recipeCost)}</div>
+                <div>{twoDecimalNumber(ingredient.recipeGrams)}</div>
+                <div>
+                  {twoDecimalNumber(ingredient.contribution)}%
+                </div>
+                <div>{twoDecimalNumber(ingredient.packageCost)}</div>
+                <div>{twoDecimalNumber(ingredient.packageGrams)}</div>
+              </li>
+            );
+          })}
+      </ul>
+    );
+
     let recipeContent;
     if (
       recipeLoading === true ||
@@ -297,21 +334,6 @@ class RecipeResults extends Component {
     ) {
       recipeContent = <Spinner />;
     } else {
-      console.log('recipe->', selectedRecipe);
-
-      let ingredientResults = (
-        <ul>
-          <li>
-            <div>Ingredient Name</div>
-            <div>Recipe Cost</div>
-            <div>Recipe Grams</div>
-            <div>Contribution %</div>
-            <div>Packet Cost</div>
-            <div>Packet Grams</div>
-          </li>
-        </ul>
-      );
-
       recipeContent = (
         <React.Fragment>
           {!isEmpty(recipeResults) && (
@@ -332,7 +354,7 @@ class RecipeResults extends Component {
           </section>
           <hr />
           <section className="ingredientResults">
-            {ingredientResults}
+            {ingredientsOverview}
           </section>
         </React.Fragment>
       );

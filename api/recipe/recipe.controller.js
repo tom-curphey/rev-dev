@@ -204,6 +204,9 @@ const editRecipeByID = (req, res) => {
     }
 
     console.log('FOUND', recipe);
+    if (req.body.staffTime) {
+      console.log('REQ', req.body);
+    }
 
     if (req.body.venue) {
       Venue.findById(req.body.venue).then(venue => {
@@ -241,6 +244,8 @@ const editRecipeByID = (req, res) => {
         req.body.ingredients && req.body.ingredients.length > 0
           ? (recipeFields.ingredients = req.body.ingredients)
           : (recipeFields.ingredients = []);
+
+        console.log('RF', recipeFields);
 
         Recipe.findOneAndUpdate(
           { _id: req.params.recipe_id },
