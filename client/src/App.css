@@ -649,13 +649,33 @@ section.comparison ul {
 /
 */
 
-section.recipeResults {
+section.recipeResults form {
+  border: none;
+  display: grid;
+  grid-template-columns: 350px 120px;
+}
+
+section.recipeOverview {
   display: grid;
   grid-template-columns: auto auto auto;
   width: 800px;
 }
 
-section.recipeResults ul li {
+section.recipeOverview ul li {
   display: grid;
   grid-template-columns: 70% 30%;
+}
+
+section.ingredientResults ul li {
+  display: grid;
+  grid-template-columns: 180px 130px 140px 160px 130px 140px;
+}
+
+section.ingredientResults ul li div {
+  padding: 2px 10px;
+  border-left: 1px solid #f1f1f1;
+}
+
+section.ingredientResults ul li div:first-child {
+  border: none;
 }

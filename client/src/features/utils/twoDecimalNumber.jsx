@@ -4,7 +4,7 @@ import { isNumber } from 'util';
 
 const twoDecimalNumber = value => {
   let result = '';
-  if (isNumber(value)) {
+  if (isNumber(value) && !isNaN(value)) {
     result = roundNumber(value, 2);
   }
 

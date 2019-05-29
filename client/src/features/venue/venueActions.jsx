@@ -41,7 +41,7 @@ export const addOrEditVenue = (venueData, history) => dispatch => {
   axios
     .post('/api/venue', venueData)
     .then(res => {
-      // history.push('/dashboard');
+      history.push('/dashboard');
       dispatch({
         type: REMOVE_ERRORS,
         payload: {}

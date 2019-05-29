@@ -1,25 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
+import { editRecipe } from './recipeActions';
 import Spinner from '../../utils/spinner/Spinner';
 import TextInput from '../../utils/input/TextInput';
 import RecipeComparison from './RecipeComparison';
 import isEmpty from '../../utils/validation/is.empty';
 import { isNumber } from 'util';
 import {
-  calcTotalIngredientCost,
-  calcVenueCost,
-  calcStaffCost,
-  calcProfitPerServe,
-  calcProfitPerYear,
-  recommendedSalesPrice,
   roundNumber,
-  calcRecipeProfit,
-  calcRecipeRevenue,
-  calcProfitMargin,
-  calcRecipeMarkup,
-  calcRecipeGrams,
-  calcRecipeGramsPerServe
+  getRecipeResults,
+  getIngredientResults
 } from '../../utils/utilityFunctions';
 import twoDecimalNumber from '../utils/twoDecimalNumber';
 
@@ -57,146 +49,28 @@ class RecipeResults extends Component {
         this.props.recipe.selectedRecipe &&
       this.props.venue !== null
     ) {
-      console.log('PROP CHANGE');
-
       if (Object.keys(this.props.recipe.selectedRecipe).length > 0) {
         const { selectedRecipe } = this.props.recipe;
         const { venue } = this.props.venue;
-        const recipeResults = {};
-
-        recipeResults.totalIngredientCost = calcTotalIngredientCost(
-          selectedRecipe
-        );
-
-        recipeResults.staffCost = calcStaffCost(
-          selectedRecipe,
-          venue
-        );
-        recipeResults.venueCost = calcVenueCost(
-          selectedRecipe,
-          venue
-        );
-
-        let totalCost =
-          recipeResults.totalIngredientCost +
-          recipeResults.staffCost +
-          recipeResults.venueCost;
-
-        recipeResults.profitPerServe = calcProfitPerServe(
-          selectedRecipe,
-          totalCost
-        );
-
-        recipeResults.profitPerYear = calcProfitPerYear(
-          selectedRecipe,
-          recipeResults.profitPerServe,
-          venue
-        );
-
-        recipeResults.recommendedSalesPrice = recommendedSalesPrice(
-          selectedRecipe.serves,
-          totalCost
-        );
-
-        recipeResults.recipeProfit = calcRecipeProfit(
-          selectedRecipe,
-          totalCost
-        );
-
-        recipeResults.recipeRevenue = calcRecipeRevenue(
-          selectedRecipe
-        );
-
-        recipeResults.profitMargin = calcProfitMargin(
-          recipeResults.recipeProfit,
-          recipeResults.recipeRevenue
-        );
-
-        recipeResults.recipeMarkup = calcRecipeMarkup(
-          recipeResults.recipeProfit,
-          totalCost
-        );
-
-        recipeResults.recipeGrams = calcRecipeGrams(
-          selectedRecipe.ingredients
-        );
-
-        recipeResults.recipeGramsPerServe = calcRecipeGramsPerServe(
-          selectedRecipe.ingredients,
-          selectedRecipe.serves
-        );
-
+        const recipeResults = getRecipeResults(selectedRecipe, venue);
         this.setState({ recipeResults: recipeResults });
+
+        if (selectedRecipe.ingredients.length > 0) {
+          const ingredientResults = getIngredientResults(
+            selectedRecipe
+          );
+
+          console.log('ingredientResults', ingredientResults);
+
+          // this.setState({ recipeResults: ingredientResults });
+        }
       }
     }
     if (prevState.selectedRecipe !== this.state.selectedRecipe) {
-      console.log('STATE CHANGE');
       if (Object.keys(this.state.selectedRecipe).length > 0) {
         const { selectedRecipe } = this.state;
         const { venue } = this.props.venue;
-        const recipeResults = {};
-
-        recipeResults.totalIngredientCost = calcTotalIngredientCost(
-          selectedRecipe
-        );
-
-        recipeResults.staffCost = calcStaffCost(
-          selectedRecipe,
-          venue
-        );
-        recipeResults.venueCost = calcVenueCost(
-          selectedRecipe,
-          venue
-        );
-
-        let totalCost =
-          recipeResults.totalIngredientCost +
-          recipeResults.staffCost +
-          recipeResults.venueCost;
-
-        recipeResults.profitPerServe = calcProfitPerServe(
-          selectedRecipe,
-          totalCost
-        );
-
-        recipeResults.profitPerYear = calcProfitPerYear(
-          selectedRecipe,
-          recipeResults.profitPerServe,
-          venue
-        );
-
-        recipeResults.recommendedSalesPrice = recommendedSalesPrice(
-          selectedRecipe.serves,
-          totalCost
-        );
-
-        recipeResults.recipeProfit = calcRecipeProfit(
-          selectedRecipe,
-          totalCost
-        );
-
-        recipeResults.recipeRevenue = calcRecipeRevenue(
-          selectedRecipe
-        );
-
-        recipeResults.profitMargin = calcProfitMargin(
-          recipeResults.recipeProfit,
-          recipeResults.recipeRevenue
-        );
-
-        recipeResults.recipeMarkup = calcRecipeMarkup(
-          recipeResults.recipeProfit,
-          totalCost
-        );
-
-        recipeResults.recipeGrams = calcRecipeGrams(
-          selectedRecipe.ingredients
-        );
-
-        recipeResults.recipeGramsPerServe = calcRecipeGramsPerServe(
-          selectedRecipe.ingredients,
-          selectedRecipe.serves
-        );
+        const recipeResults = getRecipeResults(selectedRecipe, venue);
 
         this.setState({ recipeResults: recipeResults });
       }
@@ -232,6 +106,26 @@ class RecipeResults extends Component {
     }
   };
 
+  handleOnSubmit = exit => e => {
+    e.preventDefault();
+
+    const { selectedRecipe } = this.state;
+
+    const updatedRecipe = {
+      ...selectedRecipe,
+      expectedSales: selectedRecipe.salePricePerServe
+    };
+
+    console.log('Updated Recipe', updatedRecipe);
+
+    this.props.editRecipe(
+      updatedRecipe,
+      this.props.profile,
+      this.props.history,
+      exit
+    );
+  };
+
   render() {
     const { selectedRecipe, errors, recipeResults } = this.state;
     const recipeLoading = this.props.recipe.loading;
@@ -255,15 +149,23 @@ class RecipeResults extends Component {
               )}
             </p>
           </div>
-          <TextInput
-            placeholder="Confirm Sales Price"
-            name="salePricePerServe"
-            type="text"
-            value={selectedRecipe.salePricePerServe}
-            onChange={this.handleOnChange}
-            label="Confirm Sales Price"
-            error={errors.salePricePerServe}
-          />
+          <form>
+            <TextInput
+              placeholder="Sales Price"
+              name="salePricePerServe"
+              type="text"
+              value={selectedRecipe.salePricePerServe}
+              onChange={this.handleOnChange}
+              label="Confirm Sales Price"
+              error={errors.salePricePerServe}
+            />
+            <button
+              type="onSubmit"
+              onClick={this.handleOnSubmit(false)}
+            >
+              Confirm Sales Price
+            </button>
+          </form>
         </React.Fragment>
       );
     }
@@ -278,8 +180,6 @@ class RecipeResults extends Component {
         <hr />
       </React.Fragment>
     );
-
-    console.log('recipeResults', recipeResults);
 
     let recipeAnalysis = (
       <ul>
@@ -322,23 +222,69 @@ class RecipeResults extends Component {
 
     let recipeCosts = (
       <ul>
-        <li>Cost Per Serve</li>
-        <li>Recipe Cost</li>
-        <li>Ingredient Cost</li>
-        <li>Staff Cost</li>
-        <li>Venue Cost</li>
-        <li>Packaging Cost</li>
+        <li>
+          <span>Cost Per Serve</span>
+          <span>{twoDecimalNumber(recipeResults.costPerServe)}</span>
+        </li>
+        <li>
+          <span>Recipe Cost</span>
+          <span>{twoDecimalNumber(recipeResults.recipeCost)}</span>
+        </li>
+        <li>
+          <span>Ingredient Cost</span>
+          <span>
+            {twoDecimalNumber(recipeResults.totalIngredientCost)}
+          </span>
+        </li>
+        <li>
+          <span>Staff Cost</span>
+          <span>{twoDecimalNumber(recipeResults.staffCost)}</span>
+        </li>
+        <li>
+          <span>Venue Cost</span>
+          <span>{twoDecimalNumber(recipeResults.venueCost)}</span>
+        </li>
+        <li>
+          <span>Packaging Cost</span>
+          <span />
+        </li>
       </ul>
     );
 
     let profitProjections = (
       <ul>
-        <li>Profit Per Week</li>
-        <li>Profit Per Month</li>
-        <li>Profit Per Year</li>
-        <li>Revenue Per Week</li>
-        <li>Revenue Per Month</li>
-        <li>Revenue Per Year</li>
+        <li>
+          <span>Profit Per Week</span>
+          <span>{twoDecimalNumber(recipeResults.profitPerWeek)}</span>
+        </li>
+        <li>
+          <span>Profit Per Month</span>
+          <span>
+            {twoDecimalNumber(recipeResults.profitPerMonth)}
+          </span>
+        </li>
+        <li>
+          <span>Profit Per Year</span>
+          <span>{twoDecimalNumber(recipeResults.profitPerYear)}</span>
+        </li>
+        <li>
+          <span>Revenue Per Week</span>
+          <span>
+            {twoDecimalNumber(recipeResults.revenuePerWeek)}
+          </span>
+        </li>
+        <li>
+          <span>Revenue Per Month</span>
+          <span>
+            {twoDecimalNumber(recipeResults.revenuePerMonth)}
+          </span>
+        </li>
+        <li>
+          <span>Revenue Per Year</span>
+          <span>
+            {twoDecimalNumber(recipeResults.revenuePerYear)}
+          </span>
+        </li>
       </ul>
     );
 
@@ -351,6 +297,21 @@ class RecipeResults extends Component {
     ) {
       recipeContent = <Spinner />;
     } else {
+      console.log('recipe->', selectedRecipe);
+
+      let ingredientResults = (
+        <ul>
+          <li>
+            <div>Ingredient Name</div>
+            <div>Recipe Cost</div>
+            <div>Recipe Grams</div>
+            <div>Contribution %</div>
+            <div>Packet Cost</div>
+            <div>Packet Grams</div>
+          </li>
+        </ul>
+      );
+
       recipeContent = (
         <React.Fragment>
           {!isEmpty(recipeResults) && (
@@ -364,20 +325,28 @@ class RecipeResults extends Component {
           <hr />
           {salesPriceForm}
           {recipeServes}
-          <section className="recipeResults">
+          <section className="recipeOverview">
             {recipeAnalysis}
             {recipeCosts}
             {profitProjections}
+          </section>
+          <hr />
+          <section className="ingredientResults">
+            {ingredientResults}
           </section>
         </React.Fragment>
       );
     }
 
-    return <section className="">{recipeContent}</section>;
+    return (
+      <section className="recipeResults">{recipeContent}</section>
+    );
   }
 }
 
-const actions = {};
+const actions = {
+  editRecipe
+};
 
 const mapState = state => ({
   recipe: state.recipe,
@@ -390,10 +359,12 @@ RecipeResults.propTypes = {
   recipe: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
   venue: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  roundNumber: PropTypes.func,
+  getRecipeResults: PropTypes.func
 };
 
 export default connect(
   mapState,
   actions
-)(RecipeResults);
+)(withRouter(RecipeResults));

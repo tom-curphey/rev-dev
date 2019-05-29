@@ -117,6 +117,97 @@ export const calcCostPerSecondToCostPerUnit = (
   return roundNumber(costPerUnit, 3);
 };
 
+export const getRecipeResults = (selectedRecipe, venue) => {
+  const recipeResults = {};
+
+  recipeResults.totalIngredientCost = calcTotalIngredientCost(
+    selectedRecipe
+  );
+
+  recipeResults.staffCost = calcStaffCost(selectedRecipe, venue);
+  recipeResults.venueCost = calcVenueCost(selectedRecipe, venue);
+
+  recipeResults.recipeCost =
+    recipeResults.totalIngredientCost +
+    recipeResults.staffCost +
+    recipeResults.venueCost;
+
+  recipeResults.profitPerServe = calcProfitPerServe(
+    selectedRecipe,
+    recipeResults.recipeCost
+  );
+
+  recipeResults.profitPerWeek = calcProfitPerWeek(
+    selectedRecipe.expectedSales,
+    recipeResults.profitPerServe
+  );
+
+  recipeResults.profitPerMonth = calcProfitPerMonth(
+    selectedRecipe.expectedSales,
+    recipeResults.profitPerServe
+  );
+
+  recipeResults.profitPerYear = calcProfitPerYear(
+    selectedRecipe,
+    recipeResults.profitPerServe,
+    venue
+  );
+
+  recipeResults.recommendedSalesPrice = recommendedSalesPrice(
+    selectedRecipe.serves,
+    recipeResults.recipeCost
+  );
+
+  recipeResults.recipeProfit = calcRecipeProfit(
+    selectedRecipe,
+    recipeResults.recipeCost
+  );
+
+  recipeResults.recipeRevenue = calcRecipeRevenue(selectedRecipe);
+
+  recipeResults.revenuePerWeek = calcRevenuePerWeek(
+    selectedRecipe.salePricePerServe,
+    selectedRecipe.expectedSales
+  );
+
+  recipeResults.revenuePerMonth = calcRevenuePerMonth(
+    selectedRecipe.salePricePerServe,
+    selectedRecipe.expectedSales
+  );
+
+  recipeResults.revenuePerYear = calcRevenuePerYear(
+    selectedRecipe.salePricePerServe,
+    selectedRecipe.expectedSales,
+    venue.weeksOpenPerYear
+  );
+
+  recipeResults.profitMargin = calcProfitMargin(
+    recipeResults.recipeProfit,
+    recipeResults.recipeRevenue
+  );
+
+  recipeResults.recipeMarkup = calcRecipeMarkup(
+    recipeResults.recipeProfit,
+    recipeResults.recipeCost
+  );
+
+  recipeResults.recipeGrams = calcRecipeGrams(
+    selectedRecipe.ingredients
+  );
+
+  recipeResults.recipeGramsPerServe = calcRecipeGramsPerServe(
+    selectedRecipe.ingredients,
+    selectedRecipe.serves
+  );
+
+  recipeResults.costPerServe = calcCostPerServe(
+    selectedRecipe.serves,
+    recipeResults.recipeCost
+  );
+
+  return recipeResults;
+};
+
 export const calcTotalIngredientCost = selectedRecipe => {
   let totalIngredientCost = null;
 
@@ -207,6 +298,17 @@ export const calcProfitPerServe = (selectedRecipe, totalCost) => {
   return profitPerServe;
 };
 
+export const calcProfitPerWeek = (expectedSales, profitPerServe) => {
+  const profitPerWeek = profitPerServe * expectedSales;
+  return profitPerWeek;
+};
+
+export const calcProfitPerMonth = (expectedSales, profitPerServe) => {
+  const profitPerWeek = profitPerServe * expectedSales;
+  const profitPerMonth = (profitPerWeek * 52) / 12;
+  return profitPerMonth;
+};
+
 export const calcProfitPerYear = (
   selectedRecipe,
   profitPerServe,
@@ -242,11 +344,7 @@ export const recommendedSalesPrice = (recipeServes, totalCost) => {
   if (!totalCost || totalCost === 0) {
     return `-`;
   }
-
   let recommendedSalesPrice = (totalCost / recipeServes) * 2;
-
-  console.log('recommendedSalesPrice', recommendedSalesPrice);
-
   return recommendedSalesPrice;
 };
 
@@ -283,6 +381,33 @@ export const calcRecipeRevenue = selectedRecipe => {
   return recipeRevenue;
 };
 
+export const calcRevenuePerWeek = (
+  salePricePerServe,
+  expectedSales
+) => {
+  const revenuePerWeek = salePricePerServe * expectedSales;
+  return revenuePerWeek;
+};
+
+export const calcRevenuePerMonth = (
+  salePricePerServe,
+  expectedSales
+) => {
+  const revenuePerWeek = salePricePerServe * expectedSales;
+  const revenuePerMonth = (revenuePerWeek * 52) / 12;
+  return revenuePerMonth;
+};
+
+export const calcRevenuePerYear = (
+  salePricePerServe,
+  expectedSales,
+  weeksOpenPerYear
+) => {
+  const revenuePerWeek = salePricePerServe * expectedSales;
+  const revenuePerYear = revenuePerWeek * weeksOpenPerYear;
+  return revenuePerYear;
+};
+
 export const calcProfitMargin = (recipeProfit, recipeRevenue) => {
   const profitMargin = (recipeProfit / recipeRevenue) * 100;
   return profitMargin;
@@ -313,4 +438,19 @@ export const calcRecipeGramsPerServe = (
   }
   const recipeGramsPerServe = totalGrams / recipeServes;
   return recipeGramsPerServe;
+};
+
+export const calcCostPerServe = (recipeServes, totalCost) => {
+  const costPerServe = totalCost / recipeServes;
+  return costPerServe;
+};
+
+export const getIngredientResults = selectedRecipe => {
+  const ingredientResults = {};
+
+  console.log('selectedRecipe', selectedRecipe);
+
+  // ingredientResults.recipeCost = (packetCost / packetGrams) * grams;
+
+  return ingredientResults;
 };
