@@ -24,7 +24,27 @@ class RecipeResults extends Component {
   };
 
   componentDidMount() {
-    if (this.props.recipe.selectedRecipe !== null) {
+    if (
+      this.props.recipe.selectedRecipe !== null &&
+      this.props.venue !== null
+    ) {
+      if (Object.keys(this.props.recipe.selectedRecipe).length > 0) {
+        const { selectedRecipe } = this.props.recipe;
+        const { venue } = this.props.venue;
+        const recipeResults = getRecipeResults(selectedRecipe, venue);
+        this.setState({ recipeResults: recipeResults });
+
+        console.log('Selected Re', selectedRecipe);
+
+        if (selectedRecipe.ingredients.length > 0) {
+          const ingredientResults = getIngredientResults(
+            selectedRecipe,
+            recipeResults.recipeGrams
+          );
+          this.setState({ ingredientResults: ingredientResults });
+        }
+      }
+
       this.setState({
         selectedRecipe: this.props.recipe.selectedRecipe
       });
