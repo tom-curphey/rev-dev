@@ -46,6 +46,8 @@ const addOrEditVenue = (req, res) => {
   if (req.body.phone) venueFields.phone = req.body.phone;
   if (req.body.website) venueFields.website = req.body.website;
   if (req.body.address) venueFields.address = req.body.address;
+  if (req.body.weeksOpenPerYear)
+    venueFields.weeksOpenPerYear = req.body.weeksOpenPerYear;
 
   // Costs
   venueFields.costs = {};
@@ -73,7 +75,6 @@ const addOrEditVenue = (req, res) => {
     venueFields.costs.councilCost = req.body.councilCost;
   if (req.body.councilUnitCost)
     venueFields.costs.councilUnitCost = req.body.councilUnitCost;
-
   console.log(venueFields);
 
   Venue.findOne({

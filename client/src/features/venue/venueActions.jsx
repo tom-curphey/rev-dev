@@ -35,7 +35,7 @@ export const getCurrentVenue = () => dispatch => {
 
 // Add Venue
 export const addOrEditVenue = (venueData, history) => dispatch => {
-  console.log('here');
+  console.log('here', venueData);
 
   dispatch(setVenueLoading());
   axios

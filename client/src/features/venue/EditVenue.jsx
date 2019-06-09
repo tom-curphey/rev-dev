@@ -413,6 +413,14 @@ class EditVenue extends Component {
           label="Venue Website"
           error={errors.website}
         />
+        <TextInput
+          name="weeksOpenPerYear"
+          type="weeksOpenPerYear"
+          value={weeksOpenPerYear}
+          onChange={this.handleCostChange}
+          label="Weeks open per year"
+          error={errors.weeksOpenPerYear}
+        />
         <button
           onClick={() => {
             this.setState(prevState => ({
