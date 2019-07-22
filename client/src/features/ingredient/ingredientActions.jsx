@@ -187,7 +187,7 @@ export const setSelectedIngredient = (
         );
 
         console.log(
-          'IN SET SELCTED INGREDIENT:',
+          'IN SET SELECTED INGREDIENT:',
           selectedIngredientSupplier
         );
 

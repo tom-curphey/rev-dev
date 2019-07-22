@@ -134,7 +134,7 @@ class Ingredient extends Component {
     let ingredientContent;
     let supplierContent;
     let metricContent = '';
-    if (ingredients === null || loading === true) {
+    if (loading === true) {
       ingredientContent = <Spinner />;
     } else {
       ingredientContent = (
@@ -143,7 +143,7 @@ class Ingredient extends Component {
             <SelectIngredient
               getSelectedIngredient={this.getSelectedIngredient}
             />
-
+            x
             {!isEmpty(selectedIngredientSupplier) && (
               <React.Fragment>
                 <TextInput
